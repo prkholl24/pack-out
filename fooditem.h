@@ -1,22 +1,126 @@
+/**
+ * @file
+ * @brief
+ */
 #ifndef FOODITEM_H
 #define FOODITEM_H
 
-#include "Item.h"
+#include "item.h"
+#include <map>
 
-class FoodItem : public PackableItem
-{
-public:
-    FoodItem();
-    FoodItem(QString& toolTip, double weight, QObject* parent, int calories, double sustenance);
+/**
+ * @brief The source of truth for FoodItem.
+ *
+ * Contains all the possible values for FoodItem.
+ */
+enum class Food {
+    BANANA,
+    POTATO,
+    STEAK,
+    MAYONAISE
+};
 
-private:
-    int calories;
+/**
+ * @brief Struct for the Food enum
+ *
+ * Contains necessary varibles that a Food must contain.
+ */
+struct FoodStats {
+    double calories;
     double sustenance;
+    double weight;
+    QString description;
+};
 
-signals:
+static const std::map<Food, FoodStats> FoodRegistry = {
+    /**
+     * TEMPLATE:
+       { Food::{FOOD_NAME}, {
+            // Calories
+            95.0,
 
-private slots:
+            // SUSTENANCE
+            10.0,
 
+            // WEIGHT
+            0.5,
+
+            // DESCRIPTION
+            QString("{DESCRIPTION}")
+       }},
+     */
+    { Food::BANANA, {
+        // Calories
+        95.0,
+
+        // SUSTENANCE
+        10.0,
+
+        // WEIGHT
+        0.5,
+
+        // DESCRIPTION
+        QString("The potassium in a banana helps prevent muscle cramps and regulate fluid balance.")
+    }},
+
+     { Food::POTATO, {
+        // Calories
+        340.0,
+
+        // SUSTENANCE
+        2.5,
+
+        // WEIGHT
+        1.0,
+
+        // DESCRIPTION
+        QString("Dense in calories but high in weight.")
+    }},
+};
+
+class FoodItem : public PackableItem {
+    public:
+        /**
+         * @brief Public constructor for FoodItem
+         *
+         * Accepts the `Food` enum->Looks up the FoodStats
+         * ->calls the private constructor using the FoodStates
+         * values
+         */
+        FoodItem(Food);
+
+
+    private:
+        /**
+         * @brief calories contained in this FoodItem
+         *
+         * Calories are the primary unit of measure used
+         * to determine whether the user has packed enough
+         * food for their trip.
+         */
+        double calories;
+
+        /**
+         * @brief sustenance
+         *
+         * ???
+         * Not sure how this is going to work.
+         */
+        double sustenance;
+
+
+        /**
+         * @brief FoodItem contructor
+         *
+         * Initializes a FoodItem object with implicitly states
+         * values. This method is intended to only be called by the public
+         * constructor.
+         *
+         * @param calories
+         * @param sustenance
+         * @param weight
+         */
+        FoodItem(double calories, double sustenance, double weight);
 };
 
 #endif // FOODITEM_H
