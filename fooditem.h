@@ -7,10 +7,10 @@ class FoodItem : public PackableItem
 {
 public:
     FoodItem();
-    FoodItem(double calories, double sustenance, double weight);
+    FoodItem(QString& toolTip, double weight, QObject* parent, int calories, double sustenance);
 
 private:
-    double calories;
+    int calories;
     double sustenance;
 
 signals:

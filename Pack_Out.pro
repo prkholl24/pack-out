@@ -11,15 +11,19 @@ CONFIG += c++17
 SOURCES += \
     fooditem.cpp \
     item.cpp \
+    level.cpp \
     main.cpp \
     mainwindow.cpp \
-    player.cpp
+    player.cpp \
+    wateritem.cpp
 
 HEADERS += \
     fooditem.h \
     item.h \
+    level.h \
     mainwindow.h \
-    player.h
+    player.h \
+    wateritem.h
 
 FORMS += \
     mainwindow.ui
