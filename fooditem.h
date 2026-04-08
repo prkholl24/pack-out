@@ -6,6 +6,7 @@
 #define FOODITEM_H
 
 #include "item.h"
+#include "qpixmap.h"
 
 /**
  * @brief The source of truth for FoodItem.
@@ -14,13 +15,15 @@
  */
 enum class Food {
     BANANA,
-    POTATO
+    POTATO,
+    GRANOLABAR
 };
 
 /**
  * @brief Struct for a food item
  */
 struct FoodStats {
+    QPixmap image;
     double calories;
     double sustenance;
     double weight;
@@ -38,6 +41,9 @@ static const std::map<Food, FoodStats> FoodRegistry = {
      * TEMPLATE:
 
        { Food::{FOOD_NAME}, {
+            // Image
+            pixmap("{IMAGE}"),
+
             // Calories
             95.0,
 
@@ -53,7 +59,10 @@ static const std::map<Food, FoodStats> FoodRegistry = {
 
      */
     { Food::BANANA, {
-                       // Calories
+                       // IMAGE
+                       QPixmap("banana.png"),
+
+                       // CALORIES
                        95.0,
 
                        // SUSTENANCE
@@ -67,7 +76,10 @@ static const std::map<Food, FoodStats> FoodRegistry = {
                    }},
 
     { Food::POTATO, {
-                       // Calories
+                        // IMAGE
+                        QPixmap("potato.png"),
+
+                       // CALORIES
                        340.0,
 
                        // SUSTENANCE
@@ -79,6 +91,23 @@ static const std::map<Food, FoodStats> FoodRegistry = {
                        // DESCRIPTION
                        QString("Dense in calories but high in weight.")
                    }},
+
+    { Food::GRANOLABAR, {
+                        // IMAGE
+                        QPixmap("energybar.png"),
+
+                        // CALORIES
+                        400.0,
+
+                        // SUSTENANCE
+                        0.5,
+
+                        // WEIGHT
+                        0.1,
+
+                        // DESCRIPTION
+                        QString("High in energy-packed calories, but low in sustenance.")
+                       }}
 };
 /**
  * @brief Represents a Food Item
