@@ -1,6 +1,17 @@
 /**
  * @file fooditem.h
  * @brief Contains the FoodItem method headers and pre-made definitions of Foods.
+ *
+ * The FoodItem interface is a way to create foods
+ * through the Map data structure, avoiding the need to
+ * create a new child class for every food instance we want to add.
+ *
+ * Team: Green Goombas
+ * Github: GitHub: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
+ * @authors Charles Aldair, Lindsey Reese, Kent Wilkison
+ * @date 4/8/2026
+ *
+ * Last Revision: 4/8/2026 3:58 MST by KENT WILKISON
  */
 #ifndef FOODITEM_H
 #define FOODITEM_H
@@ -21,6 +32,8 @@ enum class Food {
 
 /**
  * @brief Struct for a food item
+ *
+ * Contains all assets that a food-item needs to know.
  */
 struct FoodStats {
     QPixmap image;
@@ -153,12 +166,12 @@ protected:
      *
      * Returns a structured output of this items
      * stats
+     *
      * Example:
+     * - Calories:               95
+     * - Weight(lbs):           0.5
      *
-     * Calories               95
-     * Weight(lbs)           0.5
-     *
-      * @return a map containing the stat and its value
+     * @return a map containing the stat and its value
      */
     std::map<QString, double> getStats() override;
 };
