@@ -2,20 +2,30 @@
 
 /**
  * @brief PackableItem Default constructor.
- * Creates an item with no toolTip and 0 weight.
  */
-PackableItem::PackableItem() : toolTip(""), weight(0.0), parent(nullptr) {}
-
-PackableItem::PackableItem(QString& toolTip, double weight, QObject* parent) : toolTip(toolTip), weight(weight), parent(parent)
-{
-    // Any fancy code that needs to happen goes here!
-}
+PackableItem::PackableItem() : weight(0.0), description(nullptr) {}
 
 double PackableItem::getWeight() const {
     return this->weight;
 }
 
-void PackableItem::setWeight(double newWeight) {
-    this->weight = newWeight;
-    emit weightChanged(newWeight);
+QString PackableItem::getToolTip() {
+    std::map<QString, double> stats = getStats();
+    QString toolTipText = "";
+
+    for (auto const& [name, value] : stats) {
+        toolTipText += name + ": " + QString::number(value) + "\n";
+    }
+
+    if (description != nullptr) {
+        toolTipText += "\n" + *description;
+    }
+
+    return toolTipText;
+}
+
+std::map<QString, double> PackableItem::getStats() {
+    std::map<QString, double> stats;
+    stats["Weight"] = weight;
+    return stats;
 }
