@@ -14,6 +14,7 @@
  *          Brady Nelson, Lindsey Reese, Kent Wilkison
  * @date 4/7/2026
  */
+
 #ifndef LEVEL_H
 #define LEVEL_H
 
@@ -30,7 +31,7 @@
  * backpack passes the level and generate feedback.
  *
  * This class is designed to be extended, allowing different
- * types of levels to implement custom grading behavior.
+ * levels to implement custom grading behavior.
  */
 class Level
 {
@@ -94,7 +95,7 @@ public:
      * @param backpack The collection of packed items.
      * @return A grade from 0 to 100 representing preparedness.
      */
-    virtual double gradeMyBag(const std::vector<PackableItem>& backpack) const;
+    virtual double gradeMyBag(const std::vector<Item*>& backpack) const;
 
     /**
      * @brief Determines whether the backpack passes the level.
@@ -104,9 +105,9 @@ public:
      * the passing threshold.
      *
      * @param backpack The collection of packed items being evaluated.
-     * @return true if the backpack passes the level; otherwise false.
+     * @return True if the backpack passes the level; otherwise false.
      */
-    virtual bool passesLevel(const std::vector<PackableItem>& backpack) const;
+    virtual bool passesLevel(const std::vector<Item*>& backpack) const;
 
     /**
      * @brief Generates written feedback about the backpack.
@@ -116,11 +117,14 @@ public:
      * resources.
      *
      * @param backpack The collection of packed items being evaluated.
-     * @return A report describing the backpack's preparedness.
+     * @return A QString containing a report describing the backpack's preparedness.
      */
-    virtual QString getReport(const std::vector<PackableItem>& backpack) const;
+    virtual QString getReport(const std::vector<Item*>& backpack) const;
 
 private:
+
+    // ---------- Helper methods ----------
+    // --- Data collection ---
     /**
      * @brief Helper method that calculates the total calories in the backpack.
      *
@@ -130,19 +134,20 @@ private:
      * @param backpack The collection of packed items being evaluated.
      * @return The total calories packed.
      */
-    double calculateTotalCalories(const std::vector<PackableItem>& backpack) const;
+    double calculateTotalCalories(const std::vector<Item*>& backpack) const;
 
     /**
      * @brief Helper method that calculates the total water in the backpack.
      *
-     * Iterates through all packed items and sums their water values.
+     * Iterates through all packed items and sums their water amounts.
      * Implemented in level.cpp.
      *
      * @param backpack The collection of packed items being evaluated.
      * @return The total water packed.
      */
-    double calculateTotalWater(const std::vector<PackableItem>& backpack) const;
+    double calculateTotalWater(const std::vector<Item*>& backpack) const;
 
+    // --- Scoring ---
     /**
      * @brief Helper method that calculates the calorie portion of the grade.
      *
@@ -165,30 +170,79 @@ private:
      */
     double calculateWaterScore(double totalWater) const;
 
+    // --- Report building ---
     /**
      * @brief The number of calories required to complete the trip.
+     *
+     * Used when grading the backpack to determine whether
+     * the player has packed enough food.
      */
     int requiredCalories = -1;
 
     /**
      * @brief The number of ounces of water required to complete the trip.
+     *
+     * Used when grading the backpack to determine whether
+     * the player has packed enough water.
      */
     double requiredWater = -1;
 
     /**
      * @brief The duration of the trip, measured in hours.
+     *
+     * Represents how long the level lasts and may influence
+     * the required resources.
      */
     int duration = -1;
 
     /**
      * @brief A short description of the level scenario.
+     *
+     * Provides context or instructions for the player.
      */
     QString description;
 
     /**
      * @brief The minimum grade required to pass the level.
+     *
+     * A backpack must achieve at least this score to pass.
      */
     double passingScore = 70.0;
+
+    /**
+     * @brief Helper method to build the summary section of the backpack report.
+     *
+     * Includes the overall grade, total calories packed,
+     * and total water packed.
+     *
+     * @param grade The overall grade for the backpack.
+     * @param totalCalories The total calories packed.
+     * @param totalWater The total water packed.
+     * @return A QString containing the summary section of the report.
+     */
+    QString buildSummaryReport(double grade, double totalCalories, double totalWater) const;
+
+    /**
+     * @brief Helper method to build the fail section of the backpack report.
+     *
+     * Includes feedback about which required resources
+     * are missing from the backpack.
+     *
+     * @param totalCalories The total calories packed.
+     * @param totalWater The total water packed.
+     * @return A QString containing the fail section of the report.
+     */
+    QString buildFailReport(double totalCalories, double totalWater) const;
+
+    /**
+     * @brief Helper method to build the pass section of the backpack report.
+     *
+     * Includes feedback indicating that the player
+     * packed enough resources for the level.
+     *
+     * @return A QString containing the pass section of the report.
+     */
+    QString buildPassReport() const;
 };
 
 #endif // LEVEL_H
