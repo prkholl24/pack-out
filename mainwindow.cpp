@@ -1,6 +1,20 @@
 /**
  * @file mainwindow.cpp
- * @brief Implementation detailed in mainwindow.h
+ * @brief Implementation of the MainWindow class
+ *
+ * Implements the MainWindow class, which handles:
+ * - rendering objects using Qt
+ * - managing the Box2D physics world
+ * - handling mouse input for interaction
+ *
+ * Connects the UI with the physics simulation so the user
+ * can create, move, and interact with items on the screen.
+ *
+ * Team: Green Goombas
+ * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
+ * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
+ *          Brady Nelson, Lindsey Reese, Kent Wilkison
+ * @date 4/7/2026
  */
 #include "mainwindow.h"
 #include "ui_mainwindow.h"

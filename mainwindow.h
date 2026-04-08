@@ -1,6 +1,21 @@
 /**
  * @file mainwindow.h
- * @brief Contains headers for mainwindow.cpp
+ * @brief Contains the MainWindow class and handles rendering + user interaction.
+ *
+ * Defines the MainWindow class, which is responsible for:
+ * -> setting up the UI
+ * -> managing the Box2D physics world
+ * -> handling mouse input
+ * -> rendering objects to the screen
+ *
+ * This connects the physics simulation with the Qt interface so the user
+ * can interact with items in a visual way.
+ *
+ * Team: Green Goombas
+ * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
+ * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
+ *          Brady Nelson, Lindsey Reese, Kent Wilkison
+ * @date 4/7/2026
  */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
@@ -50,7 +65,7 @@ protected:
      *
      * Translates Box2D objects into rectangles that Qt can paint.
      *
-     * @param event – The paint event created by Qt
+     * @param event The paint event created by Qt
      */
     void paintEvent(QPaintEvent *event) override;
 
@@ -58,10 +73,11 @@ protected:
      * @brief Overrides the mouse press event to interact with physics objects.
      *
      * If the user clicks a spawner (say a banana spawner)
-     *                -> create a new banana to render and attach it to the users mouse.
-     * If the user clicks an existing item -> attach it to the users mouse.
+     * -> create a new banana to render and attach it to the user's mouse.
+     * If the user clicks an existing item
+     * -> attach it to the user's mouse.
      *
-     * @param event – mouse event created by Qt
+     * @param event mouse event created by Qt
      */
     void mousePressEvent(QMouseEvent *event) override;
 
@@ -70,7 +86,7 @@ protected:
      *
      * Checks if the user is holding an item and allows them to drag it around if they are.
      *
-     * @param event – mouse event created by Qt
+     * @param event mouse event created by Qt
      */
     void mouseMoveEvent(QMouseEvent *event) override;
 
@@ -79,7 +95,7 @@ protected:
      *
      * If the user is holding an object -> release it.
      *
-     * @param event – mouse event created by Qt
+     * @param event mouse event created by Qt
      */
     void mouseReleaseEvent(QMouseEvent *event) override;
 
@@ -95,7 +111,7 @@ private:
     /**
      * @brief Contains all of the Qt widgets and buttons.
      */
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
 
     /**
      * @brief The Box2D physics world.
@@ -105,9 +121,9 @@ private:
     b2World world;
 
     /**
-     * @brief Timer for the game loop
+     * @brief Timer for the game loop.
      *
-     * Continuously emits `udpatePhysics()`
+     * Continuously calls `updatePhysics()`.
      */
     QTimer* timer;
 
@@ -120,18 +136,18 @@ private:
     b2MouseJoint* mouseJoint = nullptr;
 
     /**
-     * @brief Converts Qt screen position to Box2D
-     * @param point – The position according to Qt
+     * @brief Converts a Qt screen position to a Box2D world position
      *
-     * Qt – Maps the TOP-LEFT of the screen the logical 0,0
-     *      As you move RIGHT, you increase the X value
-     *      As you move DOWN, you increse the Y value
+     * Qt - Maps the TOP-LEFT of the screen as (0,0)
+     * -> Moving RIGHT increases the X value
+     * -> Moving DOWN increases the Y value
      *
-     * Box2D – Maps the BOTTOM-LEFT as the logical 0,0
-     *      As you move RIGHT, you increase the X value
-     *      As you move UP, you increase the Y value.
+     * Box2D - Maps the BOTTOM-LEFT as (0,0)
+     * -> Moving RIGHT increases the X value
+     * -> Moving UP increases the Y value
      *
-     * @return The corresponding position in the Box2D world.
+     * @param point The position according to Qt
+     * @return The corresponding position in the Box2D world
      */
     b2Vec2 screenToWorld(const QPoint& point);
 };
