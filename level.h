@@ -4,9 +4,9 @@
  *
  * The Level class represents one backpacking challenge.
  * Each level defines the minimum resources the player must
- * pack in order to successfully complete the trip. It also
- * provides functionality for grading a backpack, determining
- * whether the player passed the level, and generating feedback.
+ * pack to successfully complete the trip. It also provides
+ * functionality for grading a backpack, determining whether
+ * the player passed the level, and generating feedback.
  *
  * Team: Green Goombas
  * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
@@ -121,6 +121,50 @@ public:
     virtual QString getReport(const std::vector<PackableItem>& backpack) const;
 
 private:
+    /**
+     * @brief Helper method that calculates the total calories in the backpack.
+     *
+     * Iterates through all packed items and sums their calorie values.
+     * Implemented in level.cpp.
+     *
+     * @param backpack The collection of packed items being evaluated.
+     * @return The total calories packed.
+     */
+    double calculateTotalCalories(const std::vector<PackableItem>& backpack) const;
+
+    /**
+     * @brief Helper method that calculates the total water in the backpack.
+     *
+     * Iterates through all packed items and sums their water values.
+     * Implemented in level.cpp.
+     *
+     * @param backpack The collection of packed items being evaluated.
+     * @return The total water packed.
+     */
+    double calculateTotalWater(const std::vector<PackableItem>& backpack) const;
+
+    /**
+     * @brief Helper method that calculates the calorie portion of the grade.
+     *
+     * Computes the calorie contribution to the overall score.
+     * Implemented in level.cpp.
+     *
+     * @param totalCalories The total calories packed.
+     * @return The calorie contribution to the final score.
+     */
+    double calculateCalorieScore(double totalCalories) const;
+
+    /**
+     * @brief Helper method that calculates the water portion of the grade.
+     *
+     * Computes the water contribution to the overall score.
+     * Implemented in level.cpp.
+     *
+     * @param totalWater The total water packed.
+     * @return The water contribution to the final score.
+     */
+    double calculateWaterScore(double totalWater) const;
+
     /**
      * @brief The number of calories required to complete the trip.
      */
