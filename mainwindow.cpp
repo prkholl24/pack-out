@@ -15,6 +15,7 @@
  * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
  *          Brady Nelson, Lindsey Reese, Kent Wilkison
  * @date 4/7/2026
+ * Reviewed by Lindsey Reese 4/8/2026
  */
 #include "mainwindow.h"
 #include "ui_mainwindow.h"

@@ -3,10 +3,10 @@
  * @brief Contains the MainWindow class and handles rendering + user interaction.
  *
  * Defines the MainWindow class, which is responsible for:
- * -> setting up the UI
- * -> managing the Box2D physics world
- * -> handling mouse input
- * -> rendering objects to the screen
+ * - setting up the UI
+ * - managing the Box2D physics world
+ * - handling mouse input
+ * - rendering objects to the screen
  *
  * This connects the physics simulation with the Qt interface so the user
  * can interact with items in a visual way.
@@ -16,6 +16,7 @@
  * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
  *          Brady Nelson, Lindsey Reese, Kent Wilkison
  * @date 4/7/2026
+ * Reviewed by Lindsey Reese 4/8/2026
  */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
@@ -65,7 +66,7 @@ protected:
      *
      * Translates Box2D objects into rectangles that Qt can paint.
      *
-     * @param event The paint event created by Qt
+     * @param event - The paint event created by Qt
      */
     void paintEvent(QPaintEvent *event) override;
 
@@ -139,14 +140,14 @@ private:
      * @brief Converts a Qt screen position to a Box2D world position
      *
      * Qt - Maps the TOP-LEFT of the screen as (0,0)
-     * -> Moving RIGHT increases the X value
-     * -> Moving DOWN increases the Y value
+     * - Moving RIGHT increases the X value
+     * - Moving DOWN increases the Y value
      *
      * Box2D - Maps the BOTTOM-LEFT as (0,0)
-     * -> Moving RIGHT increases the X value
-     * -> Moving UP increases the Y value
+     * - Moving RIGHT increases the X value
+     * - Moving UP increases the Y value
      *
-     * @param point The position according to Qt
+     * @param point - The position according to Qt
      * @return The corresponding position in the Box2D world
      */
     b2Vec2 screenToWorld(const QPoint& point);
