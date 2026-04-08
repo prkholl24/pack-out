@@ -5,7 +5,7 @@
 #include "wateritem.h"
 
 WaterItem::WaterItem(Water waterEnum) {
-    WaterStats waterStruct = WaterRegistry.at(waterEnum);
+    const WaterStats& waterStruct = WaterRegistry.at(waterEnum);
 
     this->weight      = waterStruct.weight;
     this->capacity    = waterStruct.capacity;
@@ -15,8 +15,8 @@ WaterItem::WaterItem(Water waterEnum) {
 std::map<QString, double> WaterItem::getStats() {
     std::map<QString, double> output;
 
-    output.at(QString("Capacity(L)")) = this->capacity;
-    output.at(QString("Weight(lbs)")) = this->weight;
+    output["Capacity(L)"] = this->capacity;
+    output["Weight(lbs)"] = this->weight;
 
     return output;
 }

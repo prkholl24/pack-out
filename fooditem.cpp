@@ -7,20 +7,19 @@
 
 FoodItem::FoodItem(Food foodEnum) {
     // Looks up the foodEnum from the table
-    FoodStats foodStruct = FoodRegistry.at(foodEnum);
+    const FoodStats& foodStruct = FoodRegistry.at(foodEnum);
 
     this->sustenance  = foodStruct.sustenance;
     this->calories    = foodStruct.calories;
     this->weight      = foodStruct.weight;
     this->description = &foodStruct.description;
-};
+}
 
 std::map<QString, double> FoodItem::getStats() {
     std::map<QString, double> output;
 
-    output.at(QString("Calories")) = this->calories;
-    output.at(QString("Weight(lbs)")) = this->weight;
-    // Question: Do we want sustenance to be known to the user?
+    output["Calories"] = this->calories;
+    output["Weight(lbs)"] = this->weight;
 
     return output;
 }
