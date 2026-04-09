@@ -12,6 +12,7 @@
 #ifndef TREKVIEW_H
 #define TREKVIEW_H
 
+#include "trekbox2dphysics.h"
 #include <QMainWindow>
 #include <Box2D/Box2D.h>
 
@@ -27,32 +28,18 @@ public:
     explicit TrekView(QWidget *parent = nullptr);
     ~TrekView();
 
+public slots:
+    void bodyDisplay(float x, float y);
 private:
     /**
      * @brief ui
      */
     Ui::TrekView *ui;
-
-    /**
-     * @brief Override QT paint to display user/trek information to window.
-     * @param event
-     */
-    // void paintEvent(QPaintEvent *event) override;
-
-    /**
-     * @brief Box2D World
-     */
-    b2World world;
-
-    /**
-     * @brief body
-     */
-    b2Body* body;
-
-    /**
-     * @brief timer
-     */
-    QTimer* timer;
+    TrekBox2DPhysics* phys = new TrekBox2DPhysics(this);
+    float boxX;
+    float boxY;
+protected:
+    void paintEvent(QPaintEvent *event) override;
 };
 
 #endif // TREKVIEW_H

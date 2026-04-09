@@ -61,6 +61,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     player.cpp \
+    trekbox2dphysics.cpp \
     trekview.cpp \
     wateritem.cpp
 
@@ -117,6 +118,7 @@ HEADERS += \
     level.h \
     mainwindow.h \
     player.h \
+    trekbox2dphysics.h \
     trekview.h \
     wateritem.h
 
