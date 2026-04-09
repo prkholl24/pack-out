@@ -65,7 +65,8 @@ void MainWindow::paintEvent(QPaintEvent *event)
             for (int32 i = 0; i < poly->GetVertexCount(); ++i) {
 
                 b2Vec2 v = poly->GetVertex(i);
-                QPointF vertexPos = worldToScreen(v);
+
+                QPointF vertexPos(v.x, -v.y);
 
                 qPoly << vertexPos;
             }
@@ -89,7 +90,7 @@ QPointF MainWindow::worldToScreen(const b2Vec2& point)
 {
     // Inverts the Y value such that the
     // TOP of the screen is 0
-    float worldY = point.y + this->height();
+    float worldY = this->height() - point.y;
 
     return QPointF(point.x, worldY);
 }
