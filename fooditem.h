@@ -104,23 +104,6 @@ static const std::map<Food, FoodStats> FoodRegistry = {
                        // DESCRIPTION
                        QString("Dense in calories but high in weight.")
                    }},
-
-    { Food::GRANOLABAR, {
-                        // IMAGE
-                        QPixmap("energybar.png"),
-
-                        // CALORIES
-                        400.0,
-
-                        // SUSTENANCE
-                        0.5,
-
-                        // WEIGHT
-                        0.1,
-
-                        // DESCRIPTION
-                        QString("High in energy-packed calories, but low in sustenance.")
-                       }}
 };
 /**
  * @brief Represents a Food Item
