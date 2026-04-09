@@ -28,6 +28,12 @@ MainWindow::MainWindow(QWidget *parent)
     , timer(new QTimer(this))
 {
     ui->setupUi(this);
+
+    // Connect the timer to the updatePhysics slot
+    connect(timer, &QTimer::timeout, this, &MainWindow::updatePhysics);
+
+    // Decides how often the screen gets repainted
+    timer->start(1000 / REFRESH_RATE);
 }
 
 MainWindow::~MainWindow()
@@ -37,26 +43,89 @@ MainWindow::~MainWindow()
 
 void MainWindow::paintEvent(QPaintEvent *event)
 {
-    // TO-DO: Implement this
+    Q_UNUSED(event);
+    QPainter painter(this);
+    painter.setBrush(Qt::blue);
+    painter.setPen(Qt::black);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    for (b2Body* body = world.GetBodyList(); body; body = body->GetNext()) {
+        painter.save();
+
+        QPointF screenPos = worldToScreen(body->GetPosition());
+        painter.translate(screenPos);
+        painter.rotate(-body->GetAngle() * 180.0f / b2_pi);
+
+        for (b2Fixture* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+
+            // Translates the Box2D shape into a shape Qt understands
+            b2PolygonShape* poly = static_cast<b2PolygonShape*>(fixture->GetShape());
+            QPolygonF qPoly;
+
+            for (int32 i = 0; i < poly->GetVertexCount(); ++i) {
+
+                b2Vec2 v = poly->GetVertex(i);
+                QPointF vertexPos = worldToScreen(v);
+
+                qPoly << vertexPos;
+            }
+            painter.drawPolygon(qPoly);
+        }
+
+        painter.restore();
+    }
 }
 
 b2Vec2 MainWindow::screenToWorld(const QPoint& point)
 {
     // Inverts the Y value such that the
-    // bottom of the screen is 0.
+    // BOTTOM of the screen is 0.
     float worldY = this->height() - point.y();
 
     return b2Vec2(point.x(), worldY);
 }
 
+QPointF MainWindow::worldToScreen(const b2Vec2& point)
+{
+    // Inverts the Y value such that the
+    // TOP of the screen is 0
+    float worldY = point.y + this->height();
+
+    return QPointF(point.x, worldY);
+}
+
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
+
         b2Vec2 worldPos = screenToWorld(event->pos());
 
         // TO-DO: Remove this
-        std::cout << "Qt coordinate [X:" << event->pos().x() << ", " << event->pos().y() << ")" << std::endl
+        std::cout << "Qt coordinate (" << event->pos().x() << ", " << event->pos().y() << ")" << std::endl
                   << "Box2D coordinate (" << worldPos.x << ", " << worldPos.y << ")" << std::endl;
+
+        // Define the dynamic body. We set its position and call the body factory.
+        b2BodyDef bodyDef;
+        bodyDef.type = b2_dynamicBody;
+        bodyDef.position.Set(worldPos.x, worldPos.y);
+        b2Body* body = world.CreateBody(&bodyDef);
+
+        // Define another box shape for our dynamic body.
+        b2PolygonShape dynamicBox;
+        dynamicBox.SetAsBox(10.0f, 10.0f);
+
+        // Define the dynamic body fixture.
+        b2FixtureDef fixtureDef;
+        fixtureDef.shape = &dynamicBox;
+
+        // Set the box density to be non-zero, so it will be dynamic.
+        fixtureDef.density = 1.0f;
+
+        // Override the default friction
+        fixtureDef.friction = 0.3f;
+
+        // Add the shape to the body.
+        body->CreateFixture(&fixtureDef);
     }
 }
 
@@ -72,5 +141,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 
 void MainWindow::updatePhysics()
 {
-    // TO-DO: Implement this
+    // Step the simulation and request a repaint
+    world.Step(1.0f / static_cast<float>(REFRESH_RATE) , 8, 3);
+    update();
 }

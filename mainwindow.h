@@ -110,6 +110,11 @@ private slots:
 
 private:
     /**
+     * @brief REFRESH_RATE determines how often the screen gets updated.
+     */
+    const int REFRESH_RATE = 60;
+
+    /**
      * @brief Contains all of the Qt widgets and buttons.
      */
     Ui::MainWindow* ui;
@@ -151,5 +156,21 @@ private:
      * @return The corresponding position in the Box2D world
      */
     b2Vec2 screenToWorld(const QPoint& point);
+
+    /**
+     * @brief Converts a Box2D world position to a Qt screen position
+     *
+     * Qt - Maps the TOP-LEFT of the screen as (0,0)
+     * - Moving RIGHT increases the X value
+     * - Moving DOWN increases the Y value
+     *
+     * Box2D - Maps the BOTTOM-LEFT as (0,0)
+     * - Moving RIGHT increases the X value
+     * - Moving UP increases the Y value
+     *
+     * @param point – The position according to Box2D
+     * @return The corresponding position in the Qt screen.
+     */
+    QPointF worldToScreen(const b2Vec2& point);
 };
 #endif // MAINWINDOW_H
