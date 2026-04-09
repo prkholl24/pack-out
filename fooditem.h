@@ -80,8 +80,9 @@ static const std::map<Food, FoodStats> FoodRegistry = {
                        QString("Dense in calories but high in weight.")
                    }},
 };
+
 /**
- * @brief Represents a Food Item
+ * @brief Represents a FoodItem
  *
  * A food item contains calories and a sustenance variable
  * Inherits from `PackableItem`: int weight, QString toolTip

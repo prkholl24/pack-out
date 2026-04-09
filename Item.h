@@ -49,7 +49,6 @@ class PackableItem {
         QString getToolTip();
 
     protected:
-
         /**
          * @brief weight in pounds
          *
