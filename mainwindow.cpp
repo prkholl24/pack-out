@@ -4,6 +4,8 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , levelOne(0, 32.0, 2)
+    , levelTwo(1200, 64.0, 8)
 {
     ui->setupUi(this);
 }
