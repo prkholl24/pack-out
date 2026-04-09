@@ -1,18 +1,25 @@
 /**
  * @file fooditem.h
- * @brief Contains the FoodItem method headers and pre-made definitions of Foods.
+ * @brief Contains the FoodItem class, Food enum, and supporting data structures.
  *
- * The FoodItem interface is a way to create foods
- * through the Map data structure, avoiding the need to
- * create a new child class for every food instance we want to add.
+ * Defines the FoodItem class, which represents food that the player
+ * can pack in their backpack. Each food item pulls its values from
+ * the FoodRegistry and provides stats such as calories and weight
+ * for use in grading and gameplay.
+ *
+ * Also includes:
+ * - The Food enum, which defines all available food item types
+ * - The FoodStats struct, which stores the properties of each food item
+ * - The FoodRegistry map, which serves as a lookup table from Food enum values
+ *   to their corresponding stats
  *
  * Team: Green Goombas
- * Github: GitHub: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Aldair, Lindsey Reese, Kent Wilkison
- * @date 4/8/2026
- *
- * Last Revision: 4/8/2026 3:58 MST by KENT WILKISON
+ * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
+ * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
+ *          Brady Nelson, Lindsey Reese, Kent Wilkison
+ * @date 4/7/2026
  */
+
 #ifndef FOODITEM_H
 #define FOODITEM_H
 
@@ -104,29 +111,29 @@ static const std::map<Food, FoodStats> FoodRegistry = {
                        QString("Dense in calories but high in weight.")
                    }},
 };
+
 /**
  * @brief Represents a Food Item
  *
- * A food item contains calories and a sustenance variable
- * Inherits from `PackableItem`: int weight, QString toolTip
+ * A FoodItem contains calories and a sustenance values.
+ * Inherits from `Item`: weight, description.
  */
-class FoodItem : public PackableItem {
+class FoodItem : public Item {
 public:
     /**
-     * @brief Public constructor for FoodItem
+     * @brief Public constructor for FoodItem.
      *
-     * Accepts the `Food` enum->Looks up the FoodStats
-     * ->calls the private constructor using the FoodStates
-     * values
+     * Accepts the `Food` enum, looks up the corresponding
+     * FoodStats values in the FoodRegistry, and uses those
+     * values to initialize the object.
      *
-     * @param foodEnum maps to an existing FoodStats struct
+     * @param foodEnum Maps to an existing FoodStats struct.
      */
     FoodItem(Food foodEnum);
 
-
 private:
     /**
-     * @brief calories contained in this FoodItem
+     * @brief Calories contained in this FoodItem
      *
      * Calories are the primary unit of measure used
      * to determine whether the user has packed enough
@@ -135,10 +142,10 @@ private:
     double calories;
 
     /**
-     * @brief sustenance
+     * @brief Sustenance value for this FoodItem.
      *
-     * ???
-     * Not sure how this is going to work.
+     * Sustenance represents how filling this food is
+     * and may be used in grading or gameplay logic.
      */
     double sustenance;
 
@@ -155,7 +162,7 @@ protected:
      *
      * @return a map containing the stat and its value
      */
-    std::map<QString, double> getStats() override;
+    std::map<QString, double> getStats() const override;
 };
 
 #endif // FOODITEM_H
