@@ -1,3 +1,14 @@
+/**
+ * @file
+ * @brief The TrekView is a MainWindow subclass to display user's current Trek/Level simulation.
+ *
+ *
+ * Team: Green Goombas
+ * GitHub: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
+ * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
+ *                  Brady Nelson, Lindsey Reese, Kent Wilkison
+ * @date 4/08/2026
+ */
 #ifndef TREKVIEW_H
 #define TREKVIEW_H
 
@@ -26,7 +37,7 @@ private:
      * @brief Override QT paint to display user/trek information to window.
      * @param event
      */
-    void paintEvent(QPaintEvent *event) override;
+    // void paintEvent(QPaintEvent *event) override;
 
     /**
      * @brief Box2D World
