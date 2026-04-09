@@ -12,8 +12,10 @@ SOURCES += \
     fooditem.cpp \
     item.cpp \
     level.cpp \
+    levelreportbuilder.cpp \
     main.cpp \
     mainwindow.cpp \
+    nutritionprofile.cpp \
     player.cpp \
     wateritem.cpp
 
@@ -21,7 +23,10 @@ HEADERS += \
     fooditem.h \
     item.h \
     level.h \
+    levelreportbuilder.h \
+    levelresult.h \
     mainwindow.h \
+    nutritionprofile.h \
     player.h \
     wateritem.h
 

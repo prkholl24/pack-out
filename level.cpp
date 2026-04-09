@@ -15,14 +15,28 @@
  */
 
 #include "level.h"
+#include "levelreportbuilder.h"
+
+const double DEFAULT_PASSING_SCORE = 70.0;
+
+const double ENERGY_SCORE_WEIGHT = 50.0;
+const double HYDRATION_SCORE_WEIGHT = 50.0;
+
+const double WATER_HYDRATION_MULTIPLIER = 1.0;
+const double SPORTS_DRINK_HYDRATION_MULTIPLIER = 0.8;
+const double SODA_HYDRATION_MULTIPLIER = 0.25;
+const double CAFFEINE_HYDRATION_PENALTY_PER_MG = 0.02;
+const double CAFFEINE_ENERGY_BONUS_PER_MG = 0.05;
 
 Level::Level()
-    : requiredCalories(-1), requiredWater(-1), duration(-1), description("")
+    : requiredCalories(-1), requiredHydration(-1), duration(-1), description(""),
+    passingScore(DEFAULT_PASSING_SCORE)
 {
 }
 
 Level::Level(int calories, double water, int duration)
-    : requiredCalories(calories), requiredWater(water), duration(duration), description("")
+    : requiredCalories(calories), requiredHydration(water), duration(duration), description(""),
+    passingScore(DEFAULT_PASSING_SCORE)
 {
 }
 
@@ -31,9 +45,9 @@ int Level::getRequiredCalories() const
     return requiredCalories;
 }
 
-double Level::getRequiredWater() const
+double Level::getRequiredHydration() const
 {
-    return requiredWater;
+    return requiredHydration;
 }
 
 int Level::getDuration() const
@@ -49,12 +63,22 @@ QString Level::getDescription() const
 double Level::gradeMyBag(const std::vector<Item*>& backpack) const
 {
     double totalCalories = calculateTotalCalories(backpack);
-    double totalWater = calculateTotalWater(backpack);
+    double effectiveHydration = calculateEffectiveHydration(backpack);
+    double totalCaffeine = calculateTotalStat(backpack, "Caffeine(mg)");
 
-    double calorieScore = calculateCalorieScore(totalCalories);
-    double waterScore = calculateWaterScore(totalWater);
+    double energyScore = calculateEnergyScore(totalCalories, totalCaffeine);
+    double hydrationScore = calculateHydrationScore(effectiveHydration);
 
-    return calorieScore + waterScore;
+    // Reduces energy score if hydration is too low.
+    if (requiredHydration > 0)
+    {
+        double hydrationRatio = effectiveHydration / requiredHydration;
+
+        if (hydrationRatio < 1.0)
+            energyScore *= hydrationRatio;
+    }
+
+    return energyScore + hydrationScore;
 }
 
 bool Level::passesLevel(const std::vector<Item*>& backpack) const
@@ -64,22 +88,30 @@ bool Level::passesLevel(const std::vector<Item*>& backpack) const
 
 QString Level::getReport(const std::vector<Item*>& backpack) const
 {
-    double totalCalories = calculateTotalCalories(backpack);
-    double totalWater = calculateTotalWater(backpack);
-    double grade = gradeMyBag(backpack);
-
-    QString report = buildSummaryReport(grade, totalCalories, totalWater);
-
-    if (grade >= passingScore)
-        report += buildPassReport();
-    else
-        report += buildFailReport(totalCalories, totalWater);
-
-    return report;
+    LevelResult result = evaluateBackpack(backpack);
+    return LevelReportBuilder::buildReport(result);
 }
 
 // ---------- Helper Methods ----------
 // --- Data collection ---
+
+double Level::calculateTotalStat(const std::vector<Item*>& backpack, const QString& statName) const
+{
+    double total = 0.0;
+
+    for (const Item* item : backpack)
+    {
+        if (item == nullptr)
+            continue;
+
+        std::map<QString, double> stats = item->getStats();
+
+        if (stats.count(statName) > 0)
+            total += stats.at(statName);
+    }
+
+    return total;
+}
 
 double Level::calculateTotalCalories(const std::vector<Item*>& backpack) const
 {
@@ -99,82 +131,69 @@ double Level::calculateTotalCalories(const std::vector<Item*>& backpack) const
     return totalCalories;
 }
 
-double Level::calculateTotalWater(const std::vector<Item*>& backpack) const
+double Level::calculateEffectiveHydration(const std::vector<Item*>& backpack) const
 {
-    double totalWater = 0.0;
+    double totalWater = calculateTotalStat(backpack, "Water(oz)");
+    double totalSportsDrink = calculateTotalStat(backpack, "SportsDrink(oz)");
+    double totalSoda = calculateTotalStat(backpack, "Soda(oz)");
+    double totalCaffeine = calculateTotalStat(backpack, "Caffeine(mg)");
 
-    for (const Item* item : backpack)
-    {
-        if (item == nullptr)
-            continue;
+    double effectiveHydration = 0.0;
+    effectiveHydration += totalWater * WATER_HYDRATION_MULTIPLIER;
+    effectiveHydration += totalSportsDrink * SPORTS_DRINK_HYDRATION_MULTIPLIER;
+    effectiveHydration += totalSoda * SODA_HYDRATION_MULTIPLIER;
+    effectiveHydration -= totalCaffeine * CAFFEINE_HYDRATION_PENALTY_PER_MG;
 
-        std::map<QString, double> stats = item->getStats();
+    if (effectiveHydration < 0.0)
+        effectiveHydration = 0.0;
 
-        if (stats.count("Water(oz)") > 0)
-            totalWater += stats.at("Water(oz)");
-    }
-
-    return totalWater;
+    return effectiveHydration;
 }
 
 // --- Scoring ---
 
-double Level::calculateCalorieScore(double totalCalories) const
+double Level::calculateEnergyScore(double totalCalories, double totalCaffeine) const
 {
     if (requiredCalories <= 0)
         return 0.0;
 
-    double score = (totalCalories / requiredCalories) * 50.0;
+    double score = (totalCalories / requiredCalories) * ENERGY_SCORE_WEIGHT;
 
-    if (score > 50.0)
-        score = 50.0;
+    // Add caffeine bonus
+    score += totalCaffeine * CAFFEINE_ENERGY_BONUS_PER_MG;
+
+    if (score > ENERGY_SCORE_WEIGHT)
+        score = ENERGY_SCORE_WEIGHT;
 
     return score;
 }
 
-double Level::calculateWaterScore(double totalWater) const
+double Level::calculateHydrationScore(double effectiveHydration) const
 {
-    if (requiredWater <= 0)
+    if (requiredHydration <= 0)
         return 0.0;
 
-    double score = (totalWater / requiredWater) * 50.0;
+    double score = (effectiveHydration / requiredHydration) * HYDRATION_SCORE_WEIGHT;
 
-    if (score > 50.0)
-        score = 50.0;
+    if (score > HYDRATION_SCORE_WEIGHT)
+        score = HYDRATION_SCORE_WEIGHT;
 
     return score;
 }
 
-// --- Report building ---
+// --- Evaluation ---
 
-QString Level::buildSummaryReport(double grade, double totalCalories, double totalWater) const
+LevelResult Level::evaluateBackpack(const std::vector<Item*>& backpack) const
 {
-    QString report;
-    report += "Backpack Report\n";
-    report += "Grade: " + QString::number(grade) + "/100\n";
-    report += "Calories packed: " + QString::number(totalCalories) + "\n";
-    report += "Water packed: " + QString::number(totalWater) + "\n";
-    return report;
-}
+    LevelResult result;
 
-QString Level::buildFailReport(double totalCalories, double totalWater) const
-{
-    QString report;
-    report += "Result: Fail\n";
+    result.totalCalories = calculateTotalCalories(backpack);
+    result.effectiveHydration = calculateEffectiveHydration(backpack);
+    result.grade = gradeMyBag(backpack);
+    result.passed = result.grade >= passingScore;
 
-    if (totalCalories < requiredCalories)
-        report += "- You need more calories.\n";
+    result.requiredCalories = requiredCalories;
+    result.requiredHydration = requiredHydration;
 
-    if (totalWater < requiredWater)
-        report += "- You need more water.\n";
-
-    return report;
-}
-
-QString Level::buildPassReport() const
-{
-    QString report;
-    report += "Result: Pass\n";
-    report += "You packed enough resources for this level.\n";
-    return report;
+    return result;
 }
