@@ -52,19 +52,19 @@ QString LevelReportBuilder::buildFailReport(const LevelResult& result)
     report += "Result: Fail\n";
 
     if (result.totalCalories < result.requiredCalories)
-        report += "- You need more energy.\n";
+        report += "You need more energy.\n";
 
     if (result.effectiveHydration < result.requiredHydration)
-        report += "- You need more hydration.\n";
+        report += "You need more hydration.\n";
 
     if (result.totalCaffeine > 150)
-        report += "- High caffeine reduces hydration effectiveness.\n";
+        report += "High caffeine reduces hydration effectiveness.\n";
 
     if (result.totalAlcohol > 0.0)
-        report += "- Alcohol reduces hydration effectiveness.\n";
+        report += "Alcohol reduces hydration effectiveness.\n";
 
     if (result.totalSugar > 50.0)
-        report += "- Too much sugar can make your food and drink choices less effective.\n";
+        report += "Too much sugar can make your food and drink choices less effective.\n";
 
     return report;
 }

@@ -9,18 +9,19 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    drinkitem.cpp \
     fooditem.cpp \
     item.cpp \
     level.cpp \
     levelreportbuilder.cpp \
     main.cpp \
     mainwindow.cpp \
-    nutritionprofile.cpp \
-    player.cpp \
-    wateritem.cpp
+    player.cpp
 
 HEADERS += \
+    drinkitem.h \
     fooditem.h \
+    gearitem.h \
     item.h \
     level.h \
     levelreportbuilder.h \
@@ -28,7 +29,7 @@ HEADERS += \
     mainwindow.h \
     nutritionprofile.h \
     player.h \
-    wateritem.h
+    tripconditions.h
 
 FORMS += \
     mainwindow.ui
