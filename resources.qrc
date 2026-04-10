@@ -1,3 +1,7 @@
 <RCC>
-    <qresource prefix="/qrc:"/>
+    <qresource prefix="/qrc:">
+        <file>banana2.png</file>
+        <file>potato2.png</file>
+        <file>waterbottle2.png</file>
+    </qresource>
 </RCC>

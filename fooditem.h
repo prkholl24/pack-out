@@ -149,6 +149,14 @@ private:
      */
     double sustenance;
 
+    /**
+     * @brief Displayed image for this FoodItem.
+     *
+     * This determines what sprite will show up for the
+     * food image.
+     */
+    QPixmap image;
+
 protected:
     /**
      * @brief Gets the stats of this item
