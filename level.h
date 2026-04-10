@@ -179,6 +179,14 @@ private:
     double calculateHydrationScore(double effectiveHydration) const;
 
     /**
+     * @brief Helper method that calculates the total sugar in the backpack.
+     *
+     * @param backpack - The collection of packed items being evaluated.
+     * @return The total sugar packed in grams.
+     */
+    double calculateTotalSugar(const std::vector<Item*>& backpack) const;
+
+    /**
      * @brief Helper method that calculates the total weight in the backpack.
      *
      * @param backpack - The collection of packed items being evaluated.
@@ -191,11 +199,12 @@ private:
      *
      * @param totalCalories - The total calories packed.
      * @param totalCaffeine - The total caffeine contributing to energy.
+     * @param totalSugar - The total sugar contributing to energy.
      * @param totalWeight - The total backpack weight in pounds.
      * @return The energy contribution to the final score.
      */
     double calculateEnergyScore(double totalCalories, double totalCaffeine,
-                                double totalWeight) const;
+                                double totalSugar, double totalWeight) const;
 
     // ---------- Member variables ----------
 

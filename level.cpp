@@ -26,6 +26,8 @@ const double IDEAL_WEIGHT_PER_HOUR = 2.0;
 const double CAFFEINE_HYDRATION_PENALTY_PER_MG = 0.02;
 const double CAFFEINE_ENERGY_BONUS_PER_MG = 0.05;
 const double ALCOHOL_HYDRATION_PENALTY_PER_UNIT = 1.5;
+const double SUGAR_ENERGY_PENALTY_THRESHOLD = 50.0;
+const double SUGAR_ENERGY_PENALTY_FACTOR = 0.5;
 
 Level::Level()
     : requiredCalories(-1), requiredHydration(-1), duration(-1), description(""),
@@ -64,9 +66,10 @@ double Level::gradeMyBag(const std::vector<Item*>& backpack) const
     double totalCalories = calculateTotalCalories(backpack);
     double effectiveHydration = calculateEffectiveHydration(backpack);
     double totalCaffeine = calculateTotalCaffeine(backpack);
+    double totalSugar = calculateTotalSugar(backpack);
 
     double totalWeight = calculateTotalWeight(backpack);
-    double energyScore = calculateEnergyScore(totalCalories, totalCaffeine, totalWeight);
+    double energyScore = calculateEnergyScore(totalCalories, totalCaffeine, totalSugar, totalWeight);
     double hydrationScore = calculateHydrationScore(effectiveHydration);
 
     // Reduces energy score if hydration is too low.
@@ -175,7 +178,8 @@ double Level::calculateEffectiveHydration(const std::vector<Item*>& backpack) co
 
 // --- Scoring ---
 
-double Level::calculateEnergyScore(double totalCalories, double totalCaffeine, double totalWeight) const
+double Level::calculateEnergyScore(double totalCalories, double totalCaffeine,
+                                double totalSugar, double totalWeight) const
 {
     if (requiredCalories <= 0)
         return 0.0;
@@ -184,6 +188,12 @@ double Level::calculateEnergyScore(double totalCalories, double totalCaffeine, d
 
     // Add caffeine bonus
     score += totalCaffeine * CAFFEINE_ENERGY_BONUS_PER_MG;
+
+    // Add sugar bonus
+    if (totalSugar > SUGAR_ENERGY_PENALTY_THRESHOLD)
+    {
+        score += (totalSugar - SUGAR_ENERGY_PENALTY_THRESHOLD) * SUGAR_ENERGY_PENALTY_FACTOR;
+    }
 
     double idealWeight = duration * IDEAL_WEIGHT_PER_HOUR;
 
@@ -237,6 +247,10 @@ LevelResult Level::evaluateBackpack(const std::vector<Item*>& backpack) const
 
     result.totalCalories = calculateTotalCalories(backpack);
     result.effectiveHydration = calculateEffectiveHydration(backpack);
+    result.totalCaffeine = calculateTotalCaffeine(backpack);
+    result.totalSugar = calculateTotalSugar(backpack);
+    result.totalAlcohol = calculateTotalAlcohol(backpack);
+
     result.grade = gradeMyBag(backpack);
     result.passed = result.grade >= passingScore;
 
@@ -244,4 +258,19 @@ LevelResult Level::evaluateBackpack(const std::vector<Item*>& backpack) const
     result.requiredHydration = requiredHydration;
 
     return result;
+}
+
+double Level::calculateTotalSugar(const std::vector<Item*>& backpack) const
+{
+    double totalSugar = 0.0;
+
+    for (const Item* item : backpack)
+    {
+        if (item == nullptr)
+            continue;
+
+        totalSugar += item->getNutrition().sugar;
+    }
+
+    return totalSugar;
 }
