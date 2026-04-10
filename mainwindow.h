@@ -27,6 +27,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QMouseEvent>
+#include <memory>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -59,6 +60,16 @@ public:
      * @brief Destructor for MainWindow
      */
     ~MainWindow();
+
+signals:
+    /**
+     * @brief Emitted once the player activates the "Cinch & Go"
+     * button and the button body has fully exited the screen.
+     *
+     * The controller/model layer can subscribe to this signal to
+     * transition out of the packing scene and start the trip.
+     */
+    void levelHasStarted();
 
 protected:
     /**
@@ -115,6 +126,34 @@ private:
     const int REFRESH_RATE = 60;
 
     /**
+     * @brief Scale factor between the Box2D world (meters) and Qt pixels.
+     *
+     * Box2D is tuned for objects in the 0.1–10 meter range. Treating
+     * 1 world unit as 1 pixel pushes bodies far outside that band,
+     * so we scale: 1 meter == PIXELS_PER_METER pixels.
+     */
+    static constexpr float PIXELS_PER_METER = 50.0f;
+
+    /**
+     * @brief World dimensions in meters.
+     *
+     * An 800x600 window at 50 px/m gives a 16x12 m world — items
+     * sized ~0.3–1 m and a pack ~3 m wide all sit in Box2D's
+     * numerically-healthy range.
+     */
+    static constexpr float WORLD_WIDTH_M = 16.0f;
+    static constexpr float WORLD_HEIGHT_M = 12.0f;
+
+    /**
+     * @brief Fixed window dimensions in pixels.
+     *
+     * The window size is locked via setFixedSize() so the
+     * screen <-> world math never has to account for resize.
+     */
+    static constexpr int WINDOW_WIDTH_PX = 800;
+    static constexpr int WINDOW_HEIGHT_PX = 600;
+
+    /**
      * @brief Contains all of the Qt widgets and buttons.
      */
     Ui::MainWindow* ui;
@@ -140,6 +179,86 @@ private:
      * the mouse and other objects.
      */
     b2MouseJoint* mouseJoint = nullptr;
+
+    /**
+     * @brief Invisible static body used as bodyA for the mouse joint.
+     *
+     * b2MouseJoint requires two bodies. bodyB is the grabbed item;
+     * bodyA is this anchor, which never moves.
+     */
+    b2Body* mouseJointAnchor = nullptr;
+
+    /**
+     * @brief The "Cinch & Go" button body.
+     *
+     * Tracked so updatePhysics() can watch it leave the screen
+     * after activation and emit levelHasStarted().
+     */
+    b2Body* cinchAndGoButton = nullptr;
+
+    /**
+     * @brief Guards against emitting levelHasStarted() more than once.
+     */
+    bool levelStarted = false;
+
+    /**
+     * @brief Listener that nulls out mouseJoint if its body is destroyed.
+     *
+     * Box2D auto-destroys joints attached to a destroyed body but leaves
+     * our mouseJoint pointer dangling. This listener intercepts the
+     * SayGoodbye(b2Joint*) callback and clears the pointer.
+     */
+    class DestructionListener;
+    std::unique_ptr<DestructionListener> destructionListener;
+
+    /**
+     * @name Scene construction helpers
+     *
+     * Each one builds a portion of the initial scene by creating
+     * static Box2D bodies with tagged user data.
+     */
+    /// @{
+    void createWorldBounds();
+    void createShelf();
+    void createBackpack();
+    void createSpawners();
+    void createCinchAndGoButton();
+    void createMouseAnchor();
+    /// @}
+
+    /**
+     * @name Item spawn helpers
+     *
+     * Create a dynamic body with the right fixtures and physics
+     * properties for each item type. Position is in world meters.
+     */
+    /// @{
+    b2Body* spawnBanana(const b2Vec2& position);
+    b2Body* spawnPotato(const b2Vec2& position);
+    b2Body* spawnBottle(const b2Vec2& position);
+    /// @}
+
+    /**
+     * @brief Returns the first body whose fixtures contain the given point.
+     *
+     * Iterates the world's body list in forward order. For the small
+     * number of bodies in this scene (< 20) this is simpler and faster
+     * to write than b2World::QueryAABB.
+     *
+     * @param worldPos - Point in Box2D world coordinates.
+     * @return The hit body, or nullptr if no fixture contains the point.
+     */
+    b2Body* findBodyAt(const b2Vec2& worldPos);
+
+    /**
+     * @brief Creates the mouse joint that glues a body to the cursor.
+     */
+    void beginDragging(b2Body* body, const b2Vec2& worldPos);
+
+    /**
+     * @brief Destroys the current mouse joint, if any.
+     */
+    void endDragging();
 
     /**
      * @brief Converts a Qt screen position to a Box2D world position
