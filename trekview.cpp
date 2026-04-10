@@ -8,6 +8,14 @@ TrekView::TrekView(QWidget *parent)
 {
     ui->setupUi(this);
     connect(phys,&TrekBox2DPhysics::sendBodyLocation,this,&TrekView::bodyDisplay);
+    playerLevel = 1;
+
+    imageFilePaths.append("://DryCanyonTrail.png");
+   // ui->centralwidget->setStyleSheet("border-image: url("+imageFilePaths[0]+") 0 0 0 0 stretch stretch");
+
+
+   // backgroundImage = QImage("://DryCanyonTrail.png");
+
 }
 
 TrekView::~TrekView()
@@ -15,13 +23,23 @@ TrekView::~TrekView()
     delete ui;
 }
 
+void TrekView::currentLevel(int level){
+    playerLevel = level;
+}
+
 void TrekView::bodyDisplay(float x, float y){
     boxX = x;
     boxY = y;
 }
 
+
+
 void TrekView::paintEvent(QPaintEvent *event){
     QPainter painter(this);
+
+    //This works, but is extremely slow
+    //QPixmap background(imageFilePaths[playerLevel-1]);
+    //painter.drawPixmap(rect(), background);
 
     painter.setBrush(Qt::blue);
 

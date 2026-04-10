@@ -30,7 +30,20 @@ public:
 
 public slots:
     void bodyDisplay(float x, float y);
+
+    /**
+     * @brief Slot receives the current level the player is on.
+     * @param int: level, what level the user is on.
+     */
+    void currentLevel(int level);
 private:
+    //Current level the player is on.
+    int playerLevel;
+
+    QVector<QString> imageFilePaths;
+
+    QImage backgroundImage;
+
     /**
      * @brief ui
      */
