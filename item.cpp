@@ -1,17 +1,36 @@
+/**
+ * @file item.cpp
+ * @brief Implementation of the Item class.
+ *
+ * Implements the base Item functionality, including shared behavior
+ * for all items, such as weight access, tooltip generation,
+ * and default stat handling.
+ *
+ * The Item class provides shared functionality used by all item types
+ * and acts as the base for how items are represented in the backpacking system.
+ *
+ * Team: Green Goombas
+ * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
+ * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
+ *          Brady Nelson, Lindsey Reese, Kent Wilkison
+ * @date 4/7/2026
+ */
+
 #include "item.h"
 
-/**
- * @brief PackableItem Default constructor.
- */
-PackableItem::PackableItem() : weight(0.0), description(nullptr) {}
+Item::Item() : weight(0.0), description(nullptr)
+{
+}
 
-double PackableItem::getWeight() const {
+double Item::getWeight() const
+{
     return this->weight;
 }
 
-QString PackableItem::getToolTip() {
+QString Item::getToolTip() const
+{
     std::map<QString, double> stats = getStats();
-    QString toolTipText = "";
+    QString toolTipText;
 
     for (auto const& [name, value] : stats) {
         toolTipText += name + ": " + QString::number(value) + "\n";
@@ -24,8 +43,9 @@ QString PackableItem::getToolTip() {
     return toolTipText;
 }
 
-std::map<QString, double> PackableItem::getStats() {
+std::map<QString, double> Item::getStats() const
+{
     std::map<QString, double> stats;
-    stats["Weight"] = weight;
+    stats["Weight(lbs)"] = weight;
     return stats;
 }
