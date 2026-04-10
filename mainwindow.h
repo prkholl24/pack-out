@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "level.h"
+#include "player.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,6 +21,11 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    /**
+     * @brief The player object managing the current session's backpack.
+     */
+    Player player;
 
     /**
      * @brief Intro level focused mainly on hydration.

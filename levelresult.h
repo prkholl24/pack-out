@@ -35,6 +35,10 @@ struct LevelResult
     double totalSugar = 0.0;         // Total sugar affecting energy quality
     double totalAlcohol = 0.0;       // Total alcohol reducing hydration
 
+    double totalWeight = 0.0;        // Total backpack weight
+    double idealWeight = 0.0;        // Recommended weight for duration
+    bool hasMissingGear = false;     // Whether essential gear was missing
+
     int requiredCalories = 0;        // Minimum calories needed for the level
     double requiredHydration = 0.0;  // Minimum effective hydration required
 };

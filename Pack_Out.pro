@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     drinkitem.cpp \
     fooditem.cpp \
+    gearitem.cpp \
     item.cpp \
     level.cpp \
     levelreportbuilder.cpp \

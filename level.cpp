@@ -15,6 +15,7 @@
  */
 
 #include "drinkitem.h"
+#include "gearitem.h"
 #include "level.h"
 #include "levelreportbuilder.h"
 
@@ -31,12 +32,15 @@ const double SUGAR_ENERGY_PENALTY_FACTOR = 0.5;
 
 Level::Level()
     : requiredCalories(-1), requiredHydration(-1), duration(-1), description(""),
+    requiredTerrain(TerrainType::ALL), requiredAdventure(AdventureType::ALL),
     passingScore(DEFAULT_PASSING_SCORE)
 {
 }
 
-Level::Level(int calories, double water, int duration)
+Level::Level(int calories, double water, int duration,
+             TerrainType terrain, AdventureType adventure)
     : requiredCalories(calories), requiredHydration(water), duration(duration), description(""),
+    requiredTerrain(terrain), requiredAdventure(adventure),
     passingScore(DEFAULT_PASSING_SCORE)
 {
 }
@@ -54,6 +58,16 @@ double Level::getRequiredHydration() const
 int Level::getDuration() const
 {
     return duration;
+}
+
+TerrainType Level::getTerrain() const
+{
+    return requiredTerrain;
+}
+
+AdventureType Level::getAdventure() const
+{
+    return requiredAdventure;
 }
 
 QString Level::getDescription() const
@@ -81,7 +95,15 @@ double Level::gradeMyBag(const std::vector<Item*>& backpack) const
             energyScore *= hydrationRatio;
     }
 
-    return energyScore + hydrationScore;
+    double totalScore = energyScore + hydrationScore;
+
+    // Apply penalty if required gear is missing
+    if (!hasRequiredGear(backpack))
+    {
+        totalScore *= 0.85; // 15% penalty for missing essential gear
+    }
+
+    return totalScore;
 }
 
 bool Level::passesLevel(const std::vector<Item*>& backpack) const
@@ -239,6 +261,27 @@ double Level::calculateTotalWeight(const std::vector<Item*>& backpack) const
     return totalWeight;
 }
 
+bool Level::hasRequiredGear(const std::vector<Item*>& backpack) const
+{
+    bool hasMatchingTerrainGear = (requiredTerrain == TerrainType::ALL);
+    bool hasMatchingAdventureGear = (requiredAdventure == AdventureType::ALL);
+
+    for (const Item* item : backpack)
+    {
+        const GearItem* gear = dynamic_cast<const GearItem*>(item);
+        if (gear == nullptr)
+            continue;
+
+        if (gear->getTerrainType() == requiredTerrain || gear->getTerrainType() == TerrainType::ALL)
+            hasMatchingTerrainGear = true;
+
+        if (gear->getAdventureType() == requiredAdventure || gear->getAdventureType() == AdventureType::ALL)
+            hasMatchingAdventureGear = true;
+    }
+
+    return hasMatchingTerrainGear && hasMatchingAdventureGear;
+}
+
 // --- Evaluation ---
 
 LevelResult Level::evaluateBackpack(const std::vector<Item*>& backpack) const
@@ -250,6 +293,10 @@ LevelResult Level::evaluateBackpack(const std::vector<Item*>& backpack) const
     result.totalCaffeine = calculateTotalCaffeine(backpack);
     result.totalSugar = calculateTotalSugar(backpack);
     result.totalAlcohol = calculateTotalAlcohol(backpack);
+
+    result.totalWeight = calculateTotalWeight(backpack);
+    result.idealWeight = duration * IDEAL_WEIGHT_PER_HOUR;
+    result.hasMissingGear = !hasRequiredGear(backpack);
 
     result.grade = gradeMyBag(backpack);
     result.passed = result.grade >= passingScore;

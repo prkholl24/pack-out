@@ -22,6 +22,7 @@
 #include <vector>
 #include "item.h"
 #include "levelresult.h"
+#include "tripconditions.h"
 
 /**
  * @brief Represents a single backpacking level.
@@ -47,8 +48,11 @@ public:
      * @param calories - The minimum calories required for the trip.
      * @param hydration - The minimum hydration required for the trip, in ounces.
      * @param duration - The duration of the trip in hours.
+     * @param terrain - The terrain type of the trip.
+     * @param adventure - The adventure type of the trip.
      */
-    Level(int calories, double hydration, int duration);
+    Level(int calories, double hydration, int duration,
+          TerrainType terrain, AdventureType adventure);
 
     /**
      * @brief Virtual destructor for Level.
@@ -75,6 +79,20 @@ public:
      * @return The trip duration in hours.
      */
     int getDuration() const;
+
+    /**
+     * @brief Gets the terrain type of this level.
+     *
+     * @return The terrain type.
+     */
+    TerrainType getTerrain() const;
+
+    /**
+     * @brief Gets the adventure type of this level.
+     *
+     * @return The adventure type.
+     */
+    AdventureType getAdventure() const;
 
     /**
      * @brief Gets the description of this level.
@@ -195,6 +213,14 @@ private:
     double calculateTotalWeight(const std::vector<Item*>& backpack) const;
 
     /**
+     * @brief Helper method that checks if the backpack contains required gear.
+     *
+     * @param backpack - The collection of packed items being evaluated.
+     * @return True if all required gear items are present; otherwise false.
+     */
+    bool hasRequiredGear(const std::vector<Item*>& backpack) const;
+
+    /**
      * @brief Helper method that calculates the energy portion of the grade.
      *
      * @param totalCalories - The total calories packed.
@@ -240,9 +266,17 @@ private:
     QString description;
 
     /**
+     * @brief The terrain type for this level.
+     */
+    TerrainType requiredTerrain = TerrainType::ALL;
+
+    /**
+     * @brief The adventure type for this level.
+     */
+    AdventureType requiredAdventure = AdventureType::ALL;
+
+    /**
      * @brief The minimum grade required to pass the level.
-     *
-     * A backpack must achieve at least this score to pass.
      */
     double passingScore;
 };

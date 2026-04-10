@@ -12,13 +12,15 @@ enum class TerrainType {
     DESERT,
     FOREST,
     MOUNTAIN,
-    ROCKY
+    ROCKY,
+    ALL
 };
 
 enum class AdventureType {
     BACKPACKING,
     CAMPING,
-    DAY_HIKE
+    DAY_HIKE,
+    ALL
 };
 
 #endif // TRIPCONDITIONS_H
