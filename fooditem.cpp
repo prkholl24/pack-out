@@ -21,7 +21,7 @@ FoodItem::FoodItem(Food foodEnum)
     // Looks up the foodEnum from the table
     const FoodStats& foodStruct = FoodRegistry.at(foodEnum);
 
-    this->image       = foodStruct.image;
+    this->image       = QPixmap(foodStruct.imageFilePath);
     this->sustenance  = foodStruct.sustenance;
     this->calories    = foodStruct.calories;
     this->weight      = foodStruct.weight;

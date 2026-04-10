@@ -42,7 +42,7 @@ enum class Food {
  * Contains all assets that a food-item needs to know.
  */
 struct FoodStats {
-    QPixmap image;
+    QString imageFilePath;
     double calories;
     double sustenance;
     double weight;
@@ -60,8 +60,8 @@ static const std::map<Food, FoodStats> FoodRegistry = {
      * TEMPLATE:
 
        { Food::{FOOD_NAME}, {
-            // Image
-            pixmap("{IMAGE}"),
+            // ImageFilePath
+            "{IMAGE FILEPATH}",
 
             // Calories
             95.0,
@@ -78,8 +78,8 @@ static const std::map<Food, FoodStats> FoodRegistry = {
 
      */
     { Food::BANANA, {
-                       // IMAGE
-                       QPixmap("banana.png"),
+                       // IMAGE FILE PATH
+                       QString("banana.png"), // there seems to be a bug here? the order of initialization seems to be crashing the program, i think?
 
                        // CALORIES
                        95.0,
@@ -95,8 +95,8 @@ static const std::map<Food, FoodStats> FoodRegistry = {
                    }},
 
     { Food::POTATO, {
-                        // IMAGE
-                        QPixmap("potato.png"),
+                        // IMAGE FILE PATH
+                        QString("potato.png"),
 
                        // CALORIES
                        340.0,
