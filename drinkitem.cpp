@@ -2,8 +2,9 @@
  * @file drinkitem.cpp
  * @brief Implementation of the DrinkItem class.
  *
- * Implements DrinkItem construction and stat display
- * using values pulled from the DrinkRegistry.
+ * Implements DrinkItem construction, stat display,
+ * and effective hydration calculation using values
+ * pulled from the DrinkRegistry.
  *
  * Team: Green Goombas
  * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
@@ -15,7 +16,7 @@
 #include "drinkitem.h"
 
 DrinkItem::DrinkItem(DrinkType drinkEnum)
-    : drinkType(drinkEnum), hydrationMultiplier(0.0)
+    : hydrationMultiplier(0.0)
 {
     const DrinkStats& drinkStats = DrinkRegistry.at(drinkEnum);
 

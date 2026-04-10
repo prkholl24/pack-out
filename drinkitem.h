@@ -1,12 +1,10 @@
 /**
  * @file drinkitem.h
- * @brief Contains the DrinkItem class, DrinkType enum, and supporting data structures.
+ * @brief Contains the DrinkItem class, DrinkType enum, and drink registry data.
  *
- * Defines DrinkItem, which represents a drink the player
- * can pack. Most drinks are treated as fixed products with
- * built-in container weight. Water is handled as a special
- * case through separate drink types such as WATER_BOTTLE
- * and WATER_CAMELBAK.
+ * Defines DrinkItem, which represents a drink the player can pack.
+ * Drink items use predefined values from the DrinkRegistry for
+ * nutrition, weight, description, and hydration effectiveness.
  *
  * Team: Green Goombas
  * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
@@ -46,8 +44,6 @@ struct DrinkStats {
 
     /**
      * @brief Total weight of the drink item in pounds.
-     *
-     * This includes both the liquid and its built-in container.
      */
     double weight;
 
@@ -57,7 +53,7 @@ struct DrinkStats {
     QString description;
 
     /**
-     * @brief Multiplier used to determine how effective this drink is for hydration.
+     * @brief Multiplier used to determine hydration effectiveness.
      */
     double hydrationMultiplier;
 };
@@ -65,7 +61,7 @@ struct DrinkStats {
 /**
  * @brief Registry of all predefined drink items.
  *
- * This acts as the source of truth for all DrinkItem values.
+ * This acts as the source of truth for DrinkItem values.
  */
 static const std::map<DrinkType, DrinkStats> DrinkRegistry = {
     { DrinkType::BEER, {
@@ -113,7 +109,7 @@ class DrinkItem : public Item
 {
 public:
     /**
-     * @brief Constructs a DrinkItem from a DrinkType enum value.
+     * @brief Constructs a DrinkItem from a DrinkType value.
      *
      * Looks up the corresponding DrinkStats in the DrinkRegistry
      * and uses them to initialize this DrinkItem.
@@ -137,11 +133,6 @@ public:
     double getEffectiveHydration() const;
 
 private:
-    /**
-     * @brief The type of this drink.
-     */
-    DrinkType drinkType;
-
     /**
      * @brief Multiplier used for hydration effectiveness.
      */
