@@ -40,3 +40,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
+
+DISTFILES += \
+    ../../../../../Downloads/banana2.png \
+    ../../../../../Downloads/potato2.png \
+    ../../../../../Downloads/waterbottle2.png
