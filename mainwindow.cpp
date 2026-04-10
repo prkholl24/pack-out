@@ -29,6 +29,9 @@
 #include <QStatusBar>
 
 #include <cstdint>
+#include <iostream>
+#include <unordered_map>
+#include <vector>
 
 namespace {
 
@@ -48,6 +51,7 @@ enum class BodyKind : std::uintptr_t {
     SpawnerPotato,
     SpawnerBottle,
     PackWall,
+    PackSensor,
     CinchAndGoLedge,
     CinchAndGoIdle,
     CinchAndGoActivated,
@@ -55,6 +59,21 @@ enum class BodyKind : std::uintptr_t {
     ItemPotato,
     ItemBottle,
 };
+
+inline bool isItemKind(BodyKind kind) {
+    return kind == BodyKind::ItemBanana
+        || kind == BodyKind::ItemPotato
+        || kind == BodyKind::ItemBottle;
+}
+
+inline QString itemNameOf(BodyKind kind) {
+    switch (kind) {
+        case BodyKind::ItemBanana: return QStringLiteral("BANANA");
+        case BodyKind::ItemPotato: return QStringLiteral("POTATO");
+        case BodyKind::ItemBottle: return QStringLiteral("BOTTLE");
+        default:                   return QString();
+    }
+}
 
 inline void* tagFor(BodyKind k) {
     return reinterpret_cast<void*>(static_cast<std::uintptr_t>(k));
@@ -87,6 +106,7 @@ QColor colorFor(BodyKind kind) {
         case BodyKind::CinchAndGoActivated: return QColor(50, 130, 60);    // darker green
 
         case BodyKind::MouseAnchor:         return QColor(0, 0, 0, 0);     // invisible
+        case BodyKind::PackSensor:          return QColor(0, 0, 0, 0);     // invisible
 
         case BodyKind::None:
         default:                            return QColor(Qt::blue);
@@ -130,6 +150,75 @@ public:
     void SayGoodbye(b2Fixture*) override {}
 };
 
+/**
+ * @class MainWindow::ContactListener
+ * @brief Turns pack-sensor contacts into itemAddedToBag / itemRemovedFromBag.
+ *
+ * Multi-fixture items (banana has 2, bottle has 2) generate one BeginContact
+ * per fixture-sensor pair. To emit a single "added" event per true entry,
+ * we keep a per-body contact counter: the signal fires only on the 0 -> 1
+ * transition, and the "removed" signal fires only on the 1 -> 0 transition.
+ *
+ * Box2D also calls EndContact for every remaining contact when a body is
+ * destroyed, so an item deconstructed while still in the bag still emits
+ * a trailing "removed" event.
+ *
+ * Caveat: BeginContact / EndContact run inside world.Step(). Slots connected
+ * with direct connections (the default) run synchronously from here, so they
+ * must not mutate the world. The std::cout slot we wire up in the constructor
+ * is safe.
+ */
+class MainWindow::ContactListener : public b2ContactListener {
+public:
+    MainWindow* owner = nullptr;
+
+    void BeginContact(b2Contact* contact) override {
+        b2Body* itemBody = itemBodyFromContact(contact);
+        if (!itemBody) {
+            return;
+        }
+        int& count = inBagCount[itemBody];
+        if (count == 0 && owner) {
+            emit owner->itemAddedToBag(itemNameOf(kindOf(itemBody)));
+        }
+        ++count;
+    }
+
+    void EndContact(b2Contact* contact) override {
+        b2Body* itemBody = itemBodyFromContact(contact);
+        if (!itemBody) {
+            return;
+        }
+        auto it = inBagCount.find(itemBody);
+        if (it == inBagCount.end()) {
+            return;
+        }
+        if (--it->second <= 0) {
+            if (owner) {
+                emit owner->itemRemovedFromBag(itemNameOf(kindOf(itemBody)));
+            }
+            inBagCount.erase(it);
+        }
+    }
+
+private:
+    /**
+     * @brief If the contact is between the pack sensor and an item,
+     * return the item's body. Otherwise return nullptr.
+     */
+    b2Body* itemBodyFromContact(b2Contact* contact) const {
+        b2Body* a = contact->GetFixtureA()->GetBody();
+        b2Body* b = contact->GetFixtureB()->GetBody();
+        const BodyKind ka = kindOf(a);
+        const BodyKind kb = kindOf(b);
+        if (ka == BodyKind::PackSensor && isItemKind(kb)) return b;
+        if (kb == BodyKind::PackSensor && isItemKind(ka)) return a;
+        return nullptr;
+    }
+
+    std::unordered_map<b2Body*, int> inBagCount;
+};
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -149,9 +238,24 @@ MainWindow::MainWindow(QWidget *parent)
     destructionListener->owner = this;
     world.SetDestructionListener(destructionListener.get());
 
-    // Build the scene.
+    // Register a contact listener that turns pack-sensor contacts into
+    // itemAddedToBag / itemRemovedFromBag signals.
+    contactListener = std::make_unique<ContactListener>();
+    contactListener->owner = this;
+    world.SetContactListener(contactListener.get());
+
+    // Temporary: log add/remove events to stdout so we can watch the
+    // signals fire until a real subscriber exists.
+    connect(this, &MainWindow::itemAddedToBag, this, [](const QString& name) {
+        std::cout << "Added to bag: " << name.toStdString() << std::endl;
+    });
+    connect(this, &MainWindow::itemRemovedFromBag, this, [](const QString& name) {
+        std::cout << "Removed from bag: " << name.toStdString() << std::endl;
+    });
+
+    // Build the scene. No world bounds — items that fall off the screen
+    // are destroyed by updatePhysics() instead.
     createMouseAnchor();
-    createWorldBounds();
     createShelf();
     createBackpack();
     createCinchAndGoButton();
@@ -166,6 +270,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    // Detach Box2D listeners before our nested listener objects are
+    // torn down by member destruction. ~b2World doesn't currently
+    // fire callbacks, but this keeps us safe if that ever changes.
+    world.SetContactListener(nullptr);
+    world.SetDestructionListener(nullptr);
     delete ui;
 }
 
@@ -182,6 +291,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     QFont labelFont = painter.font();
     labelFont.setBold(true);
+    labelFont.setPointSize(12);
 
     for (b2Body* body = world.GetBodyList(); body; body = body->GetNext()) {
         BodyKind kind = kindOf(body);
@@ -219,11 +329,13 @@ void MainWindow::paintEvent(QPaintEvent *event)
         painter.restore();
 
         // Labels are drawn after restore() so they never rotate or scale.
+        // Position: centered horizontally on the body, floating above it
+        // into the dark window background where white text reads cleanly.
         QString label = labelFor(kind);
         if (!label.isEmpty()) {
             painter.setFont(labelFont);
-            painter.setPen(Qt::black);
-            QRectF labelRect(screenPos.x() - 70.0, screenPos.y() - 12.0, 140.0, 24.0);
+            painter.setPen(Qt::white);
+            QRectF labelRect(screenPos.x() - 80.0, screenPos.y() - 42.0, 160.0, 22.0);
             painter.drawText(labelRect, Qt::AlignCenter, label);
         }
     }
@@ -319,26 +431,53 @@ void MainWindow::updatePhysics()
     // Step the simulation and request a repaint
     world.Step(1.0f / static_cast<float>(REFRESH_RATE) , 8, 3);
 
-    // Watch for the Cinch & Go button exiting the visible area.
-    // This check runs AFTER the step, so destroying the body here is safe.
-    if (!levelStarted && cinchAndGoButton
-        && kindOf(cinchAndGoButton) == BodyKind::CinchAndGoActivated) {
+    // Destroy-on-exit sweep for every dynamic item (and the activated
+    // Cinch & Go button). With no world walls, items dropped outside
+    // the pack fall until they leave the screen, at which point they
+    // get deconstructed here. Runs AFTER Step, so destroying bodies
+    // during the loop is safe — but we still collect first and destroy
+    // second because world.DestroyBody mutates the body list.
+    constexpr float EXIT_MARGIN = 2.0f;
 
-        const b2Vec2 pos = cinchAndGoButton->GetPosition();
-        const bool offScreen = pos.y > WORLD_HEIGHT_M + 2.0f
-                               || pos.x < -2.0f
-                               || pos.x > WORLD_WIDTH_M + 2.0f
-                               || pos.y < -2.0f;
+    std::vector<b2Body*> toDestroy;
+    for (b2Body* body = world.GetBodyList(); body; body = body->GetNext()) {
+        if (body->GetType() != b2_dynamicBody) {
+            continue;
+        }
+        const BodyKind kind = kindOf(body);
+        const bool destroyable =
+               kind == BodyKind::ItemBanana
+            || kind == BodyKind::ItemPotato
+            || kind == BodyKind::ItemBottle
+            || kind == BodyKind::CinchAndGoActivated;
+        if (!destroyable) {
+            continue;
+        }
 
+        const b2Vec2 pos = body->GetPosition();
+        const bool offScreen = pos.x < -EXIT_MARGIN
+                               || pos.x > WORLD_WIDTH_M + EXIT_MARGIN
+                               || pos.y < -EXIT_MARGIN
+                               || pos.y > WORLD_HEIGHT_M + EXIT_MARGIN;
         if (offScreen) {
+            toDestroy.push_back(body);
+        }
+    }
+
+    for (b2Body* body : toDestroy) {
+        const BodyKind kind = kindOf(body);
+
+        if (kind == BodyKind::CinchAndGoActivated && !levelStarted) {
             levelStarted = true;
-            if (mouseJoint && mouseJoint->GetBodyB() == cinchAndGoButton) {
-                endDragging();
-            }
-            world.DestroyBody(cinchAndGoButton);
-            cinchAndGoButton = nullptr;
             emit levelHasStarted();
         }
+        if (body == cinchAndGoButton) {
+            cinchAndGoButton = nullptr;
+        }
+
+        // The destruction listener clears mouseJoint if this body is
+        // the one currently being dragged, so no extra cleanup needed.
+        world.DestroyBody(body);
     }
 
     update();
@@ -357,32 +496,6 @@ void MainWindow::createMouseAnchor()
     mouseJointAnchor = world.CreateBody(&def);
     mouseJointAnchor->SetUserData(tagFor(BodyKind::MouseAnchor));
     // No fixtures — the anchor should never collide or be picked up.
-}
-
-void MainWindow::createWorldBounds()
-{
-    auto makeWall = [this](float cx, float cy, float halfW, float halfH) {
-        b2BodyDef def;
-        def.type = b2_staticBody;
-        def.position.Set(cx, cy);
-        b2Body* body = world.CreateBody(&def);
-
-        b2PolygonShape box;
-        box.SetAsBox(halfW, halfH);
-
-        b2FixtureDef fix;
-        fix.shape = &box;
-        fix.friction = 0.5f;
-        body->CreateFixture(&fix);
-
-        body->SetUserData(tagFor(BodyKind::WorldBound));
-    };
-
-    // Ground spans the full window width, sitting at the bottom.
-    makeWall(WORLD_WIDTH_M * 0.5f, 0.1f, WORLD_WIDTH_M * 0.5f, 0.1f);
-    // Left and right walls. No top wall — the Cinch & Go button escapes up.
-    makeWall(0.1f, WORLD_HEIGHT_M * 0.5f, 0.1f, WORLD_HEIGHT_M * 0.5f);
-    makeWall(WORLD_WIDTH_M - 0.1f, WORLD_HEIGHT_M * 0.5f, 0.1f, WORLD_HEIGHT_M * 0.5f);
 }
 
 void MainWindow::createShelf()
@@ -423,9 +536,34 @@ void MainWindow::createBackpack()
     };
 
     // Left wall, right wall, and bottom forming a U open at the top.
-    makePackWall(10.5f, 3.25f, 0.1f, 2.25f);
-    makePackWall(13.5f, 3.25f, 0.1f, 2.25f);
-    makePackWall(12.0f, 1.0f,  1.6f, 0.1f);
+    // Interior width ~1.8 m, height ~4.4 m — tall and narrow so the
+    // arrangement of items inside matters.
+    makePackWall(11.0f, 3.25f, 0.1f, 2.25f);
+    makePackWall(13.0f, 3.25f, 0.1f, 2.25f);
+    makePackWall(12.0f, 1.0f,  1.1f, 0.1f);
+
+    // Sensor fixture filling the pack's interior volume. It doesn't
+    // collide with anything (isSensor = true), it just fires contact
+    // callbacks when items cross the boundary. The ContactListener
+    // converts those callbacks into itemAddedToBag / itemRemovedFromBag.
+    //
+    // Interior extents:
+    //   x: 11.1 .. 12.9 (between the walls)
+    //   y: 1.1  .. 5.5  (above the bottom slab, up to the wall tops)
+    b2BodyDef sensorDef;
+    sensorDef.type = b2_staticBody;
+    sensorDef.position.Set(12.0f, 3.3f);
+    packSensor = world.CreateBody(&sensorDef);
+
+    b2PolygonShape sensorBox;
+    sensorBox.SetAsBox(0.9f, 2.2f);
+
+    b2FixtureDef sensorFix;
+    sensorFix.shape = &sensorBox;
+    sensorFix.isSensor = true;
+    packSensor->CreateFixture(&sensorFix);
+
+    packSensor->SetUserData(tagFor(BodyKind::PackSensor));
 }
 
 void MainWindow::createSpawners()
@@ -437,7 +575,7 @@ void MainWindow::createSpawners()
         b2Body* body = world.CreateBody(&def);
 
         b2PolygonShape box;
-        box.SetAsBox(0.25f, 0.15f);
+        box.SetAsBox(0.40f, 0.20f);
 
         b2FixtureDef fix;
         fix.shape = &box;
@@ -449,9 +587,10 @@ void MainWindow::createSpawners()
         body->SetUserData(tagFor(kind));
     };
 
-    makeSpawner(1.25f, 4.25f, BodyKind::SpawnerBanana);
-    makeSpawner(2.50f, 4.25f, BodyKind::SpawnerPotato);
-    makeSpawner(3.75f, 4.25f, BodyKind::SpawnerBottle);
+    // Spread along the 4 m shelf with 1.5 m gaps so labels don't collide.
+    makeSpawner(1.00f, 4.30f, BodyKind::SpawnerBanana);
+    makeSpawner(2.50f, 4.30f, BodyKind::SpawnerPotato);
+    makeSpawner(4.00f, 4.30f, BodyKind::SpawnerBottle);
 }
 
 void MainWindow::createCinchAndGoButton()
@@ -510,24 +649,47 @@ b2Body* MainWindow::spawnBanana(const b2Vec2& position)
     def.angularDamping = 1.0f;
     b2Body* body = world.CreateBody(&def);
 
-    // Six-vertex convex polygon approximating a curved banana blob.
-    // Counter-clockwise, all within b2_maxPolygonVertices (8).
-    b2Vec2 verts[6] = {
-        b2Vec2(-0.30f, -0.02f),
-        b2Vec2(-0.15f, -0.12f),
-        b2Vec2( 0.15f, -0.12f),
-        b2Vec2( 0.30f,  0.02f),
-        b2Vec2( 0.10f,  0.14f),
-        b2Vec2(-0.10f,  0.14f),
+    // A real crescent is non-convex, so the banana is built from two
+    // convex quads that meet along the vertical midline. Together they
+    // form a shape ~1.4 m long that tapers at both ends and bulges
+    // downward in the middle — a cartoony curved banana.
+    //
+    // Left half (CCW):
+    //     (-0.70, 0.05) ──── (-0.70, 0.10)
+    //          tip               top tip
+    //            \                 \
+    //             \_________________\__
+    //          (0.00, -0.13)     (0.00, 0.07)
+    //
+    // Right half mirrors across x=0.
+    b2Vec2 leftHalf[4] = {
+        b2Vec2(-0.70f,  0.05f),
+        b2Vec2( 0.00f, -0.13f),
+        b2Vec2( 0.00f,  0.07f),
+        b2Vec2(-0.70f,  0.10f),
     };
-    b2PolygonShape shape;
-    shape.Set(verts, 6);
+    b2Vec2 rightHalf[4] = {
+        b2Vec2( 0.00f, -0.13f),
+        b2Vec2( 0.70f,  0.05f),
+        b2Vec2( 0.70f,  0.10f),
+        b2Vec2( 0.00f,  0.07f),
+    };
 
-    b2FixtureDef fix;
-    fix.shape = &shape;
-    fix.density = 0.5f;
-    fix.friction = 0.5f;
-    body->CreateFixture(&fix);
+    b2PolygonShape leftShape;
+    leftShape.Set(leftHalf, 4);
+    b2FixtureDef leftFix;
+    leftFix.shape = &leftShape;
+    leftFix.density = 0.5f;
+    leftFix.friction = 0.5f;
+    body->CreateFixture(&leftFix);
+
+    b2PolygonShape rightShape;
+    rightShape.Set(rightHalf, 4);
+    b2FixtureDef rightFix;
+    rightFix.shape = &rightShape;
+    rightFix.density = 0.5f;
+    rightFix.friction = 0.5f;
+    body->CreateFixture(&rightFix);
 
     body->SetUserData(tagFor(BodyKind::ItemBanana));
     return body;
@@ -542,14 +704,15 @@ b2Body* MainWindow::spawnPotato(const b2Vec2& position)
     def.angularDamping = 1.0f;
     b2Body* body = world.CreateBody(&def);
 
-    // Six-vertex convex blob, slightly lopsided.
+    // Six-vertex convex blob, slightly lopsided. Scaled up so it
+    // reads as a proper potato inside the pack.
     b2Vec2 verts[6] = {
-        b2Vec2(-0.22f, -0.05f),
-        b2Vec2(-0.10f, -0.17f),
-        b2Vec2( 0.14f, -0.15f),
-        b2Vec2( 0.24f,  0.02f),
-        b2Vec2( 0.08f,  0.17f),
-        b2Vec2(-0.16f,  0.14f),
+        b2Vec2(-0.33f, -0.08f),
+        b2Vec2(-0.15f, -0.26f),
+        b2Vec2( 0.21f, -0.23f),
+        b2Vec2( 0.36f,  0.03f),
+        b2Vec2( 0.12f,  0.26f),
+        b2Vec2(-0.24f,  0.21f),
     };
     b2PolygonShape shape;
     shape.Set(verts, 6);
@@ -574,8 +737,9 @@ b2Body* MainWindow::spawnBottle(const b2Vec2& position)
     b2Body* body = world.CreateBody(&def);
 
     // Two-fixture water bottle: tall main body + small cap offset upward.
+    // Enlarged so it feels substantial inside the pack.
     b2PolygonShape bodyRect;
-    bodyRect.SetAsBox(0.12f, 0.35f);
+    bodyRect.SetAsBox(0.17f, 0.50f);
     b2FixtureDef bodyFix;
     bodyFix.shape = &bodyRect;
     bodyFix.density = 1.0f;
@@ -583,7 +747,7 @@ b2Body* MainWindow::spawnBottle(const b2Vec2& position)
     body->CreateFixture(&bodyFix);
 
     b2PolygonShape capRect;
-    capRect.SetAsBox(0.07f, 0.05f, b2Vec2(0.0f, 0.40f), 0.0f);
+    capRect.SetAsBox(0.10f, 0.07f, b2Vec2(0.0f, 0.57f), 0.0f);
     b2FixtureDef capFix;
     capFix.shape = &capRect;
     capFix.density = 1.0f;

@@ -71,6 +71,26 @@ signals:
      */
     void levelHasStarted();
 
+    /**
+     * @brief Emitted when an item body enters the pack's interior.
+     *
+     * Fires exactly once per item per entry, even for multi-fixture
+     * items (the banana has two fixtures, the bottle two) — a contact
+     * counter inside the listener de-duplicates per body.
+     *
+     * @param itemName - Short human-readable name, e.g. "BANANA".
+     */
+    void itemAddedToBag(const QString& itemName);
+
+    /**
+     * @brief Emitted when an item body leaves the pack's interior,
+     * or when an item inside the pack is destroyed (e.g. dragged out
+     * and off-screen).
+     *
+     * @param itemName - Short human-readable name, e.g. "BANANA".
+     */
+    void itemRemovedFromBag(const QString& itemName);
+
 protected:
     /**
      * @brief QPainter uses this to know how to paint the scene
@@ -212,13 +232,29 @@ private:
     std::unique_ptr<DestructionListener> destructionListener;
 
     /**
+     * @brief Listener that fires itemAddedToBag / itemRemovedFromBag
+     * when item bodies enter or leave the pack sensor fixture.
+     *
+     * Maintains an internal contact count per body so multi-fixture
+     * items (banana, bottle) only emit one signal per true entry.
+     */
+    class ContactListener;
+    std::unique_ptr<ContactListener> contactListener;
+
+    /**
+     * @brief Static body carrying a single sensor fixture that fills
+     * the pack's interior volume. Collisions with this fixture are
+     * non-physical but still fire contact callbacks.
+     */
+    b2Body* packSensor = nullptr;
+
+    /**
      * @name Scene construction helpers
      *
      * Each one builds a portion of the initial scene by creating
      * static Box2D bodies with tagged user data.
      */
     /// @{
-    void createWorldBounds();
     void createShelf();
     void createBackpack();
     void createSpawners();
