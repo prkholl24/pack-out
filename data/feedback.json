@@ -1,0 +1,17 @@
+{
+    "fail_intro": "As the trail got steeper, the reality of your planning set in. ",
+    "fail_footer": "\n\nYou were forced to call off the trip. Use the 'Trip Science' breakdown below to improve your pack for the next attempt.\n",
+    "pass_body": "The sun sets behind the ridge as you reach your final camp. Because you packed well, your energy levels stayed high throughout the climb. You successfully completed the trek and learned how your body handles the trail!\n",
+    "failure_scenarios": {
+        "starving": "Without enough calories, your muscles began to fatigue halfway through the distance. ",
+        "dehydrated": "Severe dehydration left you feeling lightheaded and unable to focus on the terrain. ",
+        "missing_gear": "Missing critical safety gear forced you to turn back before things got dangerous. ",
+        "missing_essentials": "Lacking one of the 10 Essentials meant you weren't prepared for the changing conditions. ",
+        "too_heavy": "The excessive weight of your pack made every step a struggle, quickly draining your reserves. ",
+        "too_bulky": "Your pack was overflowing! You couldn't zip it shut or carry it properly on the trail. ",
+        "lnt_violation": "You realized you had no way to pack out your trash, forcing you to abandon the trip to avoid littering. ",
+        "high_caffeine": "Jitters from excessive caffeine made your pace erratic and your heart race. ",
+        "high_sugar": "A sugar crash left you feeling shaky and weak after an initial energy spike. ",
+        "alcohol_penalty": "The alcohol you packed slowed your recovery and significantly dehydrated your system. "
+    }
+}

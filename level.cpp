@@ -1,199 +1,221 @@
 /**
  * @file level.cpp
- * @brief Implementation of the Level class
- *
- * Implements the Level model, including grading logic,
- * pass/fail evaluation, and feedback generation for
- * backpack preparedness.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/7/2026
- * Reviewed by Charles Adair
+ * @brief Implementation of the Level orchestrator class.
  */
 
 #include "level.h"
-#include "levelreportbuilder.h"
+#include "drinkitem.h"
+#include "trekphysiology.h"
+#include "gearcheck.h"
+#include "trekrules.h"
+#include <algorithm>
 
-const double DEFAULT_PASSING_SCORE = 70.0;
+Level::Level() : requirements(TripRequirements{}) {}
+Level::Level(const TripRequirements& req) : requirements(req) {}
 
-const double ENERGY_SCORE_WEIGHT = 50.0;
-const double HYDRATION_SCORE_WEIGHT = 50.0;
-
-const double WATER_HYDRATION_MULTIPLIER = 1.0;
-const double SPORTS_DRINK_HYDRATION_MULTIPLIER = 0.8;
-const double SODA_HYDRATION_MULTIPLIER = 0.25;
-const double CAFFEINE_HYDRATION_PENALTY_PER_MG = 0.02;
-const double CAFFEINE_ENERGY_BONUS_PER_MG = 0.05;
-
-Level::Level()
-    : requiredCalories(-1), requiredHydration(-1), duration(-1), description(""),
-    passingScore(DEFAULT_PASSING_SCORE)
-{
-}
-
-Level::Level(int calories, double water, int duration)
-    : requiredCalories(calories), requiredHydration(water), duration(duration), description(""),
-    passingScore(DEFAULT_PASSING_SCORE)
-{
-}
-
-int Level::getRequiredCalories() const
-{
-    return requiredCalories;
-}
-
-double Level::getRequiredHydration() const
-{
-    return requiredHydration;
-}
-
-int Level::getDuration() const
-{
-    return duration;
-}
-
-QString Level::getDescription() const
-{
-    return description;
-}
-
-double Level::gradeMyBag(const std::vector<Item*>& backpack) const
-{
-    double totalCalories = calculateTotalCalories(backpack);
-    double effectiveHydration = calculateEffectiveHydration(backpack);
-    double totalCaffeine = calculateTotalStat(backpack, "Caffeine(mg)");
-
-    double energyScore = calculateEnergyScore(totalCalories, totalCaffeine);
-    double hydrationScore = calculateHydrationScore(effectiveHydration);
-
-    // Reduces energy score if hydration is too low.
-    if (requiredHydration > 0)
-    {
-        double hydrationRatio = effectiveHydration / requiredHydration;
-
-        if (hydrationRatio < 1.0)
-            energyScore *= hydrationRatio;
-    }
-
-    return energyScore + hydrationScore;
-}
-
-bool Level::passesLevel(const std::vector<Item*>& backpack) const
-{
-    return gradeMyBag(backpack) >= passingScore;
-}
-
-QString Level::getReport(const std::vector<Item*>& backpack) const
-{
-    LevelResult result = evaluateBackpack(backpack);
-    return LevelReportBuilder::buildReport(result);
-}
-
-// ---------- Helper Methods ----------
-// --- Data collection ---
-
-double Level::calculateTotalStat(const std::vector<Item*>& backpack, const QString& statName) const
-{
-    double total = 0.0;
-
-    for (const Item* item : backpack)
-    {
-        if (item == nullptr)
-            continue;
-
-        std::map<QString, double> stats = item->getStats();
-
-        if (stats.count(statName) > 0)
-            total += stats.at(statName);
-    }
-
-    return total;
-}
-
-double Level::calculateTotalCalories(const std::vector<Item*>& backpack) const
-{
-    double totalCalories = 0.0;
-
-    for (const Item* item : backpack)
-    {
-        if (item == nullptr)
-            continue;
-
-        std::map<QString, double> stats = item->getStats();
-
-        if (stats.count("Calories") > 0)
-            totalCalories += stats.at("Calories");
-    }
-
-    return totalCalories;
-}
-
-double Level::calculateEffectiveHydration(const std::vector<Item*>& backpack) const
-{
-    double totalWater = calculateTotalStat(backpack, "Water(oz)");
-    double totalSportsDrink = calculateTotalStat(backpack, "SportsDrink(oz)");
-    double totalSoda = calculateTotalStat(backpack, "Soda(oz)");
-    double totalCaffeine = calculateTotalStat(backpack, "Caffeine(mg)");
-
-    double effectiveHydration = 0.0;
-    effectiveHydration += totalWater * WATER_HYDRATION_MULTIPLIER;
-    effectiveHydration += totalSportsDrink * SPORTS_DRINK_HYDRATION_MULTIPLIER;
-    effectiveHydration += totalSoda * SODA_HYDRATION_MULTIPLIER;
-    effectiveHydration -= totalCaffeine * CAFFEINE_HYDRATION_PENALTY_PER_MG;
-
-    if (effectiveHydration < 0.0)
-        effectiveHydration = 0.0;
-
-    return effectiveHydration;
-}
-
-// --- Scoring ---
-
-double Level::calculateEnergyScore(double totalCalories, double totalCaffeine) const
-{
-    if (requiredCalories <= 0)
-        return 0.0;
-
-    double score = (totalCalories / requiredCalories) * ENERGY_SCORE_WEIGHT;
-
-    // Add caffeine bonus
-    score += totalCaffeine * CAFFEINE_ENERGY_BONUS_PER_MG;
-
-    if (score > ENERGY_SCORE_WEIGHT)
-        score = ENERGY_SCORE_WEIGHT;
-
-    return score;
-}
-
-double Level::calculateHydrationScore(double effectiveHydration) const
-{
-    if (requiredHydration <= 0)
-        return 0.0;
-
-    double score = (effectiveHydration / requiredHydration) * HYDRATION_SCORE_WEIGHT;
-
-    if (score > HYDRATION_SCORE_WEIGHT)
-        score = HYDRATION_SCORE_WEIGHT;
-
-    return score;
-}
-
-// --- Evaluation ---
-
-LevelResult Level::evaluateBackpack(const std::vector<Item*>& backpack) const
+LevelResult Level::evaluateBackpack(const std::vector<std::unique_ptr<Item>>& backpack, const Player& player) const
 {
     LevelResult result;
+    
+    // 1. Data Aggregation
+    BackpackTotals totals = gatherBackpackTotals(backpack);
+    mapTotalsToResult(result, totals, player);
 
-    result.totalCalories = calculateTotalCalories(backpack);
-    result.effectiveHydration = calculateEffectiveHydration(backpack);
-    result.grade = gradeMyBag(backpack);
-    result.passed = result.grade >= passingScore;
+    // 2. Physiology Math
+    TrekPhysiology::computeRequirements(result, requirements, player, totals.hasPoles);
 
-    result.requiredCalories = requiredCalories;
-    result.requiredHydration = requiredHydration;
+    // 3. Gear Safety Validation
+    GearCheck::validate(backpack, requirements, result);
+
+    // 4. Scoring logic
+    applyEvaluationScoring(result, totals);
+    
+    // Physical state checks
+    if (result.totalVolume > result.maxVolume) {
+        result.conditions.push_back(TripCondition::TOO_BULKY);
+    }
+    if (result.totalWaste > 0 && !result.hasWasteStorage) {
+        result.leftTrashBehind = true;
+        result.conditions.push_back(TripCondition::LNT_VIOLATION);
+    }
+
+    applyEvaluationPenalties(result);
+
+    // 5. Condition Generation
+    generateStatusTags(result);
+    result.lessonCode = determineScienceLesson(result);
 
     return result;
+}
+
+BackpackTotals Level::gatherBackpackTotals(const std::vector<std::unique_ptr<Item>>& backpack) const
+{
+    BackpackTotals totals;
+    for (const auto& item : backpack) {
+        if (!item) continue;
+        
+        totals.weightLbs += item->getWeight();
+        totals.volume += item->getVolume();
+        
+        const NutritionProfile& n = item->getNutrition();
+        totals.calories += n.calories;
+        totals.sugar += n.sugar;
+        totals.fiber += n.fiber;
+        totals.sodium += n.sodium;
+        totals.caffeine += n.caffeineMg;
+        totals.alcohol += n.alcohol;
+        
+        const DrinkItem* drink = dynamic_cast<const DrinkItem*>(item.get());
+        if (drink) {
+            totals.hydrationOz += n.hydrationOz;
+            totals.effectiveHydration += drink->getEffectiveHydration();
+        }
+
+        if (item->generatesWaste()) totals.wasteCount++;
+        if (item->isWasteStorage()) totals.hasWasteStorage = true;
+        if (item->isCottonMaterial()) totals.hasCotton = true;
+        if (item->isTrekkingPole()) totals.hasPoles = true;
+    }
+    
+    applyDiureticPenalties(totals);
+    return totals;
+}
+
+void Level::mapTotalsToResult(LevelResult& result, const BackpackTotals& totals, const Player& player) const
+{
+    result.totalCalories = totals.calories;
+    result.effectiveHydration = totals.effectiveHydration;
+    result.totalCaffeine = totals.caffeine;
+    result.totalSugar = totals.sugar;
+    result.totalFiber = totals.fiber;
+    result.totalSodium = totals.sodium;
+    result.totalAlcohol = totals.alcohol;
+    result.totalWeight = totals.weightLbs;
+    result.totalVolume = totals.volume;
+    result.totalWaste = totals.wasteCount;
+    result.maxVolume = player.getMaxVolumeCapacity();
+    result.hasWasteStorage = totals.hasWasteStorage;
+    result.hasCottonWarning = totals.hasCotton;
+}
+
+void Level::applyDiureticPenalties(BackpackTotals& totals) const
+{
+    double caffeinePenalty = TrekRules::get("health_thresholds", "caffeine_hydration_penalty");
+    double alcoholPenalty = TrekRules::get("health_thresholds", "alcohol_hydration_penalty");
+
+    totals.effectiveHydration -= totals.caffeine * caffeinePenalty;
+    totals.effectiveHydration -= totals.alcohol * alcoholPenalty;
+    totals.effectiveHydration = std::max(0.0, totals.effectiveHydration);
+}
+
+void Level::applyEvaluationScoring(LevelResult& result, const BackpackTotals& totals) const
+{
+    double weightE = TrekRules::get("scoring", "energy_score_weight");
+    double norm = TrekRules::get("scoring", "normalization_factor");
+    double perfect = TrekRules::get("scoring", "perfect_score");
+
+    double eScore = calculateEnergyScore(totals.calories, result.requiredCalories, totals.sugar);
+    double hScore = calculateHydrationScore(totals.effectiveHydration, result.requiredHydration);
+
+    if (result.requiredCalories > 0 && result.requiredHydration > 0) result.grade = eScore + hScore;
+    else if (result.requiredCalories > 0) result.grade = eScore * norm;
+    else if (result.requiredHydration > 0) result.grade = hScore * norm;
+    else result.grade = perfect;
+}
+
+void Level::applyEvaluationPenalties(LevelResult& result) const
+{
+    if (result.hasMissingGear) result.grade *= TrekRules::get("penalties", "missing_gear");
+    if (result.totalVolume > result.maxVolume) result.grade *= TrekRules::get("penalties", "bulky_pack");
+    if (result.leftTrashBehind) result.grade *= TrekRules::get("penalties", "lnt_violation");
+    if (result.missingEssentials) result.grade *= TrekRules::get("penalties", "missing_essentials");
+    
+    result.passed = result.grade >= requirements.passingScore;
+}
+
+void Level::generateStatusTags(LevelResult& result) const
+{
+    double idealWeightFactor = TrekRules::get("health_thresholds", "ideal_weight_lbs_per_hour");
+    double caffeineThreshold = TrekRules::get("health_thresholds", "caffeine_warning_mg");
+    double sugarThreshold = TrekRules::get("health_thresholds", "sugar_warning_grams");
+
+    result.idealWeight = requirements.durationHours * idealWeightFactor;
+    
+    if (result.totalCalories < result.requiredCalories && result.requiredCalories > 0) 
+        result.conditions.push_back(TripCondition::STARVING);
+    if (result.effectiveHydration < result.requiredHydration && result.requiredHydration > 0) 
+        result.conditions.push_back(TripCondition::DEHYDRATED);
+    if (result.totalWeight > result.idealWeight && result.idealWeight > 0.0) 
+        result.conditions.push_back(TripCondition::TOO_HEAVY);
+    if (result.totalCaffeine > caffeineThreshold) 
+        result.conditions.push_back(TripCondition::HIGH_CAFFEINE);
+    if (result.totalSugar > sugarThreshold) 
+        result.conditions.push_back(TripCondition::HIGH_SUGAR);
+    if (result.totalAlcohol > 0.0) 
+        result.conditions.push_back(TripCondition::ALCOHOL_PENALTY);
+}
+
+double Level::calculateEnergyScore(double calories, double required, double sugar) const
+{
+    if (required <= 0) return 0.0;
+    
+    double weight = TrekRules::get("scoring", "energy_score_weight");
+    double threshold = TrekRules::get("health_thresholds", "sugar_penalty_threshold");
+    double factor = TrekRules::get("penalties", "sugar_crash_factor");
+
+    double score = (calories / required) * weight;
+    if (sugar > threshold) score -= (sugar - threshold) * factor;
+    return score;
+}
+
+double Level::calculateHydrationScore(double effective, double required) const
+{
+    if (required <= 0) return 0.0;
+    double weight = TrekRules::get("scoring", "hydration_score_weight");
+    double score = (effective / required) * weight;
+    return std::min(score, weight);
+}
+
+ScienceLesson Level::determineScienceLesson(const LevelResult& result) const
+{
+    double bmrRatio = TrekRules::get("health_thresholds", "starving_bmr_ratio_threshold");
+
+    if (result.leftTrashBehind) return ScienceLesson::LEAVE_NO_TRACE_VIOLATION;
+    if (result.missingEssentials) return ScienceLesson::TEN_ESSENTIALS_MISSING;
+    if (result.hasCottonWarning && (requirements.weather == WeatherType::RAINY || requirements.weather == WeatherType::SNOW))
+        return ScienceLesson::COTTON_CLOTHING_WARNING;
+    if (result.totalSodium > 2300.0) return ScienceLesson::SODIUM_HYDRATION_LOAD;
+    if (result.totalSugar > 50.0 && result.totalFiber < 10.0) return ScienceLesson::FIBER_ENERGY_STABILITY;
+    
+    // Check for specific conditions in the conditions list
+    bool isHighCaffeine = false;
+    bool isAlcohol = false;
+    bool isStarving = false;
+    bool isTooBulky = false;
+    bool isTooHeavy = false;
+
+    for (TripCondition c : result.conditions) {
+        if (c == TripCondition::HIGH_CAFFEINE) isHighCaffeine = true;
+        if (c == TripCondition::ALCOHOL_PENALTY) isAlcohol = true;
+        if (c == TripCondition::STARVING) isStarving = true;
+        if (c == TripCondition::TOO_BULKY) isTooBulky = true;
+        if (c == TripCondition::TOO_HEAVY) isTooHeavy = true;
+    }
+
+    if (isHighCaffeine || isAlcohol) return ScienceLesson::HYDRATION_DIURETICS;
+    if (isStarving && result.bmrBurn > (result.requiredCalories * bmrRatio)) return ScienceLesson::BMR_BASE_METABOLISM;
+    if (isTooBulky) return ScienceLesson::VOLUME_OVERFLOW;
+    if (isTooHeavy) return ScienceLesson::PANDOLF_WEIGHT_PENALTY;
+    
+    return ScienceLesson::PACK_WEIGHT_RATIO;
+}
+
+double Level::gradeMyBag(const std::vector<std::unique_ptr<Item>>& backpack, const Player& player) const
+{
+    return evaluateBackpack(backpack, player).grade;
+}
+
+bool Level::passesLevel(const std::vector<std::unique_ptr<Item>>& backpack, const Player& player) const
+{
+    return evaluateBackpack(backpack, player).passed;
 }

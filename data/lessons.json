@@ -1,0 +1,46 @@
+{
+    "BMR_BASE_METABOLISM": {
+        "title": "Base Metabolism",
+        "body": "Your body burns calories just to keep your heart beating and brain running. Never forget to pack for your resting needs!"
+    },
+    "PANDOLF_WEIGHT_PENALTY": {
+        "title": "The Pandolf Penalty",
+        "body": "The Pandolf Equation shows that carrying a pack increases effort exponentially. A heavy pack can feel twice as heavy on steep terrain!"
+    },
+    "HYDRATION_DIURETICS": {
+        "title": "Hydration Interference",
+        "body": "Diuretics like caffeine and alcohol tell your kidneys to release water. They can effectively 'cancel out' your hydration!"
+    },
+    "COTTON_CLOTHING_WARNING": {
+        "title": "Cotton Kills",
+        "body": "Cotton absorbs water and loses all insulation value when wet. In rain or snow, it leads to hypothermia. Choose Wool or Synthetic!"
+    },
+    "FIBER_ENERGY_STABILITY": {
+        "title": "Energy Stability",
+        "body": "High sugar without fiber causes insulin crashes. Fiber-rich whole foods provide the most stable fuel."
+    },
+    "SODIUM_HYDRATION_LOAD": {
+        "title": "The Salt Trap",
+        "body": "Excessive sodium (>2300mg) increases thirst and strains kidneys. Choose lower-sodium whole foods for optimal hydration."
+    },
+    "WHOLE_FOOD_FUEL": {
+        "title": "Whole Food Power",
+        "body": "Minimally processed plant foods are nutrient-dense and high in antioxidants, helping your muscles recover faster from the trail!"
+    },
+    "PACK_WEIGHT_RATIO": {
+        "title": "The 20% Rule",
+        "body": "Try to keep your total pack weight under 20% of your body weight. This reduces the mechanical strain on your joints."
+    },
+    "LEAVE_NO_TRACE_VIOLATION": {
+        "title": "Leave No Trace",
+        "body": "Packing items that create waste without bringing a way to pack it out harms the environment. Always pack a trash bag or Ziploc!"
+    },
+    "VOLUME_OVERFLOW": {
+        "title": "Packing Efficiency",
+        "body": "A backpack only has so much space! High-volume items like bags of chips fill your pack quickly, leaving no room for essentials."
+    },
+    "TEN_ESSENTIALS_MISSING": {
+        "title": "The 10 Essentials",
+        "body": "Always carry navigation, sun protection, insulation, illumination, first-aid, fire, tools, shelter, food, and water. The trail doesn't care about your plans."
+    }
+}
