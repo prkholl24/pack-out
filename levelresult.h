@@ -1,42 +1,103 @@
 /**
  * @file levelresult.h
- * @brief Contains the LevelResult struct used to store evaluation results.
- *
- * Defines LevelResult, which stores the results of evaluating a player's
- * backpack for a level. This includes totals for energy and hydration,
- * as well as related factors like caffeine, sugar, and alcohol, along
- * with grading information and pass/fail status.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/8/2026
+ * @brief Container for the results of a backpack evaluation.
  */
 
 #ifndef LEVELRESULT_H
 #define LEVELRESULT_H
 
+#include <vector>
+#include "nutritionprofile.h"
+
 /**
- * @brief Stores the results of evaluating a backpack for a level.
- *
- * This struct holds all data needed to generate a report,
- * separating evaluation logic from presentation logic.
+ * @brief ScienceLesson codes used to trigger specific educational feedback.
+ */
+enum class ScienceLesson {
+    NONE,
+    BMR_BASE_METABOLISM,
+    PANDOLF_WEIGHT_PENALTY,
+    HYDRATION_DIURETICS,
+    PACK_WEIGHT_RATIO,
+    COTTON_CLOTHING_WARNING,
+    FIBER_ENERGY_STABILITY,
+    SODIUM_HYDRATION_LOAD,
+    WHOLE_FOOD_FUEL,
+    LEAVE_NO_TRACE_VIOLATION,
+    VOLUME_OVERFLOW,
+    TEN_ESSENTIALS_MISSING
+};
+
+/**
+ * @brief Specific physical or safety conditions detected by the Model.
+ */
+enum class TripCondition {
+    STARVING,
+    DEHYDRATED,
+    TOO_HEAVY,
+    TOO_BULKY,
+    HIGH_CAFFEINE,
+    HIGH_SUGAR,
+    ALCOHOL_PENALTY,
+    MISSING_GEAR,
+    MISSING_ESSENTIALS,
+    LNT_VIOLATION
+};
+
+/**
+ * @brief Combined data totals from a single pass through the backpack.
+ */
+struct BackpackTotals {
+    double calories = 0.0;
+    double weightLbs = 0.0;
+    double volume = 0.0;
+    double hydrationOz = 0.0;
+    double effectiveHydration = 0.0; 
+    double sugar = 0.0;
+    double fiber = 0.0;
+    double sodium = 0.0;
+    double caffeine = 0.0;
+    double alcohol = 0.0;
+    int wasteCount = 0;
+    
+    bool hasWasteStorage = false;
+    bool hasCotton = false;
+    bool hasPoles = false;
+};
+
+/**
+ * @brief Stores the full results of evaluating a backpack against trip requirements.
  */
 struct LevelResult
 {
-    double grade = 0.0;              // Final score out of 100
-    bool passed = false;             // Whether the level was passed
+    double grade = 0.0;              // Overall score (0-100)
+    bool passed = false;             // Did the player meet the passing score?
 
-    double totalCalories = 0.0;      // Total calories packed
-    double effectiveHydration = 0.0; // Hydration after penalties (caffeine, alcohol, etc.)
+    // Model Data State
+    BackpackTotals totals;           // Raw sums from the backpack
+    double maxVolume = 0.0;          // Backpack capacity limit
+    double idealWeight = 0.0;        // Target weight for this trip
 
-    double totalCaffeine = 0.0;      // Total caffeine affecting hydration
-    double totalSugar = 0.0;         // Total sugar affecting energy quality
-    double totalAlcohol = 0.0;       // Total alcohol reducing hydration
+    // Energy Expenditure Breakdown (Math results)
+    double bmrBurn = 0.0;            
+    double distanceBurn = 0.0;       
+    double climbBurn = 0.0;          
+    double loadPenalty = 0.0;        
 
-    int requiredCalories = 0;        // Minimum calories needed for the level
-    double requiredHydration = 0.0;  // Minimum effective hydration required
+    /**
+     * @brief List of specific conditions identified during evaluation.
+     */
+    std::vector<TripCondition> conditions;
+
+    // High-level Logic Flags
+    bool hasMissingGear = false;
+    bool missingEssentials = false;
+    bool hasCottonWarning = false;
+    bool leftTrashBehind = false;
+
+    ScienceLesson lessonCode = ScienceLesson::NONE;
+
+    int requiredCalories = 0;
+    double requiredHydration = 0.0;
 };
 
 #endif // LEVELRESULT_H

@@ -41,7 +41,7 @@
  *
  * The constant PIXELS_PER_METER (50) bridges the scale gap: Box2D
  * is tuned for objects in the 0.1 – 10 m range, so a 0.7 m banana
- * and a 1.8 m-wide pack sit comfortably in the engine's sweet spot.
+ * and a 1.8 m-wide pack sit comfortably in the library's sweet spot.
  *
  * Team: Green Goombas
  * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git

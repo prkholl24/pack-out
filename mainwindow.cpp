@@ -1,21 +1,12 @@
 /**
  * @file mainwindow.cpp
  * @brief Implementation of the MainWindow scene switcher.
- *
- * The constructor builds the scene stack, adds the BackpackScene,
- * and wires the levelHasStarted signal to a TODO stub that will
- * eventually swap to the trip/grading scene.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison, Claude Opus 4.6 (1M context)
- * @date 4/7/2026
- * Reviewed by Lindsey Reese 4/8/2026
  */
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "backpack.h"
+#include "levelreportbuilder.h"
+#include "trekregistry.h"
 
 #include <QMenuBar>
 #include <QStackedWidget>
@@ -27,32 +18,29 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Lock the window geometry and strip chrome so the full client
-    // area is available to whichever scene is active. setFixedSize
-    // also prevents resizing, which keeps the screen ↔ world
-    // coordinate math in BackpackScene stable.
+    // Lock the window geometry and strip chrome
     setFixedSize(800, 600);
     menuBar()->hide();
     statusBar()->hide();
 
-    // QStackedWidget displays exactly one child at a time.  We set
-    // it as the central widget so it fills the entire client area.
+    // Set up the scene stack
     sceneStack = new QStackedWidget(this);
     setCentralWidget(sceneStack);
 
-    // Start on the packing scene.  addWidget() parents the scene
-    // to the stack, so Qt's parent-child ownership handles cleanup.
+    // Initialize the packing scene
     backpackScene = new BackpackScene(this);
     sceneStack->addWidget(backpackScene);
     sceneStack->setCurrentWidget(backpackScene);
 
-    // When the packing scene completes (player clicked Cinch & Go
-    // and the button exited the screen), the model/controller layer
-    // will swap to the next scene here.  For now it's a no-op stub.
-    //
-    // Example of how a future transition would look:
-    //   sceneStack->setCurrentWidget(tripScene);
-    connect(backpackScene, &BackpackScene::levelHasStarted, this, [this]() {
+    // Initialize Utah Treks from external data
+    treks = TrekRegistry::loadTreks();
+
+    // Set up Signal/Slot connections for the Player Model
+    connect(&player, &Player::backpackChanged, this, &MainWindow::onBackpackChanged);
+    connect(&player, &Player::statsChanged, this, &MainWindow::onStatsChanged);
+
+    // Connect scene transition
+    connect(backpackScene, &BackpackScene::levelHasStarted, this, []() {
         // TODO: switch to the trip / grading scene
     });
 }
@@ -60,4 +48,35 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::addPackItem(Item* item)
+{
+    if (item) {
+        // MainWindow wraps raw pointer from UI into unique_ptr for Model
+        player.addItem(std::unique_ptr<Item>(item));
+    }
+}
+
+void MainWindow::evaluateTrek(int trekIndex)
+{
+    if (trekIndex < 0 || trekIndex >= (int)treks.size())
+        return;
+
+    LevelResult result = treks[trekIndex].evaluateBackpack(player.getBackpack(), player);
+    QString report = LevelReportBuilder::buildReport(result);
+
+    // TODO: Display report in UI
+}
+
+void MainWindow::onBackpackChanged()
+{
+    // TODO: Refresh the backpack list widget
+}
+
+void MainWindow::onStatsChanged(double weight, double volume)
+{
+    Q_UNUSED(weight);
+    Q_UNUSED(volume);
+    // TODO: Update weight/volume progress bars or labels
 }
