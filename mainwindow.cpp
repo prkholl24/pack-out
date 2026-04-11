@@ -28,6 +28,8 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , levelOne(0, 32.0, 2, TerrainType::FOREST, AdventureType::DAY_HIKE)
+    , levelTwo(1200, 64.0, 8, TerrainType::MOUNTAIN, AdventureType::BACKPACKING)
     , currentLevel(nullptr)
 {
     ui->setupUi(this);
@@ -55,8 +57,9 @@ MainWindow::MainWindow(QWidget *parent)
     sceneStack->addWidget(backpackScene);
     sceneStack->addWidget(debriefView);
 
-    // Create a default level for testing.
-    currentLevel = new Level(2000, 64.0, 8);
+    // Start on level one. currentLevel is a non-owning pointer into
+    // the levelOne/levelTwo members, so no delete is needed.
+    currentLevel = &levelOne;
 
     // Initialize the brief view with the current level and start there.
     briefView->setLevel(*currentLevel);
@@ -92,7 +95,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    delete currentLevel;
     delete ui;
 }
 

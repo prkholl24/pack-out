@@ -14,6 +14,8 @@
  * Reviewed by Charles Adair
  */
 
+#include "drinkitem.h"
+#include "gearitem.h"
 #include "level.h"
 #include "levelreportbuilder.h"
 
@@ -21,21 +23,24 @@ const double DEFAULT_PASSING_SCORE = 70.0;
 
 const double ENERGY_SCORE_WEIGHT = 50.0;
 const double HYDRATION_SCORE_WEIGHT = 50.0;
-
-const double WATER_HYDRATION_MULTIPLIER = 1.0;
-const double SPORTS_DRINK_HYDRATION_MULTIPLIER = 0.8;
-const double SODA_HYDRATION_MULTIPLIER = 0.25;
+const double IDEAL_WEIGHT_PER_HOUR = 2.0;
 const double CAFFEINE_HYDRATION_PENALTY_PER_MG = 0.02;
 const double CAFFEINE_ENERGY_BONUS_PER_MG = 0.05;
+const double ALCOHOL_HYDRATION_PENALTY_PER_UNIT = 1.5;
+const double SUGAR_ENERGY_PENALTY_THRESHOLD = 50.0;
+const double SUGAR_ENERGY_PENALTY_FACTOR = 0.5;
 
 Level::Level()
     : requiredCalories(-1), requiredHydration(-1), duration(-1), description(""),
+    requiredTerrain(TerrainType::ALL), requiredAdventure(AdventureType::ALL),
     passingScore(DEFAULT_PASSING_SCORE)
 {
 }
 
-Level::Level(int calories, double water, int duration)
+Level::Level(int calories, double water, int duration,
+             TerrainType terrain, AdventureType adventure)
     : requiredCalories(calories), requiredHydration(water), duration(duration), description(""),
+    requiredTerrain(terrain), requiredAdventure(adventure),
     passingScore(DEFAULT_PASSING_SCORE)
 {
 }
@@ -55,6 +60,16 @@ int Level::getDuration() const
     return duration;
 }
 
+TerrainType Level::getTerrain() const
+{
+    return requiredTerrain;
+}
+
+AdventureType Level::getAdventure() const
+{
+    return requiredAdventure;
+}
+
 QString Level::getDescription() const
 {
     return description;
@@ -64,9 +79,11 @@ double Level::gradeMyBag(const std::vector<Item*>& backpack) const
 {
     double totalCalories = calculateTotalCalories(backpack);
     double effectiveHydration = calculateEffectiveHydration(backpack);
-    double totalCaffeine = calculateTotalStat(backpack, "Caffeine(mg)");
+    double totalCaffeine = calculateTotalCaffeine(backpack);
+    double totalSugar = calculateTotalSugar(backpack);
 
-    double energyScore = calculateEnergyScore(totalCalories, totalCaffeine);
+    double totalWeight = calculateTotalWeight(backpack);
+    double energyScore = calculateEnergyScore(totalCalories, totalCaffeine, totalSugar, totalWeight);
     double hydrationScore = calculateHydrationScore(effectiveHydration);
 
     // Reduces energy score if hydration is too low.
@@ -78,7 +95,15 @@ double Level::gradeMyBag(const std::vector<Item*>& backpack) const
             energyScore *= hydrationRatio;
     }
 
-    return energyScore + hydrationScore;
+    double totalScore = energyScore + hydrationScore;
+
+    // Apply penalty if required gear is missing
+    if (!hasRequiredGear(backpack))
+    {
+        totalScore *= 0.85; // 15% penalty for missing essential gear
+    }
+
+    return totalScore;
 }
 
 bool Level::passesLevel(const std::vector<Item*>& backpack) const
@@ -95,24 +120,6 @@ QString Level::getReport(const std::vector<Item*>& backpack) const
 // ---------- Helper Methods ----------
 // --- Data collection ---
 
-double Level::calculateTotalStat(const std::vector<Item*>& backpack, const QString& statName) const
-{
-    double total = 0.0;
-
-    for (const Item* item : backpack)
-    {
-        if (item == nullptr)
-            continue;
-
-        std::map<QString, double> stats = item->getStats();
-
-        if (stats.count(statName) > 0)
-            total += stats.at(statName);
-    }
-
-    return total;
-}
-
 double Level::calculateTotalCalories(const std::vector<Item*>& backpack) const
 {
     double totalCalories = 0.0;
@@ -122,27 +129,68 @@ double Level::calculateTotalCalories(const std::vector<Item*>& backpack) const
         if (item == nullptr)
             continue;
 
-        std::map<QString, double> stats = item->getStats();
-
-        if (stats.count("Calories") > 0)
-            totalCalories += stats.at("Calories");
+        totalCalories += item->getNutrition().calories;
     }
 
     return totalCalories;
 }
 
+double Level::calculateTotalCaffeine(const std::vector<Item*>& backpack) const
+{
+    double totalCaffeine = 0.0;
+
+    for (const Item* item : backpack)
+    {
+        if (item == nullptr)
+            continue;
+
+        totalCaffeine += item->getNutrition().caffeineMg;
+    }
+
+    return totalCaffeine;
+}
+
+double Level::calculateTotalAlcohol(const std::vector<Item*>& backpack) const
+{
+    double totalAlcohol = 0.0;
+
+    for (const Item* item : backpack)
+    {
+        if (item == nullptr)
+            continue;
+
+        totalAlcohol += item->getNutrition().alcohol;
+    }
+
+    return totalAlcohol;
+}
+
 double Level::calculateEffectiveHydration(const std::vector<Item*>& backpack) const
 {
-    double totalWater = calculateTotalStat(backpack, "Water(oz)");
-    double totalSportsDrink = calculateTotalStat(backpack, "SportsDrink(oz)");
-    double totalSoda = calculateTotalStat(backpack, "Soda(oz)");
-    double totalCaffeine = calculateTotalStat(backpack, "Caffeine(mg)");
-
     double effectiveHydration = 0.0;
-    effectiveHydration += totalWater * WATER_HYDRATION_MULTIPLIER;
-    effectiveHydration += totalSportsDrink * SPORTS_DRINK_HYDRATION_MULTIPLIER;
-    effectiveHydration += totalSoda * SODA_HYDRATION_MULTIPLIER;
+    double totalCaffeine = 0.0;
+    double totalAlcohol = 0.0;
+
+    for (const Item* item : backpack)
+    {
+        if (item == nullptr)
+            continue;
+
+        const DrinkItem* drink = dynamic_cast<const DrinkItem*>(item);
+
+        // Add hydration from drinks (already includes multiplier)
+        if (drink != nullptr)
+            effectiveHydration += drink->getEffectiveHydration();
+
+        // Collect penalties from ALL items (food + drinks if applicable)
+        const NutritionProfile& nutrition = item->getNutrition();
+        totalCaffeine += nutrition.caffeineMg;
+        totalAlcohol += nutrition.alcohol;
+    }
+
+    // Apply penalties
     effectiveHydration -= totalCaffeine * CAFFEINE_HYDRATION_PENALTY_PER_MG;
+    effectiveHydration -= totalAlcohol * ALCOHOL_HYDRATION_PENALTY_PER_UNIT;
 
     if (effectiveHydration < 0.0)
         effectiveHydration = 0.0;
@@ -152,7 +200,8 @@ double Level::calculateEffectiveHydration(const std::vector<Item*>& backpack) co
 
 // --- Scoring ---
 
-double Level::calculateEnergyScore(double totalCalories, double totalCaffeine) const
+double Level::calculateEnergyScore(double totalCalories, double totalCaffeine,
+                                double totalSugar, double totalWeight) const
 {
     if (requiredCalories <= 0)
         return 0.0;
@@ -161,6 +210,22 @@ double Level::calculateEnergyScore(double totalCalories, double totalCaffeine) c
 
     // Add caffeine bonus
     score += totalCaffeine * CAFFEINE_ENERGY_BONUS_PER_MG;
+
+    // Add sugar bonus
+    if (totalSugar > SUGAR_ENERGY_PENALTY_THRESHOLD)
+    {
+        score += (totalSugar - SUGAR_ENERGY_PENALTY_THRESHOLD) * SUGAR_ENERGY_PENALTY_FACTOR;
+    }
+
+    double idealWeight = duration * IDEAL_WEIGHT_PER_HOUR;
+
+    if (idealWeight > 0.0)
+    {
+        double weightRatio = totalWeight / idealWeight;
+
+        if (weightRatio > 1.0)
+            score /= weightRatio;
+    }
 
     if (score > ENERGY_SCORE_WEIGHT)
         score = ENERGY_SCORE_WEIGHT;
@@ -181,6 +246,42 @@ double Level::calculateHydrationScore(double effectiveHydration) const
     return score;
 }
 
+double Level::calculateTotalWeight(const std::vector<Item*>& backpack) const
+{
+    double totalWeight = 0.0;
+
+    for (const Item* item : backpack)
+    {
+        if (item != nullptr)
+        {
+            totalWeight += item->getWeight();
+        }
+    }
+
+    return totalWeight;
+}
+
+bool Level::hasRequiredGear(const std::vector<Item*>& backpack) const
+{
+    bool hasMatchingTerrainGear = (requiredTerrain == TerrainType::ALL);
+    bool hasMatchingAdventureGear = (requiredAdventure == AdventureType::ALL);
+
+    for (const Item* item : backpack)
+    {
+        const GearItem* gear = dynamic_cast<const GearItem*>(item);
+        if (gear == nullptr)
+            continue;
+
+        if (gear->getTerrainType() == requiredTerrain || gear->getTerrainType() == TerrainType::ALL)
+            hasMatchingTerrainGear = true;
+
+        if (gear->getAdventureType() == requiredAdventure || gear->getAdventureType() == AdventureType::ALL)
+            hasMatchingAdventureGear = true;
+    }
+
+    return hasMatchingTerrainGear && hasMatchingAdventureGear;
+}
+
 // --- Evaluation ---
 
 LevelResult Level::evaluateBackpack(const std::vector<Item*>& backpack) const
@@ -189,6 +290,14 @@ LevelResult Level::evaluateBackpack(const std::vector<Item*>& backpack) const
 
     result.totalCalories = calculateTotalCalories(backpack);
     result.effectiveHydration = calculateEffectiveHydration(backpack);
+    result.totalCaffeine = calculateTotalCaffeine(backpack);
+    result.totalSugar = calculateTotalSugar(backpack);
+    result.totalAlcohol = calculateTotalAlcohol(backpack);
+
+    result.totalWeight = calculateTotalWeight(backpack);
+    result.idealWeight = duration * IDEAL_WEIGHT_PER_HOUR;
+    result.hasMissingGear = !hasRequiredGear(backpack);
+
     result.grade = gradeMyBag(backpack);
     result.passed = result.grade >= passingScore;
 
@@ -196,4 +305,19 @@ LevelResult Level::evaluateBackpack(const std::vector<Item*>& backpack) const
     result.requiredHydration = requiredHydration;
 
     return result;
+}
+
+double Level::calculateTotalSugar(const std::vector<Item*>& backpack) const
+{
+    double totalSugar = 0.0;
+
+    for (const Item* item : backpack)
+    {
+        if (item == nullptr)
+            continue;
+
+        totalSugar += item->getNutrition().sugar;
+    }
+
+    return totalSugar;
 }

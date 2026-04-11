@@ -12,11 +12,14 @@
  *          Brady Nelson, Lindsey Reese, Kent Wilkison
  * @date 4/7/2026
  */
+
 #ifndef ITEM_H
 #define ITEM_H
+#include "nutritionprofile.h"
 
 #include <QString>
 #include <map>
+#include "nutritionprofile.h"
 
 /**
  * @brief Base class representing an item that can be packed.
@@ -46,19 +49,24 @@ class Item {
         double getWeight() const;
 
         /**
+         * @brief Gets the nutrition profile associated with this item.
+         *
+         * Returns the NutritionProfile containing all gameplay-relevant
+         * values such as calories, hydration, sugar, caffeine, and alcohol.
+         * This information is used by the Level class to evaluate the
+         * effectiveness of the player's packed items.
+         *
+         * The returned reference is const to prevent modification of
+         * the item's internal nutrition data.
+         *
+         * @return A const reference to this item's NutritionProfile.
+         */
+        const NutritionProfile& getNutrition() const;
+
+        /**
          * @brief Gets a tool tip for this item
          *
          * A Tool-Tip is a short message detailing this item
-         * Example:
-         *
-         *      Banana:
-         *
-         * 105          Calories
-         * 0.5          Weight
-         *
-         * The potassium in a banana
-         * helps prevent muscle cramps
-         * and regulate fluid balance.
          *
          * @return A QString containing the tooltip text.
          */
@@ -68,31 +76,30 @@ class Item {
          * @brief Gets the stats of this item.
          *
          * Returns a structured output of this item's
-         * stats..
-         * Example:
-         *
-         * Calories               95
-         * Weight(lbs)           0.5
          *
          * @return a map containing the stat and its value.
          */
         virtual std::map<QString, double> getStats() const;
 
     protected:
-
         /**
          * @brief weight in pounds.
          *
          * The weight of this item in pounds (lbs).
          */
-        double weight = -1;
+        double weight;
 
         /**
          * @brief Description of this item.
          *
          * Points to the description text used for this item.
          */
-        const QString* description = nullptr;
+        QString description;
+
+        /**
+         * @brief Nutrition data for this item.
+         */
+        NutritionProfile nutrition;
 };
 
 #endif // ITEM_H

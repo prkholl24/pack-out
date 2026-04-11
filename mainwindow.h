@@ -31,6 +31,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "level.h"
+#include "player.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -136,9 +138,32 @@ private:
     DebriefView* debriefView;
 
     /**
+     * @brief The player object managing the current session's backpack.
+     */
+    Player player;
+
+    /**
+     * @brief Intro level focused mainly on hydration.
+     *
+     * This level is meant to teach the player to pack
+     * enough water for a short hike.
+     */
+    Level levelOne;
+
+    /**
+     * @brief Second level focused on both food and hydration.
+     *
+     * This level is meant to teach the player to pack
+     * enough calories and water for a longer outing.
+     */
+    Level levelTwo;
+
+    /**
      * @brief The current level being played.
      *
-     * Stores level data for use across views (brief, packing, debrief).
+     * Non-owning pointer into levelOne/levelTwo. The views read
+     * level data through this pointer so switching levels is a
+     * single reassignment.
      */
     Level* currentLevel;
 };

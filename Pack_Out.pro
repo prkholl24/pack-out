@@ -6,12 +6,13 @@ CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+# DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
     backpack.cpp \
     briefview.cpp \
     debriefview.cpp \
+    drinkitem.cpp \
     Box2D/Collision/Shapes/b2ChainShape.cpp \
     Box2D/Collision/Shapes/b2CircleShape.cpp \
     Box2D/Collision/Shapes/b2EdgeShape.cpp \
@@ -59,19 +60,19 @@ SOURCES += \
     Box2D/Dynamics/b2WorldCallbacks.cpp \
     Box2D/Rope/b2Rope.cpp \
     fooditem.cpp \
+    gearitem.cpp \
     item.cpp \
     level.cpp \
     levelreportbuilder.cpp \
     main.cpp \
     mainwindow.cpp \
-    nutritionprofile.cpp \
-    player.cpp \
-    wateritem.cpp
+    player.cpp
 
 HEADERS += \
     backpack.h \
     briefview.h \
     debriefview.h \
+    drinkitem.h \
     Box2D/Box2D.h \
     Box2D/Collision/Shapes/b2ChainShape.h \
     Box2D/Collision/Shapes/b2CircleShape.h \
@@ -120,6 +121,7 @@ HEADERS += \
     Box2D/Dynamics/b2WorldCallbacks.h \
     Box2D/Rope/b2Rope.h \
     fooditem.h \
+    gearitem.h \
     item.h \
     level.h \
     levelreportbuilder.h \
@@ -127,7 +129,7 @@ HEADERS += \
     mainwindow.h \
     nutritionprofile.h \
     player.h \
-    wateritem.h
+    tripconditions.h
 
 FORMS += \
     backpack.ui \
@@ -143,3 +145,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     Box2D/Box2DConfig.cmake \
     Box2D/CMakeLists.txt
+
+RESOURCES += \
+    resources.qrc

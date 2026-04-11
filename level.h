@@ -22,6 +22,7 @@
 #include <vector>
 #include "item.h"
 #include "levelresult.h"
+#include "tripconditions.h"
 
 /**
  * @brief Represents a single backpacking level.
@@ -47,8 +48,11 @@ public:
      * @param calories - The minimum calories required for the trip.
      * @param hydration - The minimum hydration required for the trip, in ounces.
      * @param duration - The duration of the trip in hours.
+     * @param terrain - The terrain type of the trip.
+     * @param adventure - The adventure type of the trip.
      */
-    Level(int calories, double hydration, int duration);
+    Level(int calories, double hydration, int duration,
+          TerrainType terrain, AdventureType adventure);
 
     /**
      * @brief Virtual destructor for Level.
@@ -75,6 +79,20 @@ public:
      * @return The trip duration in hours.
      */
     int getDuration() const;
+
+    /**
+     * @brief Gets the terrain type of this level.
+     *
+     * @return The terrain type.
+     */
+    TerrainType getTerrain() const;
+
+    /**
+     * @brief Gets the adventure type of this level.
+     *
+     * @return The adventure type.
+     */
+    AdventureType getAdventure() const;
 
     /**
      * @brief Gets the description of this level.
@@ -120,21 +138,16 @@ public:
     virtual QString getReport(const std::vector<Item*>& backpack) const;
 
 private:
+    /**
+     * @brief Evaluates the backpack and computes total stats.
+     *
+     * @param backpack The items being evaluated.
+     * @return The aggregated LevelResult.
+     */
+    LevelResult evaluateBackpack(const std::vector<Item*>& backpack) const;
 
     // ---------- Helper methods ----------
     // --- Data collection ---
-
-    /**
-     * @brief Helper method that calculates the total of a specific stat in the backpack.
-     *
-     * Iterates through all packed items and sums the value
-     * associated with the requested stat name.
-     *
-     * @param backpack - The collection of packed items being evaluated.
-     * @param statName - The stat to total.
-     * @return The total value for that stat.
-     */
-    double calculateTotalStat(const std::vector<Item*>& backpack, const QString& statName) const;
 
     /**
      * @brief Helper method that calculates the total calories in the backpack.
@@ -145,11 +158,26 @@ private:
     double calculateTotalCalories(const std::vector<Item*>& backpack) const;
 
     /**
+     * @brief Helper method that calculates the total caffeine in the backpack.
+     *
+     * @param backpack - The collection of packed items being evaluated.
+     * @return The total caffeine packed.
+     */
+    double calculateTotalCaffeine(const std::vector<Item*>& backpack) const;
+
+    /**
+     * @brief Helper method that calculates the total alcohol in the backpack.
+     *
+     * @param backpack - The collection of packed items being evaluated.
+     * @return The total alcohol packed.
+     */
+    double calculateTotalAlcohol(const std::vector<Item*>& backpack) const;
+
+    /**
      * @brief Helper method that calculates the effective hydration in the backpack.
      *
-     * Effective hydration is based on the drink types packed.
-     * Water counts fully, sports drinks count partially,
-     * and soda counts weakly.
+     * Effective hydration is computed using DrinkItem hydration multipliers
+     * and reduced by caffeine and alcohol penalties.
      *
      * @param backpack - The collection of packed items being evaluated.
      * @return The effective hydration packed in ounces.
@@ -157,18 +185,6 @@ private:
     double calculateEffectiveHydration(const std::vector<Item*>& backpack) const;
 
     // --- Scoring ---
-
-    /**
-     * @brief Helper method that calculates the energy portion of the grade.
-     *
-     * Computes the energy contribution to the overall score based on
-     * total calories, with an additional boost from caffeine.
-     *
-     * @param totalCalories The total calories packed.
-     * @param totalCaffeine The total caffeine contributing to energy.
-     * @return The energy contribution to the final score.
-     */
-    double calculateEnergyScore(double totalCalories, double totalCaffeine) const;
 
     /**
      * @brief Helper method that calculates the hydration portion of the grade.
@@ -180,22 +196,41 @@ private:
      */
     double calculateHydrationScore(double effectiveHydration) const;
 
-    // --- Evaluation ---
+    /**
+     * @brief Helper method that calculates the total sugar in the backpack.
+     *
+     * @param backpack - The collection of packed items being evaluated.
+     * @return The total sugar packed in grams.
+     */
+    double calculateTotalSugar(const std::vector<Item*>& backpack) const;
 
     /**
-     * @brief Evaluates the contents of a backpack for this level.
+     * @brief Helper method that calculates the total weight in the backpack.
      *
-     * Calculates total calories and effective hydration from the items
-     * in the backpack, then computes the overall grade and determines
-     * whether the level requirements are met.
-     *
-     * The results are returned in a LevelResult so they can be used
-     * to build a report elsewhere without exposing the grading logic.
-     *
-     * @param backpack The collection of packed items to evaluate.
-     * @return A LevelResult containing totals, grade, and pass/fail status.
+     * @param backpack - The collection of packed items being evaluated.
+     * @return The total weight packed in pounds.
      */
-    LevelResult evaluateBackpack(const std::vector<Item*>& backpack) const;
+    double calculateTotalWeight(const std::vector<Item*>& backpack) const;
+
+    /**
+     * @brief Helper method that checks if the backpack contains required gear.
+     *
+     * @param backpack - The collection of packed items being evaluated.
+     * @return True if all required gear items are present; otherwise false.
+     */
+    bool hasRequiredGear(const std::vector<Item*>& backpack) const;
+
+    /**
+     * @brief Helper method that calculates the energy portion of the grade.
+     *
+     * @param totalCalories - The total calories packed.
+     * @param totalCaffeine - The total caffeine contributing to energy.
+     * @param totalSugar - The total sugar contributing to energy.
+     * @param totalWeight - The total backpack weight in pounds.
+     * @return The energy contribution to the final score.
+     */
+    double calculateEnergyScore(double totalCalories, double totalCaffeine,
+                                double totalSugar, double totalWeight) const;
 
     // ---------- Member variables ----------
 
@@ -231,9 +266,17 @@ private:
     QString description;
 
     /**
+     * @brief The terrain type for this level.
+     */
+    TerrainType requiredTerrain = TerrainType::ALL;
+
+    /**
+     * @brief The adventure type for this level.
+     */
+    AdventureType requiredAdventure = AdventureType::ALL;
+
+    /**
      * @brief The minimum grade required to pass the level.
-     *
-     * A backpack must achieve at least this score to pass.
      */
     double passingScore;
 };
