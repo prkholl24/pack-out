@@ -203,3 +203,8 @@ bool Level::passesLevel(const std::vector<std::unique_ptr<Item>>& backpack, cons
 {
     return evaluateBackpack(backpack, player).passed;
 }
+
+void Level::setDescription(const QString& newDescription)
+{
+    requirements.description = newDescription;
+}

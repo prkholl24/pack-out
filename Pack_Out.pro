@@ -10,6 +10,9 @@ CONFIG += c++17
 
 SOURCES += \
     backpack.cpp \
+    briefview.cpp \
+    debriefview.cpp \
+    drinkitem.cpp \
     Box2D/Collision/Shapes/b2ChainShape.cpp \
     Box2D/Collision/Shapes/b2CircleShape.cpp \
     Box2D/Collision/Shapes/b2EdgeShape.cpp \
@@ -56,7 +59,6 @@ SOURCES += \
     Box2D/Dynamics/b2World.cpp \
     Box2D/Dynamics/b2WorldCallbacks.cpp \
     Box2D/Rope/b2Rope.cpp \
-    drinkitem.cpp \
     fooditem.cpp \
     gearitem.cpp \
     item.cpp \
@@ -73,6 +75,9 @@ SOURCES += \
 
 HEADERS += \
     backpack.h \
+    briefview.h \
+    debriefview.h \
+    drinkitem.h \
     Box2D/Box2D.h \
     Box2D/Collision/Shapes/b2ChainShape.h \
     Box2D/Collision/Shapes/b2CircleShape.h \
@@ -120,7 +125,6 @@ HEADERS += \
     Box2D/Dynamics/b2World.h \
     Box2D/Dynamics/b2WorldCallbacks.h \
     Box2D/Rope/b2Rope.h \
-    drinkitem.h \
     fooditem.h \
     gearitem.h \
     item.h \
@@ -139,6 +143,8 @@ HEADERS += \
 
 FORMS += \
     backpack.ui \
+    briefview.ui \
+    debriefview.ui \
     mainwindow.ui
 
 # Default rules for deployment.

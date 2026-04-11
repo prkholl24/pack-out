@@ -53,6 +53,12 @@ public:
     int getRequiredCalories() const { return requirements.customCalories; }
     QString getDescription() const { return requirements.description; }
 
+    /**
+     * @brief Sets the custom briefing description for this level.
+     * @param newDescription The custom level description to display.
+     */
+    void setDescription(const QString& newDescription);
+
 private:
     // --- Orchestration Phases ---
     

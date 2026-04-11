@@ -57,10 +57,8 @@ QString LevelReportBuilder::buildReport(const LevelResult& result)
     ensureContentLoaded();
     QString report = buildSummaryReport(result);
 
-    if (result.passed)
-        report += buildPassReport();
-    else
-        report += buildFailReport(result);
+    if (result.passed) report += "\n" + buildPassReport();
+    else report += "\n" + buildFailReport(result);
 
     report += "\n" + buildScienceTip(result);
     return report;
