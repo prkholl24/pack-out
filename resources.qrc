@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>DryCanyonTrail.png</file>
         <file>images/banana.png</file>
         <file>images/potato.png</file>
         <file>images/water_bottle.png</file>
