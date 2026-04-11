@@ -15,6 +15,22 @@
 #include "player.h"
 #include <algorithm>
 
+const double LBS_TO_KG = 0.453592;
+const double INCHES_TO_CM = 2.54;
+
+/**
+ * @brief Groups the constants used in the Mifflin-St Jeor BMR equation.
+ */
+struct BMRCoefficients {
+    double weightMult;
+    double heightMult;
+    double ageMult;
+    double offset;
+};
+
+const BMRCoefficients MALE_BMR   = { 10.0, 6.25, 5.0, 5.0 };
+const BMRCoefficients FEMALE_BMR = { 10.0, 6.25, 5.0, -161.0 };
+
 Player::Player()
 {
 }
@@ -22,6 +38,20 @@ Player::Player()
 Player::~Player()
 {
     clearBackpack();
+}
+
+double Player::calculateDailyBMR() const
+{
+    double weightKg = weightLbs * LBS_TO_KG;
+    double heightCm = heightInches * INCHES_TO_CM;
+
+    // Select the appropriate coefficients based on gender
+    const BMRCoefficients& coeffs = (gender == Gender::MALE) ? MALE_BMR : FEMALE_BMR;
+
+    return (coeffs.weightMult * weightKg) + 
+           (coeffs.heightMult * heightCm) - 
+           (coeffs.ageMult * age) + 
+           coeffs.offset;
 }
 
 void Player::addItem(Item* item)

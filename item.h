@@ -64,22 +64,26 @@ class Item {
         const NutritionProfile& getNutrition() const;
 
         /**
-         * @brief Gets a tool tip for this item
+         * @brief Gets the description of this item.
          *
-         * A Tool-Tip is a short message detailing this item
-         *
-         * @return A QString containing the tooltip text.
+         * @return A QString containing the description.
          */
-        QString getToolTip() const;
+        QString getDescription() const;
 
         /**
-         * @brief Gets the stats of this item.
-         *
-         * Returns a structured output of this item's
-         *
-         * @return a map containing the stat and its value.
+         * @brief Whether this item is a food item.
          */
-        virtual std::map<QString, double> getStats() const;
+        virtual bool isFood() const { return false; }
+
+        /**
+         * @brief Whether this item is a drink item.
+         */
+        virtual bool isDrink() const { return false; }
+
+        /**
+         * @brief Whether this item is a gear item.
+         */
+        virtual bool isGear() const { return false; }
 
     protected:
         /**

@@ -26,20 +26,6 @@ DrinkItem::DrinkItem(DrinkType drinkEnum)
     hydrationMultiplier = drinkStats.hydrationMultiplier;
 }
 
-std::map<QString, double> DrinkItem::getStats() const
-{
-    std::map<QString, double> output;
-
-    output["Alcohol"] = nutrition.alcohol;
-    output["Calories"] = nutrition.calories;
-    output["Caffeine(mg)"] = nutrition.caffeineMg;
-    output["Hydration(oz)"] = nutrition.hydrationOz;
-    output["Sugar(g)"] = nutrition.sugar;
-    output["Weight(lbs)"] = weight;
-
-    return output;
-}
-
 double DrinkItem::getEffectiveHydration() const
 {
     return nutrition.hydrationOz * hydrationMultiplier;

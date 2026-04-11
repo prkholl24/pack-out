@@ -32,27 +32,7 @@ const NutritionProfile& Item::getNutrition() const
     return nutrition;
 }
 
-QString Item::getToolTip() const
+QString Item::getDescription() const
 {
-    QString toolTipText;
-    std::map<QString, double> stats = getStats();
-
-    for (const auto& [name, value] : stats)
-    {
-        toolTipText += name + ": " + QString::number(value) + "\n";
-    }
-
-    if (!description.isEmpty())
-    {
-        toolTipText += "\n" + description;
-    }
-
-    return toolTipText;
-}
-
-std::map<QString, double> Item::getStats() const
-{
-    std::map<QString, double> stats;
-    stats["Weight(lbs)"] = weight;
-    return stats;
+    return description;
 }

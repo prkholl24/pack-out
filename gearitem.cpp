@@ -24,13 +24,6 @@ GearItem::GearItem(GearType gearEnum)
     terrainType = gearStats.terrain;
 }
 
-std::map<QString, double> GearItem::getStats() const
-{
-    std::map<QString, double> output;
-    output["Weight(lbs)"] = weight;
-    return output;
-}
-
 TerrainType GearItem::getTerrainType() const
 {
     return terrainType;

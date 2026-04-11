@@ -22,17 +22,3 @@ FoodItem::FoodItem(Food foodEnum)
     weight = foodStats.weight;
     description = foodStats.description;
 }
-
-std::map<QString, double> FoodItem::getStats() const
-{
-    std::map<QString, double> output;
-
-    output["Calories"] = nutrition.calories;
-    output["Carbs(g)"] = nutrition.carbs;
-    output["Fat(g)"] = nutrition.fat;
-    output["Protein(g)"] = nutrition.protein;
-    output["Sugar(g)"] = nutrition.sugar;
-    output["Weight(lbs)"] = weight;
-
-    return output;
-}

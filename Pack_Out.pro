@@ -13,6 +13,7 @@ SOURCES += \
     fooditem.cpp \
     gearitem.cpp \
     item.cpp \
+    itemreportbuilder.cpp \
     level.cpp \
     levelreportbuilder.cpp \
     main.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
     fooditem.h \
     gearitem.h \
     item.h \
+    itemreportbuilder.h \
     level.h \
     levelreportbuilder.h \
     levelresult.h \

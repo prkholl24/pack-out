@@ -112,12 +112,7 @@ public:
      */
     FoodItem(Food foodEnum);
 
-    /**
-     * @brief Gets the display stats for this food item.
-     *
-     * @return A map of food stat labels to values.
-     */
-    std::map<QString, double> getStats() const override;
+    virtual bool isFood() const override { return true; }
 };
 
 #endif // FOODITEM_H

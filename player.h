@@ -15,21 +15,29 @@
 
 #ifndef PLAYER_H
 #define PLAYER_H
-
 #include <vector>
+#include <QString>
 #include "item.h"
 
 /**
- * @brief Represents the player and their current state.
+ * @brief Enumerates biological gender for physiological calculations.
+ */
+enum class Gender {
+    MALE,
+    FEMALE
+};
+
+/**
+ * @brief Represents the player, their physical stats, and their backpack.
  *
- * The Player class owns the backpack and is responsible for
- * adding, removing, and managing the memory of the items packed.
+ * The Player class manages both the user's physical profile (used for 
+ * calorie calculations) and their backpack of items.
  */
 class Player
 {
 public:
     /**
-     * @brief Constructs a new Player object.
+     * @brief Constructs a new Player object with default physical stats.
      */
     Player();
 
@@ -38,8 +46,24 @@ public:
      */
     ~Player();
 
+    // --- Physical Profile ---
+    double weightLbs = 160.0;
+    double heightInches = 68.0;
+    int age = 25;
+    Gender gender = Gender::MALE;
+
+    /**
+     * @brief Calculates the daily Basal Metabolic Rate (BMR).
+     *
+     * @return Estimated daily calories burned at rest.
+     */
+    double calculateDailyBMR() const;
+
+    // --- Backpack Management ---
+
     /**
      * @brief Adds an item to the player's backpack.
+...
      *
      * The Player takes ownership of the item pointer.
      *

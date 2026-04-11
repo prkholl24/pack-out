@@ -57,6 +57,16 @@ struct NutritionProfile
     double sugar = 0.0;
 
     /**
+     * @brief Fiber content in grams. (Crucial for energy stability)
+     */
+    double fiber = 0.0;
+
+    /**
+     * @brief Sodium content in milligrams. (Affects hydration)
+     */
+    double sodium = 0.0;
+
+    /**
      * @brief Caffeine content in milligrams.
      */
     double caffeineMg = 0.0;

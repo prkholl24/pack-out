@@ -118,12 +118,7 @@ public:
      */
     DrinkItem(DrinkType drinkEnum);
 
-    /**
-     * @brief Gets the display stats for this drink item.
-     *
-     * @return A map of drink stat labels to values.
-     */
-    std::map<QString, double> getStats() const override;
+    virtual bool isDrink() const override { return true; }
 
     /**
      * @brief Gets the effective hydration provided by this drink.

@@ -19,6 +19,18 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    /**
+     * @brief Adds an item to the player's current backpack.
+     * @param item - The item to add.
+     */
+    void addPackItem(Item* item);
+
+    /**
+     * @brief Evaluates the current backpack against a trek.
+     * @param trekIndex - The index of the trek to evaluate.
+     */
+    void evaluateTrek(int trekIndex);
+
 private:
     Ui::MainWindow *ui;
 
@@ -28,19 +40,8 @@ private:
     Player player;
 
     /**
-     * @brief Intro level focused mainly on hydration.
-     *
-     * This level is meant to teach the player to pack
-     * enough water for a short hike.
+     * @brief The collection of Utah treks for the player to progress through.
      */
-    Level levelOne;
-
-    /**
-     * @brief Second level focused on both food and hydration.
-     *
-     * This level is meant to teach the player to pack
-     * enough calories and water for a longer outing.
-     */
-    Level levelTwo;
+    std::vector<Level> treks;
 };
 #endif // MAINWINDOW_H

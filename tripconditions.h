@@ -5,7 +5,9 @@ enum class WeatherType {
     COLD,
     HOT,
     RAINY,
-    WINDY
+    WINDY,
+    SNOW,
+    DEFAULT
 };
 
 enum class TerrainType {

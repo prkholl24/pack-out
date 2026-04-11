@@ -38,7 +38,10 @@ enum class GearType {
     SUNSCREEN,
     TENT,
     WATER_FILTER,
-    WHISTLE
+    WHISTLE,
+    COTTON_SHIRT,
+    WOOL_SHIRT,
+    CAST_IRON_SKILLET
 };
 
 /**
@@ -83,7 +86,10 @@ static const std::map<GearType, GearStats> GearRegistry = {
     { GearType::SUNSCREEN,   { 0.25, "Protects your skin from UV rays.", AdventureType::ALL, TerrainType::DESERT }},
     { GearType::TENT,         { 5.00, "A portable shelter for camping.", AdventureType::CAMPING, TerrainType::ALL }},
     { GearType::WATER_FILTER,{ 0.40, "Makes stream water safe to drink.", AdventureType::BACKPACKING, TerrainType::ALL }},
-    { GearType::WHISTLE,     { 0.05, "A simple signaling device for emergencies.", AdventureType::ALL, TerrainType::ALL }}
+    { GearType::WHISTLE,     { 0.05, "A simple signaling device for emergencies.", AdventureType::ALL, TerrainType::ALL }},
+    { GearType::COTTON_SHIRT, { 0.80, "A basic t-shirt. Comfortable until it gets wet.", AdventureType::ALL, TerrainType::ALL }},
+    { GearType::WOOL_SHIRT,   { 0.50, "Moisture-wicking and stays warm when wet. Essential for safety.", AdventureType::ALL, TerrainType::ALL }},
+    { GearType::CAST_IRON_SKILLET, { 8.00, "Great for cooking, but very heavy for the trail.", AdventureType::CAMPING, TerrainType::ALL }}
 };
 
 /**
@@ -99,12 +105,7 @@ public:
      */
     GearItem(GearType gearEnum);
 
-    /**
-     * @brief Gets the display stats for this gear item.
-     *
-     * @return A map of gear stat labels to values.
-     */
-    std::map<QString, double> getStats() const override;
+    virtual bool isGear() const override { return true; }
 
     /**
      * @brief Gets the terrain type associated with this gear.
