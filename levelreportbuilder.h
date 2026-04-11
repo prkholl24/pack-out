@@ -1,9 +1,6 @@
 /**
  * @file levelreportbuilder.h
  * @brief Contains the LevelReportBuilder class used to generate reports.
- *
- * Defines LevelReportBuilder, which is responsible for formatting
- * and generating user-facing reports based on LevelResult data.
  */
 
 #ifndef LEVELREPORTBUILDER_H
@@ -11,6 +8,7 @@
 
 #include <QString>
 #include <map>
+#include <QJsonObject>
 #include "levelresult.h"
 
 /**
@@ -22,40 +20,40 @@ struct LessonContent {
 };
 
 /**
- * @brief Builds a formatted report for a LevelResult.
+ * @brief Responsible for formatting evaluation results into a human-readable report.
+ * 
+ * Combines summary data, pass/fail narratives, and educational science tips.
  */
 class LevelReportBuilder
 {
 public:
     /**
      * @brief Builds the full report for a level result.
+     * @param result - The data container from the Level orchestrator.
+     * @return A formatted report string.
      */
     static QString buildReport(const LevelResult& result);
 
 private:
     /**
+     * @brief Ensures the lesson registry and feedback data are loaded from JSON.
+     */
+    static void ensureContentLoaded();
+
+    /**
      * @brief A registry mapping ScienceLesson codes to their educational content.
      */
-    static const std::map<ScienceLesson, LessonContent> LessonRegistry;
+    static std::map<ScienceLesson, LessonContent> lessonRegistry;
 
     /**
-     * @brief Builds the summary portion of the report.
+     * @brief Stores global feedback strings (intro, pass/fail narratives).
      */
+    static QJsonObject feedbackData;
+
+    // Report component builders
     static QString buildSummaryReport(const LevelResult& result);
-
-    /**
-     * @brief Builds the pass message.
-     */
     static QString buildPassReport();
-
-    /**
-     * @brief Builds the fail message.
-     */
     static QString buildFailReport(const LevelResult& result);
-
-    /**
-     * @brief Builds an educational science tip based on the lesson code.
-     */
     static QString buildScienceTip(const LevelResult& result);
 };
 

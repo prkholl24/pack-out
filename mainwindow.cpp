@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "levelreportbuilder.h"
+#include "trekregistry.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,17 +9,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Initialize Utah Treks
-    treks.push_back(Level("Angels Landing", -1, -1, 4, TerrainType::ROCKY, AdventureType::DAY_HIKE, WeatherType::HOT, 5.4, 1488.0));
-    treks.push_back(Level("The Narrows", -1, -1, 8, TerrainType::ROCKY, AdventureType::DAY_HIKE, WeatherType::RAINY, 9.4, 334.0));
-    treks.push_back(Level("Delicate Arch", -1, -1, 2, TerrainType::DESERT, AdventureType::DAY_HIKE, WeatherType::HOT, 3.0, 480.0));
-    treks.push_back(Level("Mount Timpanogos", -1, -1, 10, TerrainType::MOUNTAIN, AdventureType::DAY_HIKE, WeatherType::SNOW, 14.0, 4400.0));
-    treks.push_back(Level("Canyonlands Backpacking", -1, -1, 48, TerrainType::DESERT, AdventureType::BACKPACKING, WeatherType::WINDY, 25.0, 3000.0));
-    treks.push_back(Level("Lake Blanche", -1, -1, 5, TerrainType::FOREST, AdventureType::DAY_HIKE, WeatherType::COLD, 6.9, 2700.0));
-    treks.push_back(Level("Wall Street (Bryce)", -1, -1, 3, TerrainType::ROCKY, AdventureType::DAY_HIKE, WeatherType::HOT, 3.2, 600.0));
-    treks.push_back(Level("Grandview Point", -1, -1, 1, TerrainType::DESERT, AdventureType::DAY_HIKE, WeatherType::WINDY, 2.0, 160.0));
-    treks.push_back(Level("Uinta Camping", -1, -1, 24, TerrainType::FOREST, AdventureType::CAMPING, WeatherType::RAINY, 5.0, 1000.0));
-    treks.push_back(Level("Lone Peak", -1, -1, 12, TerrainType::MOUNTAIN, AdventureType::DAY_HIKE, WeatherType::COLD, 11.0, 5500.0));
+    // Initialize Utah Treks from external data
+    treks = TrekRegistry::loadTreks();
+
+    // Set up Signal/Slot connections for the Player Model
+    connect(&player, &Player::backpackChanged, this, &MainWindow::onBackpackChanged);
+    connect(&player, &Player::statsChanged, this, &MainWindow::onStatsChanged);
 }
 
 MainWindow::~MainWindow()
@@ -28,8 +24,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::addPackItem(Item* item)
 {
-    player.addItem(item);
-    // TODO: Update UI to show item in backpack
+    if (item) {
+        // MainWindow wraps raw pointer from UI into unique_ptr for Model
+        player.addItem(std::unique_ptr<Item>(item));
+    }
 }
 
 void MainWindow::evaluateTrek(int trekIndex)
@@ -40,5 +38,16 @@ void MainWindow::evaluateTrek(int trekIndex)
     LevelResult result = treks[trekIndex].evaluateBackpack(player.getBackpack(), player);
     QString report = LevelReportBuilder::buildReport(result);
 
-    // TODO: Update UI with report
+    // TODO: Display report in UI
+}
+
+void MainWindow::onBackpackChanged()
+{
+    // TODO: Refresh the backpack list widget
+}
+
+void MainWindow::onStatsChanged(double weight, double volume)
+{
+    // TODO: Update weight/volume progress bars or labels
+    // Example: ui->weightLabel->setText(QString::number(weight) + " lbs");
 }

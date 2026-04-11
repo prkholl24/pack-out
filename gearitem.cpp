@@ -1,15 +1,6 @@
 /**
  * @file gearitem.cpp
  * @brief Implementation of the GearItem class.
- *
- * Implements GearItem construction and stat display
- * using values pulled from the GearRegistry.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/9/2026
  */
 
 #include "gearitem.h"
@@ -19,9 +10,24 @@ GearItem::GearItem(GearType gearEnum)
     const GearStats& gearStats = GearRegistry.at(gearEnum);
 
     weight = gearStats.weight;
+    volumeLiters = gearStats.volume;
     description = gearStats.description;
     adventureType = gearStats.adventure;
     terrainType = gearStats.terrain;
+    category = gearStats.category;
+    wasteStorage = gearStats.isWasteStorage;
+    isCotton = gearStats.isCotton;
+    isPole = gearStats.isPole;
+}
+
+std::map<QString, double> GearItem::getStatMap() const
+{
+    return {}; // Gear currently has no specific numeric stats
+}
+
+GearCategory GearItem::getCategory() const
+{
+    return category;
 }
 
 TerrainType GearItem::getTerrainType() const

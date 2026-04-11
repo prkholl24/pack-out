@@ -41,55 +41,67 @@ enum class GearType {
     WHISTLE,
     COTTON_SHIRT,
     WOOL_SHIRT,
-    CAST_IRON_SKILLET
+    CAST_IRON_SKILLET,
+    TRASH_BAG,
+    ZIPLOC_BAG,
+    TREKKING_POLES
+};
+
+/**
+ * @brief Categorizes gear for "The 10 Essentials" and other logic.
+ */
+enum class GearCategory {
+    NAVIGATION,
+    ILLUMINATION,
+    SUN_PROTECTION,
+    FIRST_AID,
+    KNIFE_TOOL,
+    FIRE,
+    SHELTER,
+    INSULATION,
+    SAFETY,
+    OTHER
 };
 
 /**
  * @brief Stores the data used to construct one GearItem.
  */
 struct GearStats {
-    /**
-     * @brief Total weight of the item in pounds.
-     */
     double weight;
-
-    /**
-     * @brief Description used in the UI.
-     */
+    double volume;
     QString description;
-
-    /**
-     * @brief The adventure type this gear is best suited for.
-     */
     AdventureType adventure;
-
-    /**
-     * @brief The terrain type this gear is best suited for.
-     */
     TerrainType terrain;
+    GearCategory category;
+    bool isWasteStorage = false;
+    bool isCotton = false;
+    bool isPole = false;
 };
 
 /**
  * @brief Registry of all predefined gear items.
  */
 static const std::map<GearType, GearStats> GearRegistry = {
-    { GearType::BEAR_SPRAY,  { 0.75, "Essential for safety in bear country.", AdventureType::BACKPACKING, TerrainType::FOREST }},
-    { GearType::COMPASS,     { 0.10, "Helps you find your way when GPS fails.", AdventureType::ALL, TerrainType::ALL }},
-    { GearType::FIRESTARTER, { 0.15, "Helps you get a fire going in damp conditions.", AdventureType::CAMPING, TerrainType::ALL }},
-    { GearType::FIRST_AID_KIT, { 1.50, "Contains basic medical supplies for the trail.", AdventureType::ALL, TerrainType::ALL }},
-    { GearType::FLASHLIGHT,  { 0.50, "Provides light for night activities.", AdventureType::CAMPING, TerrainType::ALL }},
-    { GearType::HAT,         { 0.20, "Protects your head from the sun and cold.", AdventureType::ALL, TerrainType::ALL }},
-    { GearType::MATCHES,     { 0.05, "Simple, reliable way to start a fire.", AdventureType::CAMPING, TerrainType::ALL }},
-    { GearType::POCKET_KNIFE,{ 0.30, "A versatile tool for various tasks.", AdventureType::ALL, TerrainType::ALL }},
-    { GearType::RAIN_JACKET, { 0.80, "Keeps you dry during unexpected rain.", AdventureType::ALL, TerrainType::ALL }},
-    { GearType::SLEEPING_BAG,{ 3.00, "Provides warmth for overnight trips.", AdventureType::CAMPING, TerrainType::ALL }},
-    { GearType::SUNSCREEN,   { 0.25, "Protects your skin from UV rays.", AdventureType::ALL, TerrainType::DESERT }},
-    { GearType::TENT,         { 5.00, "A portable shelter for camping.", AdventureType::CAMPING, TerrainType::ALL }},
-    { GearType::WATER_FILTER,{ 0.40, "Makes stream water safe to drink.", AdventureType::BACKPACKING, TerrainType::ALL }},
-    { GearType::WHISTLE,     { 0.05, "A simple signaling device for emergencies.", AdventureType::ALL, TerrainType::ALL }},
-    { GearType::COTTON_SHIRT, { 0.80, "A basic t-shirt. Comfortable until it gets wet.", AdventureType::ALL, TerrainType::ALL }},
-    { GearType::WOOL_SHIRT,   { 0.50, "Moisture-wicking and stays warm when wet. Essential for safety.", AdventureType::ALL, TerrainType::ALL }},
-    { GearType::CAST_IRON_SKILLET, { 8.00, "Great for cooking, but very heavy for the trail.", AdventureType::CAMPING, TerrainType::ALL }}
+    { GearType::BEAR_SPRAY,  { 0.75, 0.5, "Essential for safety in bear country.", AdventureType::BACKPACKING, TerrainType::FOREST, GearCategory::SAFETY, false, false, false }},
+    { GearType::COMPASS,     { 0.10, 0.1, "Analog navigation tool that works without batteries.", AdventureType::ALL, TerrainType::ALL, GearCategory::NAVIGATION, false, false, false }},
+    { GearType::FIRESTARTER, { 0.15, 0.1, "Helps you get a fire going in damp conditions.", AdventureType::CAMPING, TerrainType::ALL, GearCategory::FIRE, false, false, false }},
+    { GearType::FIRST_AID_KIT, { 1.50, 1.0, "Contains basic medical supplies for the trail.", AdventureType::ALL, TerrainType::ALL, GearCategory::FIRST_AID, false, false, false }},
+    { GearType::FLASHLIGHT,  { 0.50, 0.3, "Provides light for night activities.", AdventureType::CAMPING, TerrainType::ALL, GearCategory::ILLUMINATION, false, false, false }},
+    { GearType::HAT,         { 0.20, 0.5, "Protects your head from the sun and cold.", AdventureType::ALL, TerrainType::ALL, GearCategory::SUN_PROTECTION, false, false, false }},
+    { GearType::MATCHES,     { 0.05, 0.1, "Simple, reliable way to start a fire.", AdventureType::CAMPING, TerrainType::ALL, GearCategory::FIRE, false, false, false }},
+    { GearType::POCKET_KNIFE,{ 0.30, 0.1, "A versatile tool for various tasks.", AdventureType::ALL, TerrainType::ALL, GearCategory::KNIFE_TOOL, false, false, false }},
+    { GearType::RAIN_JACKET, { 0.80, 1.5, "Keeps you dry during unexpected rain.", AdventureType::ALL, TerrainType::ALL, GearCategory::INSULATION, false, false, false }},
+    { GearType::SLEEPING_BAG,{ 3.00, 10.0, "Provides warmth for overnight trips.", AdventureType::CAMPING, TerrainType::ALL, GearCategory::SHELTER, false, false, false }},
+    { GearType::SUNSCREEN,   { 0.25, 0.2, "Protects your skin from UV rays. Essential even in snow.", AdventureType::ALL, TerrainType::ALL, GearCategory::SUN_PROTECTION, false, false, false }},
+    { GearType::TENT,         { 5.00, 15.0, "A portable shelter for camping.", AdventureType::CAMPING, TerrainType::ALL, GearCategory::SHELTER, false, false, false }},
+    { GearType::WATER_FILTER,{ 0.40, 0.5, "Makes stream water safe to drink.", AdventureType::BACKPACKING, TerrainType::ALL, GearCategory::SAFETY, false, false, false }},
+    { GearType::WHISTLE,     { 0.05, 0.1, "A simple signaling device for emergencies.", AdventureType::ALL, TerrainType::ALL, GearCategory::SAFETY, false, false, false }},
+    { GearType::COTTON_SHIRT, { 0.80, 1.0, "A basic t-shirt. Comfortable until it gets wet.", AdventureType::ALL, TerrainType::ALL, GearCategory::INSULATION, false, true, false }},
+    { GearType::WOOL_SHIRT,   { 0.50, 1.0, "Moisture-wicking and stays warm when wet. Essential for safety.", AdventureType::ALL, TerrainType::ALL, GearCategory::INSULATION, false, false, false }},
+    { GearType::CAST_IRON_SKILLET, { 8.00, 4.0, "Great for cooking, but very heavy for the trail.", AdventureType::CAMPING, TerrainType::ALL, GearCategory::OTHER, false, false, false }},
+    { GearType::TRASH_BAG,   { 0.10, 0.1, "A heavy-duty bag for packing out all trash and waste.", AdventureType::ALL, TerrainType::ALL, GearCategory::OTHER, true, false, false }},
+    { GearType::ZIPLOC_BAG,  { 0.01, 0.05, "A small sealable bag for snacks and small pieces of trash.", AdventureType::ALL, TerrainType::ALL, GearCategory::OTHER, true, false, false }},
+    { GearType::TREKKING_POLES, { 1.00, 1.0, "Reduces impact on knees and provides stability.", AdventureType::ALL, TerrainType::MOUNTAIN, GearCategory::OTHER, false, false, true }}
 };
 
 /**
@@ -100,12 +112,23 @@ class GearItem : public Item
 public:
     /**
      * @brief Constructs a GearItem from a GearType enum value.
-     *
      * @param gearEnum The gear type to construct.
      */
     GearItem(GearType gearEnum);
 
     virtual bool isGear() const override { return true; }
+    virtual bool isWasteStorage() const override { return wasteStorage; }
+    virtual bool isTrekkingPole() const override { return isPole; }
+
+    /**
+     * @brief Gear items currently have no additional numeric stats.
+     */
+    virtual std::map<QString, double> getStatMap() const override;
+
+    /**
+     * @brief Gets the category of this gear item for the 10 Essentials.
+     */
+    GearCategory getCategory() const;
 
     /**
      * @brief Gets the terrain type associated with this gear.
@@ -118,15 +141,11 @@ public:
     AdventureType getAdventureType() const;
 
 private:
-    /**
-     * @brief The terrain type for this gear item.
-     */
+    GearCategory category;
     TerrainType terrainType;
-
-    /**
-     * @brief The adventure type for this gear item.
-     */
     AdventureType adventureType;
+    bool wasteStorage;
+    bool isPole;
 };
 
 #endif // GEARITEM_H

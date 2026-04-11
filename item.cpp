@@ -18,6 +18,9 @@
 Item::Item()
 {
     weight = 0.0;
+    volumeLiters = 0.0;
+    producesWaste = false;
+    isCotton = false;
     description = "";
     nutrition = NutritionProfile{};
 }
@@ -27,12 +30,27 @@ double Item::getWeight() const
     return weight;
 }
 
-const NutritionProfile& Item::getNutrition() const
+double Item::getVolume() const
 {
-    return nutrition;
+    return volumeLiters;
+}
+
+bool Item::generatesWaste() const
+{
+    return producesWaste;
+}
+
+bool Item::isCottonMaterial() const
+{
+    return isCotton;
 }
 
 QString Item::getDescription() const
 {
     return description;
+}
+
+const NutritionProfile& Item::getNutrition() const
+{
+    return nutrition;
 }

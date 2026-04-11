@@ -1,16 +1,6 @@
 /**
  * @file drinkitem.cpp
  * @brief Implementation of the DrinkItem class.
- *
- * Implements DrinkItem construction, stat display,
- * and effective hydration calculation using values
- * pulled from the DrinkRegistry.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/9/2026
  */
 
 #include "drinkitem.h"
@@ -22,8 +12,22 @@ DrinkItem::DrinkItem(DrinkType drinkEnum)
 
     nutrition = drinkStats.nutrition;
     weight = drinkStats.weight;
+    volumeLiters = drinkStats.volume;
+    producesWaste = drinkStats.producesWaste;
     description = drinkStats.description;
     hydrationMultiplier = drinkStats.hydrationMultiplier;
+}
+
+std::map<QString, double> DrinkItem::getStatMap() const
+{
+    // Return programmatic IDs, not UI labels
+    std::map<QString, double> m = {
+        { "hydration", nutrition.hydrationOz },
+        { "calories", nutrition.calories }
+    };
+    if (nutrition.caffeineMg > 0) m["caffeine"] = nutrition.caffeineMg;
+    if (nutrition.alcohol > 0) m["alcohol"] = nutrition.alcohol;
+    return m;
 }
 
 double DrinkItem::getEffectiveHydration() const

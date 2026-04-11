@@ -18,7 +18,11 @@ SOURCES += \
     levelreportbuilder.cpp \
     main.cpp \
     mainwindow.cpp \
-    player.cpp
+    player.cpp \
+    trekregistry.cpp \
+    trekphysiology.cpp \
+    gearcheck.cpp \
+    trekrules.cpp
 
 HEADERS += \
     drinkitem.h \
@@ -32,7 +36,11 @@ HEADERS += \
     mainwindow.h \
     nutritionprofile.h \
     player.h \
-    tripconditions.h
+    tripconditions.h \
+    trekregistry.h \
+    trekphysiology.h \
+    gearcheck.h \
+    trekrules.h
 
 FORMS += \
     mainwindow.ui

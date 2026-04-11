@@ -1,21 +1,10 @@
 /**
  * @file item.h
- * @brief Base class for all packable items
- *
- * Defines the Item interface, which all items
- * (FoodItem, WaterItem, etc.) must implement. Each item
- * provides its stats through getStats().
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/7/2026
+ * @brief Base class for all packable items.
  */
 
 #ifndef ITEM_H
 #define ITEM_H
-#include "nutritionprofile.h"
 
 #include <QString>
 #include <map>
@@ -24,86 +13,75 @@
 /**
  * @brief Base class representing an item that can be packed.
  *
- * All derived item types must provide their stats
- * (e.g. calories, water, weight) through the getStats() method.
+ * All derived item types must provide their stats through getStatMap().
  */
 class Item {
-    public:
-        /**
-         * @brief Constructor for Item.
-         *
-         * Constructs a new Item and sets the weight.
-         */
-        Item();
+public:
+    /**
+     * @brief Constructs a new Item and sets default values.
+     */
+    Item();
 
-        /**
-         * @brief Virtual destructor for safe polymorphic cleanup.
-         */
-        virtual ~Item() = default;
+    /**
+     * @brief Virtual destructor for safe polymorphic cleanup.
+     */
+    virtual ~Item() = default;
 
-        /**
-         * @brief Gets the weight of this item.
-         *
-         * @return The weight of this item.
-         */
-        double getWeight() const;
+    // --- Physical Properties ---
 
-        /**
-         * @brief Gets the nutrition profile associated with this item.
-         *
-         * Returns the NutritionProfile containing all gameplay-relevant
-         * values such as calories, hydration, sugar, caffeine, and alcohol.
-         * This information is used by the Level class to evaluate the
-         * effectiveness of the player's packed items.
-         *
-         * The returned reference is const to prevent modification of
-         * the item's internal nutrition data.
-         *
-         * @return A const reference to this item's NutritionProfile.
-         */
-        const NutritionProfile& getNutrition() const;
+    /**
+     * @brief Gets the weight of this item in pounds.
+     */
+    double getWeight() const;
 
-        /**
-         * @brief Gets the description of this item.
-         *
-         * @return A QString containing the description.
-         */
-        QString getDescription() const;
+    /**
+     * @brief Gets the volume of this item in liters.
+     */
+    double getVolume() const;
 
-        /**
-         * @brief Whether this item is a food item.
-         */
-        virtual bool isFood() const { return false; }
+    /**
+     * @brief Whether this item produces waste (e.g. wrappers).
+     */
+    bool generatesWaste() const;
 
-        /**
-         * @brief Whether this item is a drink item.
-         */
-        virtual bool isDrink() const { return false; }
+    /**
+     * @brief Gets the narrative description of this item.
+     */
+    QString getDescription() const;
 
-        /**
-         * @brief Whether this item is a gear item.
-         */
-        virtual bool isGear() const { return false; }
+    // --- Gameplay Logic ---
 
-    protected:
-        /**
-         * @brief weight in pounds.
-         *
-         * The weight of this item in pounds (lbs).
-         */
-        double weight;
+    /**
+     * @brief Gets the nutrition profile associated with this item.
+     */
+    const NutritionProfile& getNutrition() const;
 
-        /**
-         * @brief Description of this item.
-         *
-         * Points to the description text used for this item.
-         */
-        QString description;
+    /**
+     * @brief Returns a map of numeric stats (programmatic IDs to values).
+     * @return A map used by the View layer for display.
+     */
+    virtual std::map<QString, double> getStatMap() const = 0;
 
-        /**
-         * @brief Nutrition data for this item.
-         */
-        NutritionProfile nutrition;
+    // --- Type & Material Checks ---
+
+    virtual bool isFood() const { return false; }
+    virtual bool isDrink() const { return false; }
+    virtual bool isGear() const { return false; }
+    virtual bool isWasteStorage() const { return false; }
+    virtual bool isTrekkingPole() const { return false; }
+
+    /**
+     * @brief Whether this item is cotton (safety hazard in rain/snow).
+     */
+    bool isCottonMaterial() const;
+
+protected:
+    double weight;
+    double volumeLiters;
+    bool producesWaste;
+    bool isCotton;
+    QString description;
+    NutritionProfile nutrition;
 };
 
 #endif // ITEM_H

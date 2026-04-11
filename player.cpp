@@ -1,15 +1,6 @@
 /**
  * @file player.cpp
  * @brief Implementation of the Player class.
- *
- * Implements the backpack management logic, including adding,
- * removing, and calculating total weight of packed items.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/9/2026
  */
 
 #include "player.h"
@@ -18,9 +9,6 @@
 const double LBS_TO_KG = 0.453592;
 const double INCHES_TO_CM = 2.54;
 
-/**
- * @brief Groups the constants used in the Mifflin-St Jeor BMR equation.
- */
 struct BMRCoefficients {
     double weightMult;
     double heightMult;
@@ -31,21 +19,52 @@ struct BMRCoefficients {
 const BMRCoefficients MALE_BMR   = { 10.0, 6.25, 5.0, 5.0 };
 const BMRCoefficients FEMALE_BMR = { 10.0, 6.25, 5.0, -161.0 };
 
-Player::Player()
+Player::Player(QObject *parent)
+    : QObject(parent), weightLbs(160.0), heightInches(68.0), age(25), gender(Gender::MALE),
+      maxVolumeCapacity(20.0), cachedTotalWeight(0.0), cachedTotalVolume(0.0)
 {
 }
 
 Player::~Player()
 {
-    clearBackpack();
+}
+
+// --- Physical Profile ---
+
+double Player::getWeightLbs() const { return weightLbs; }
+void Player::setWeightLbs(double weight) { 
+    if (weight > 0) {
+        weightLbs = weight; 
+        emit statsChanged(cachedTotalWeight, cachedTotalVolume);
+    }
+}
+
+double Player::getHeightInches() const { return heightInches; }
+void Player::setHeightInches(double height) { 
+    if (height > 0) {
+        heightInches = height; 
+        emit statsChanged(cachedTotalWeight, cachedTotalVolume);
+    }
+}
+
+int Player::getAge() const { return age; }
+void Player::setAge(int a) { 
+    if (a > 0 && a < 120) {
+        age = a; 
+        emit statsChanged(cachedTotalWeight, cachedTotalVolume);
+    }
+}
+
+Gender Player::getGender() const { return gender; }
+void Player::setGender(Gender g) { 
+    gender = g; 
+    emit statsChanged(cachedTotalWeight, cachedTotalVolume);
 }
 
 double Player::calculateDailyBMR() const
 {
     double weightKg = weightLbs * LBS_TO_KG;
     double heightCm = heightInches * INCHES_TO_CM;
-
-    // Select the appropriate coefficients based on gender
     const BMRCoefficients& coeffs = (gender == Gender::MALE) ? MALE_BMR : FEMALE_BMR;
 
     return (coeffs.weightMult * weightKg) + 
@@ -54,47 +73,55 @@ double Player::calculateDailyBMR() const
            coeffs.offset;
 }
 
-void Player::addItem(Item* item)
+// --- Backpack Management (Signals) ---
+
+void Player::addItem(std::unique_ptr<Item> item)
 {
-    if (item != nullptr)
+    if (item)
     {
-        backpack.push_back(item);
+        cachedTotalWeight += item->getWeight();
+        cachedTotalVolume += item->getVolume();
+        backpack.push_back(std::move(item));
+        
+        emit backpackChanged();
+        emit statsChanged(cachedTotalWeight, cachedTotalVolume);
     }
 }
 
 void Player::removeItem(Item* item)
 {
-    auto it = std::find(backpack.begin(), backpack.end(), item);
+    auto it = std::find_if(backpack.begin(), backpack.end(), 
+        [item](const std::unique_ptr<Item>& ptr) { return ptr.get() == item; });
+    
     if (it != backpack.end())
     {
-        delete *it;
+        cachedTotalWeight -= (*it)->getWeight();
+        cachedTotalVolume -= (*it)->getVolume();
         backpack.erase(it);
+        
+        emit backpackChanged();
+        emit statsChanged(cachedTotalWeight, cachedTotalVolume);
     }
 }
 
 void Player::clearBackpack()
 {
-    for (Item* item : backpack)
-    {
-        delete item;
-    }
     backpack.clear();
+    cachedTotalWeight = 0.0;
+    cachedTotalVolume = 0.0;
+    
+    emit backpackChanged();
+    emit statsChanged(cachedTotalWeight, cachedTotalVolume);
 }
 
-const std::vector<Item*>& Player::getBackpack() const
+const std::vector<std::unique_ptr<Item>>& Player::getBackpack() const
 {
     return backpack;
 }
 
-double Player::getTotalWeight() const
-{
-    double totalWeight = 0.0;
-    for (const Item* item : backpack)
-    {
-        if (item != nullptr)
-        {
-            totalWeight += item->getWeight();
-        }
-    }
-    return totalWeight;
-}
+// --- Accessors ---
+
+double Player::getTotalWeight() const { return cachedTotalWeight; }
+double Player::getTotalVolume() const { return cachedTotalVolume; }
+double Player::getMaxVolumeCapacity() const { return maxVolumeCapacity; }
+void Player::setMaxVolumeCapacity(double capacity) { if (capacity > 0) maxVolumeCapacity = capacity; }

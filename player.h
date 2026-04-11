@@ -1,21 +1,14 @@
 /**
  * @file player.h
  * @brief Header file for the Player class.
- *
- * Defines the Player class, which represents the user in the game.
- * The Player manages a backpack of items and provides access to
- * total calories, water, and weight based on its contents.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/7/2026
  */
 
 #ifndef PLAYER_H
 #define PLAYER_H
+
 #include <vector>
+#include <memory>
+#include <QObject>
 #include <QString>
 #include "item.h"
 
@@ -30,78 +23,99 @@ enum class Gender {
 /**
  * @brief Represents the player, their physical stats, and their backpack.
  *
- * The Player class manages both the user's physical profile (used for 
- * calorie calculations) and their backpack of items.
+ * Inherits from QObject to support Signal/Slot communication. Manages 
+ * ownership of items via unique_ptr and caches weight/volume for efficiency.
  */
-class Player
+class Player : public QObject
 {
+    Q_OBJECT
+
 public:
     /**
-     * @brief Constructs a new Player object with default physical stats.
+     * @brief Constructs a Player with default stats.
      */
-    Player();
-
-    /**
-     * @brief Destroys the Player object and clears the backpack.
-     */
+    explicit Player(QObject *parent = nullptr);
+    
     ~Player();
 
     // --- Physical Profile ---
-    double weightLbs = 160.0;
-    double heightInches = 68.0;
-    int age = 25;
-    Gender gender = Gender::MALE;
+    double getWeightLbs() const;
+    void setWeightLbs(double weight);
+
+    double getHeightInches() const;
+    void setHeightInches(double height);
+
+    int getAge() const;
+    void setAge(int age);
+
+    Gender getGender() const;
+    void setGender(Gender gender);
 
     /**
-     * @brief Calculates the daily Basal Metabolic Rate (BMR).
-     *
-     * @return Estimated daily calories burned at rest.
+     * @brief Calculates the daily Basal Metabolic Rate (BMR) using Mifflin-St Jeor.
+     * @return Calories burned per day at rest.
      */
     double calculateDailyBMR() const;
 
     // --- Backpack Management ---
-
+    
     /**
-     * @brief Adds an item to the player's backpack.
-...
-     *
-     * The Player takes ownership of the item pointer.
-     *
-     * @param item The item to add.
+     * @brief Adds an item and takes ownership.
      */
-    void addItem(Item* item);
-
+    void addItem(std::unique_ptr<Item> item);
+    
     /**
-     * @brief Removes a specific item from the backpack and deletes it.
-     *
-     * @param item The item pointer to remove.
+     * @brief Removes an item by raw pointer comparison.
      */
     void removeItem(Item* item);
-
+    
     /**
-     * @brief Clears all items from the backpack and deletes them.
+     * @brief Clears all items and resets ownership.
      */
     void clearBackpack();
 
     /**
-     * @brief Gets the current items in the backpack.
-     *
-     * @return A const reference to the vector of item pointers.
+     * @brief Returns a const reference to the backpack for evaluation.
      */
-    const std::vector<Item*>& getBackpack() const;
+    const std::vector<std::unique_ptr<Item>>& getBackpack() const;
 
+    // --- Accessors ---
+    
     /**
-     * @brief Calculates the total weight of all items in the backpack.
-     *
-     * @return The total weight in pounds.
+     * @brief Returns the O(1) cached total weight.
      */
     double getTotalWeight() const;
+    
+    /**
+     * @brief Returns the O(1) cached total volume.
+     */
+    double getTotalVolume() const;
+    
+    double getMaxVolumeCapacity() const;
+    void setMaxVolumeCapacity(double capacity);
+
+signals:
+    /**
+     * @brief Emitted whenever items are added or removed.
+     */
+    void backpackChanged();
+
+    /**
+     * @brief Emitted when any totals or stats change.
+     */
+    void statsChanged(double weight, double volume);
 
 private:
-    /**
-     * @brief The collection of items currently packed.
-     */
-    std::vector<Item*> backpack;
+    double weightLbs;
+    double heightInches;
+    int age;
+    Gender gender;
+
+    std::vector<std::unique_ptr<Item>> backpack;
+    double maxVolumeCapacity;
+
+    double cachedTotalWeight;
+    double cachedTotalVolume;
 };
 
 #endif // PLAYER_H

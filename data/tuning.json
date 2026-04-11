@@ -1,0 +1,58 @@
+{
+    "scoring": {
+        "energy_score_weight": 50.0,
+        "hydration_score_weight": 50.0,
+        "perfect_score": 100.0,
+        "normalization_factor": 2.0
+    },
+    "penalties": {
+        "missing_gear": 0.85,
+        "bulky_pack": 0.80,
+        "lnt_violation": 0.70,
+        "missing_essentials": 0.90,
+        "sugar_crash_factor": 0.5
+    },
+    "health_thresholds": {
+        "caffeine_warning_mg": 150.0,
+        "sugar_warning_grams": 50.0,
+        "sugar_penalty_threshold": 50.0,
+        "caffeine_hydration_penalty": 0.02,
+        "alcohol_hydration_penalty": 1.5,
+        "ideal_weight_lbs_per_hour": 2.0,
+        "starving_bmr_ratio_threshold": 0.4,
+        "load_penalty_display_threshold": 5.0
+    },
+    "physiology": {
+        "calories_per_mile_lb": 0.035,
+        "calories_per_vertical_lb": 0.005,
+        "hydration_oz_per_hour": 8.0,
+        "pack_weight_scaler": 0.15,
+        "elevation_gain_step": 100.0,
+        "steep_climb_threshold_feet": 1000.0,
+        "steep_climb_hydration_surge": 2.0,
+        "trekking_pole_bonus": 0.85,
+        "hours_in_day": 24.0
+    },
+    "terrain_multipliers": {
+        "DESERT":   {"energy": 1.2, "water": 2.0},
+        "MOUNTAIN": {"energy": 1.3, "water": 1.25},
+        "ROCKY":    {"energy": 1.3, "water": 1.25},
+        "FOREST":   {"energy": 1.1, "water": 1.05},
+        "ALL":      {"energy": 1.0, "water": 1.0}
+    },
+    "weather_multipliers": {
+        "HOT":     {"energy": 1.0, "water": 2.0},
+        "COLD":    {"energy": 1.2, "water": 0.8},
+        "SNOW":    {"energy": 1.4, "water": 0.9},
+        "WINDY":   {"energy": 1.1, "water": 1.1},
+        "RAINY":   {"energy": 1.1, "water": 1.2},
+        "DEFAULT": {"energy": 1.0, "water": 1.0}
+    },
+    "weather_keywords": {
+        "SNOW":  ["snow", "winter", "thermal"],
+        "WINDY": ["wind", "shell"],
+        "HOT":   ["sun", "vented"],
+        "COLD":  ["jacket", "wool"],
+        "RAINY": ["rain", "waterproof"]
+    }
+}

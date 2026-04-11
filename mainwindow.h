@@ -31,6 +31,17 @@ public:
      */
     void evaluateTrek(int trekIndex);
 
+private slots:
+    /**
+     * @brief Triggered when the player's backpack items change.
+     */
+    void onBackpackChanged();
+
+    /**
+     * @brief Triggered when the player's totals change.
+     */
+    void onStatsChanged(double weight, double volume);
+
 private:
     Ui::MainWindow *ui;
 

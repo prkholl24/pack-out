@@ -48,6 +48,16 @@ struct DrinkStats {
     double weight;
 
     /**
+     * @brief Volume of the drink item in liters.
+     */
+    double volume;
+
+    /**
+     * @brief Whether the drink item produces waste.
+     */
+    bool producesWaste;
+
+    /**
      * @brief Description used in the UI.
      */
     QString description;
@@ -66,37 +76,37 @@ struct DrinkStats {
 static const std::map<DrinkType, DrinkStats> DrinkRegistry = {
     { DrinkType::BEER, {
                           { 150.0, 12.0, 1.0, 13.0, 0.0, 1.0, 0.0, 5.0 },
-                          0.85,
+                          0.85, 0.4, true,
                           QString("Beer provides calories, but alcohol reduces hydration effectiveness."),
                           0.25
                       }},
     { DrinkType::ENERGY_DRINK, {
                                   { 10.0, 16.0, 0.0, 3.0, 0.0, 0.0, 160.0, 0.0 },
-                                  1.10,
+                                  1.10, 0.5, true,
                                   QString("An energy drink provides caffeine, but too much can hurt hydration."),
                                   0.60
                               }},
     { DrinkType::SODA, {
                           { 150.0, 12.0, 0.0, 39.0, 0.0, 39.0, 34.0, 0.0 },
-                          0.85,
+                          0.85, 0.4, true,
                           QString("Soda gives quick sugar and some fluid, but is not a strong hydration choice."),
                           0.25
                       }},
     { DrinkType::SPORTS_DRINK, {
                                   { 80.0, 20.0, 0.0, 21.0, 0.0, 21.0, 0.0, 0.0 },
-                                  1.45,
+                                  1.45, 0.6, true,
                                   QString("A sports drink provides fluid and quick carbohydrates."),
                                   0.80
                               }},
     { DrinkType::WATER_BOTTLE, {
                                   { 0.0, 32.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-                                  2.28,
+                                  2.28, 1.0, true,
                                   QString("A 32 oz water bottle. A basic hydration option that can be packed in the bag."),
                                   1.00
                               }},
     { DrinkType::WATER_CAMELBAK, {
                                     { 0.0, 64.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
-                                    4.67,
+                                    4.67, 2.0, false,
                                     QString("A 64 oz camelbak-style water reservoir for carrying more water."),
                                     1.00
                                 }}
@@ -119,6 +129,11 @@ public:
     DrinkItem(DrinkType drinkEnum);
 
     virtual bool isDrink() const override { return true; }
+
+    /**
+     * @brief Returns hydration and nutrition data keys and values.
+     */
+    virtual std::map<QString, double> getStatMap() const override;
 
     /**
      * @brief Gets the effective hydration provided by this drink.

@@ -4,31 +4,57 @@
  */
 
 #include "levelreportbuilder.h"
+#include "trekrules.h"
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QDebug>
 
-/**
- * @brief Registry initialization with educational content.
- */
-const std::map<ScienceLesson, LessonContent> LevelReportBuilder::LessonRegistry = {
-    { ScienceLesson::BMR_BASE_METABOLISM, 
-      { "Base Metabolism", "Your body burns calories just to keep your heart beating and brain running. Never forget to pack for your resting needs!" }},
-    { ScienceLesson::PANDOLF_WEIGHT_PENALTY, 
-      { "The Pandolf Penalty", "The Pandolf Equation shows that carrying a pack increases effort exponentially. A heavy pack can feel twice as heavy on steep terrain!" }},
-    { ScienceLesson::HYDRATION_DIURETICS, 
-      { "Hydration Interference", "Diuretics like caffeine and alcohol tell your kidneys to release water. They can effectively 'cancel out' your hydration!" }},
-    { ScienceLesson::COTTON_CLOTHING_WARNING, 
-      { "Cotton Kills", "Cotton absorbs water and loses all insulation value when wet. In rain or snow, it leads to hypothermia. Choose Wool or Synthetic!" }},
-    { ScienceLesson::FIBER_ENERGY_STABILITY, 
-      { "Energy Stability", "High sugar without fiber causes insulin crashes. According to NutritionFacts.org, fiber-rich whole foods provide the most stable fuel." }},
-    { ScienceLesson::SODIUM_HYDRATION_LOAD, 
-      { "The Salt Trap", "Excessive sodium (>2300mg) increases thirst and strains kidneys. Choose lower-sodium whole foods for optimal hydration." }},
-    { ScienceLesson::WHOLE_FOOD_FUEL, 
-      { "Whole Food Power", "Minimally processed plant foods are nutrient-dense and high in antioxidants, helping your muscles recover faster from the trail!" }},
-    { ScienceLesson::PACK_WEIGHT_RATIO, 
-      { "The 20% Rule", "Try to keep your total pack weight under 20% of your body weight. This reduces the mechanical strain on your joints." }}
-};
+// Initialize static members
+std::map<ScienceLesson, LessonContent> LevelReportBuilder::lessonRegistry;
+QJsonObject LevelReportBuilder::feedbackData;
+
+void LevelReportBuilder::ensureContentLoaded()
+{
+    if (!lessonRegistry.empty()) return;
+
+    // 1. Load Lessons from JSON
+    static const std::map<QString, ScienceLesson> keyToEnum = {
+        { "BMR_BASE_METABOLISM",      ScienceLesson::BMR_BASE_METABOLISM },
+        { "PANDOLF_WEIGHT_PENALTY",   ScienceLesson::PANDOLF_WEIGHT_PENALTY },
+        { "HYDRATION_DIURETICS",      ScienceLesson::HYDRATION_DIURETICS },
+        { "COTTON_CLOTHING_WARNING",  ScienceLesson::COTTON_CLOTHING_WARNING },
+        { "FIBER_ENERGY_STABILITY",   ScienceLesson::FIBER_ENERGY_STABILITY },
+        { "SODIUM_HYDRATION_LOAD",    ScienceLesson::SODIUM_HYDRATION_LOAD },
+        { "WHOLE_FOOD_FUEL",          ScienceLesson::WHOLE_FOOD_FUEL },
+        { "PACK_WEIGHT_RATIO",        ScienceLesson::PACK_WEIGHT_RATIO },
+        { "LEAVE_NO_TRACE_VIOLATION", ScienceLesson::LEAVE_NO_TRACE_VIOLATION },
+        { "VOLUME_OVERFLOW",          ScienceLesson::VOLUME_OVERFLOW },
+        { "TEN_ESSENTIALS_MISSING",   ScienceLesson::TEN_ESSENTIALS_MISSING }
+    };
+
+    QFile lessonFile(":/data/lessons.json");
+    if (lessonFile.open(QIODevice::ReadOnly)) {
+        QJsonObject root = QJsonDocument::fromJson(lessonFile.readAll()).object();
+        for (auto it = keyToEnum.begin(); it != keyToEnum.end(); ++it) {
+            if (root.contains(it->first)) {
+                QJsonObject obj = root.value(it->first).toObject();
+                lessonRegistry[it->second] = { obj.value("title").toString(), obj.value("body").toString() };
+            }
+        }
+    }
+
+    // 2. Load Feedback Narratives from JSON
+    QFile feedbackFile(":/data/feedback.json");
+    if (feedbackFile.open(QIODevice::ReadOnly)) {
+        feedbackData = QJsonDocument::fromJson(feedbackFile.readAll()).object();
+    }
+}
 
 QString LevelReportBuilder::buildReport(const LevelResult& result)
 {
+    ensureContentLoaded();
     QString report = buildSummaryReport(result);
 
     if (result.passed)
@@ -37,14 +63,13 @@ QString LevelReportBuilder::buildReport(const LevelResult& result)
         report += buildFailReport(result);
 
     report += "\n" + buildScienceTip(result);
-
     return report;
 }
 
 QString LevelReportBuilder::buildScienceTip(const LevelResult& result)
 {
-    auto it = LessonRegistry.find(result.lessonCode);
-    if (it == LessonRegistry.end())
+    auto it = lessonRegistry.find(result.lessonCode);
+    if (it == lessonRegistry.end())
         return "💡 **Science Tip:** Proper preparation is the key to every successful trek!";
 
     return "💡 **Science Tip: " + it->second.title + "**\n" + it->second.body;
@@ -56,18 +81,20 @@ QString LevelReportBuilder::buildSummaryReport(const LevelResult& result)
     report += "Backpack Report\n";
     report += "Grade: " + QString::number(result.grade, 'f', 1) + "/100\n";
     report += "Weight: " + QString::number(result.totalWeight, 'f', 1) + " lbs\n";
+    report += "Volume: " + QString::number(result.totalVolume, 'f', 1) + " / " + QString::number(result.maxVolume, 'f', 1) + " L\n";
     report += "Calories packed: " + QString::number(result.totalCalories, 'f', 0) + "\n";
     report += "Hydration packed: " + QString::number(result.effectiveHydration, 'f', 1) + " oz\n\n";
 
     report += "Trip Science (Energy Expenditure):\n";
-    report += "- Base Metabolism: " + QString::number(result.bmrCost, 'f', 0) + " kcal\n";
-    report += "- Distance Burn: " + QString::number(result.horizontalBurn, 'f', 0) + " kcal\n";
-    report += "- Elevation Burn: " + QString::number(result.verticalBurn, 'f', 0) + " kcal\n";
-    if (result.packWeightPenalty > 5.0) {
-        report += "- Pack Load Penalty: " + QString::number(result.packWeightPenalty, 'f', 0) + " kcal\n";
+    report += "- Base Metabolism: " + QString::number(result.bmrBurn, 'f', 0) + " kcal\n";
+    report += "- Distance Burn: " + QString::number(result.distanceBurn, 'f', 0) + " kcal\n";
+    report += "- Elevation Burn: " + QString::number(result.climbBurn, 'f', 0) + " kcal\n";
+    
+    double threshold = TrekRules::get("health_thresholds", "load_penalty_display_threshold");
+    if (result.loadPenalty > threshold) {
+        report += "- Pack Load Penalty: " + QString::number(result.loadPenalty, 'f', 0) + " kcal\n";
     }
     report += "**Total Need: " + QString::number(result.requiredCalories) + " kcal**\n";
-    
     return report;
 }
 
@@ -75,29 +102,42 @@ QString LevelReportBuilder::buildPassReport()
 {
     QString report;
     report += "Trip Outcome: Victory\n";
-    report += "The sun sets behind the ridge as you reach your final camp. Because you packed well, your energy levels stayed high throughout the climb. You successfully completed the trek and learned how your body handles the trail!\n";
+    report += feedbackData.value("pass_body").toString() + "\n";
     return report;
 }
 
 QString LevelReportBuilder::buildFailReport(const LevelResult& result)
 {
+    // Mapping from Model Enums to JSON Feedback Keys
+    static const std::map<TripCondition, QString> conditionToKey = {
+        { TripCondition::STARVING,           "starving" },
+        { TripCondition::DEHYDRATED,         "dehydrated" },
+        { TripCondition::TOO_HEAVY,          "too_heavy" },
+        { TripCondition::TOO_BULKY,          "too_bulky" },
+        { TripCondition::HIGH_CAFFEINE,      "high_caffeine" },
+        { TripCondition::HIGH_SUGAR,         "high_sugar" },
+        { TripCondition::ALCOHOL_PENALTY,    "alcohol_penalty" },
+        { TripCondition::MISSING_GEAR,       "missing_gear" },
+        { TripCondition::MISSING_ESSENTIALS, "missing_essentials" },
+        { TripCondition::LNT_VIOLATION,      "lnt_violation" }
+    };
+
     QString report;
     report += "Trip Outcome: Exhaustion\n";
-    report += "As the trail got steeper, the reality of your planning set in. ";
+    report += feedbackData.value("fail_intro").toString();
 
-    if (result.isStarving)
-        report += "Without enough calories, your muscles began to fatigue halfway through the distance. ";
+    QJsonObject scenarios = feedbackData.value("failure_scenarios").toObject();
+    
+    // Iterate through conditions identified by the Model
+    for (TripCondition condition : result.conditions) {
+        if (conditionToKey.count(condition)) {
+            QString jsonKey = conditionToKey.at(condition);
+            if (scenarios.contains(jsonKey)) {
+                report += scenarios.value(jsonKey).toString();
+            }
+        }
+    }
 
-    if (result.isDehydrated)
-        report += "Severe dehydration left you feeling lightheaded and unable to focus on the terrain. ";
-
-    if (result.hasMissingGear)
-        report += "Missing critical safety gear forced you to turn back before things got dangerous. ";
-
-    if (result.isTooHeavy)
-        report += "The excessive weight of your pack made every step a struggle, quickly draining your reserves. ";
-
-    report += "\n\nYou were forced to call off the trip. Use the 'Trip Science' breakdown below to improve your pack for the next attempt.\n";
-
+    report += feedbackData.value("fail_footer").toString();
     return report;
 }
