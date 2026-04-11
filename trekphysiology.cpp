@@ -1,6 +1,6 @@
 /**
  * @file trekphysiology.cpp
- * @brief Implementation of the physiological engine.
+ * @brief Implementation of the physiological logic.
  */
 
 #include "trekphysiology.h"
@@ -33,7 +33,7 @@ void TrekPhysiology::computeRequirements(LevelResult& result,
     double elevationStep = TrekRules::get("physiology", "elevation_gain_step");
     double scaler = TrekRules::get("physiology", "pack_weight_scaler");
     double intensity = req.miles + (req.elevationGain / elevationStep);
-    result.loadPenalty = result.totalWeight * intensity * scaler;
+    result.loadPenalty = result.totals.weightLbs * intensity * scaler;
 
     // Final Requirement Sum
     double totalCals = result.bmrBurn + result.distanceBurn + result.climbBurn + result.loadPenalty;

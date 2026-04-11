@@ -1,6 +1,6 @@
 /**
  * @file model_test.cpp
- * @brief Unit tests for the backpacking model and evaluation engine.
+ * @brief Unit tests for the backpacking model and evaluation logic.
  */
 
 #include <iostream>

@@ -1,6 +1,6 @@
 /**
  * @file trekphysiology.h
- * @brief Pure math engine for backpacking physiological calculations.
+ * @brief Pure math module for backpacking physiological calculations.
  */
 
 #ifndef TREKPHYSIOLOGY_H

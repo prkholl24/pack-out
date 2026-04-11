@@ -39,7 +39,7 @@ namespace {
  * @brief Identifies every type of Box2D body in the scene.
  *
  * Box2D bodies carry a single `void* userData` pointer that the
- * engine ignores but the application can use for any purpose.  We
+ * logic ignores but the application can use for any purpose.  We
  * cast BodyKind enum values to `void*` and store them with
  * `body->SetUserData(tagFor(kind))`.  Later, `kindOf(body)` casts
  * back.  This is the standard Box2D body-identification pattern.

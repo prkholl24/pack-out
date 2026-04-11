@@ -7,7 +7,7 @@
 #define LEVELRESULT_H
 
 #include <vector>
-#include <QString>
+#include "nutritionprofile.h"
 
 /**
  * @brief ScienceLesson codes used to trigger specific educational feedback.
@@ -72,37 +72,26 @@ struct LevelResult
     double grade = 0.0;              // Overall score (0-100)
     bool passed = false;             // Did the player meet the passing score?
 
-    // Combined Totals
-    double totalCalories = 0.0;      
-    double effectiveHydration = 0.0; 
-    double totalCaffeine = 0.0;
-    double totalSugar = 0.0;
-    double totalAlcohol = 0.0;
-    double totalWeight = 0.0;
-    double totalVolume = 0.0;
-    double totalWaste = 0.0;
-    double totalFiber = 0.0;
-    double totalSodium = 0.0;
+    // Model Data State
+    BackpackTotals totals;           // Raw sums from the backpack
+    double maxVolume = 0.0;          // Backpack capacity limit
+    double idealWeight = 0.0;        // Target weight for this trip
 
-    // Energy Expenditure Breakdown
+    // Energy Expenditure Breakdown (Math results)
     double bmrBurn = 0.0;            
     double distanceBurn = 0.0;       
     double climbBurn = 0.0;          
     double loadPenalty = 0.0;        
-
-    double idealWeight = 0.0;        
-    double maxVolume = 0.0;          
 
     /**
      * @brief List of specific conditions identified during evaluation.
      */
     std::vector<TripCondition> conditions;
 
-    // Logic Flags
+    // High-level Logic Flags
     bool hasMissingGear = false;
     bool missingEssentials = false;
     bool hasCottonWarning = false;
-    bool hasWasteStorage = false;
     bool leftTrashBehind = false;
 
     ScienceLesson lessonCode = ScienceLesson::NONE;

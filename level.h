@@ -14,9 +14,6 @@
 #include "tripconditions.h"
 #include "player.h"
 
-/**
- * @brief Identifies specific scoring penalty types.
- */
 enum class PenaltyType {
     MISSING_GEAR,
     BULKY_PACK,
@@ -60,10 +57,9 @@ private:
     // --- Orchestration Phases ---
     
     BackpackTotals gatherBackpackTotals(const std::vector<std::unique_ptr<Item>>& backpack) const;
-    void mapTotalsToResult(LevelResult& result, const BackpackTotals& totals, const Player& player) const;
-    void applyEvaluationScoring(LevelResult& result, const BackpackTotals& totals) const;
+    void applyEvaluationScoring(LevelResult& result) const;
     void applyEvaluationPenalties(LevelResult& result) const;
-    void generateStatusTags(LevelResult& result) const;
+    void generateStatusConditions(LevelResult& result) const;
     ScienceLesson determineScienceLesson(const LevelResult& result) const;
 
     // --- Internal Logic Helpers ---

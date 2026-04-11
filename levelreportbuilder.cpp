@@ -80,10 +80,10 @@ QString LevelReportBuilder::buildSummaryReport(const LevelResult& result)
     QString report;
     report += "Backpack Report\n";
     report += "Grade: " + QString::number(result.grade, 'f', 1) + "/100\n";
-    report += "Weight: " + QString::number(result.totalWeight, 'f', 1) + " lbs\n";
-    report += "Volume: " + QString::number(result.totalVolume, 'f', 1) + " / " + QString::number(result.maxVolume, 'f', 1) + " L\n";
-    report += "Calories packed: " + QString::number(result.totalCalories, 'f', 0) + "\n";
-    report += "Hydration packed: " + QString::number(result.effectiveHydration, 'f', 1) + " oz\n\n";
+    report += "Weight: " + QString::number(result.totals.weightLbs, 'f', 1) + " lbs\n";
+    report += "Volume: " + QString::number(result.totals.volume, 'f', 1) + " / " + QString::number(result.maxVolume, 'f', 1) + " L\n";
+    report += "Calories packed: " + QString::number(result.totals.calories, 'f', 0) + "\n";
+    report += "Hydration packed: " + QString::number(result.totals.effectiveHydration, 'f', 1) + " oz\n\n";
 
     report += "Trip Science (Energy Expenditure):\n";
     report += "- Base Metabolism: " + QString::number(result.bmrBurn, 'f', 0) + " kcal\n";

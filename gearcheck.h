@@ -1,6 +1,6 @@
 /**
  * @file gearcheck.h
- * @brief Safety engine responsible for validating gear requirements.
+ * @brief Safety logic responsible for validating gear requirements.
  */
 
 #ifndef GEARCHECK_H
@@ -14,7 +14,7 @@
 #include "tripconditions.h"
 
 /**
- * @brief Specialized engine that validates backpack safety and completeness.
+ * @brief Specialized logic that validates backpack safety and completeness.
  * 
  * Checks for mandatory terrain gear, weather gear, and the 10 essentials standard.
  */
