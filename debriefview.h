@@ -16,16 +16,13 @@
 #define DEBRIEFVIEW_H
 
 #include <QWidget>
-#include <vector>
+#include "levelresult.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class DebriefView;
 }
 QT_END_NAMESPACE
-
-struct LevelResult;
-class Item;
 
 /**
  * @class DebriefView
@@ -62,9 +59,8 @@ public:
      * a feedback report using LevelReportBuilder.
      *
      * @param result The evaluation results from the level.
-     * @param packedItems The items the player packed (for report generation).
      */
-    void setResults(const LevelResult& result, const std::vector<Item*>& packedItems);
+    void setResults(const LevelResult& result);
 
 signals:
     /**

@@ -102,6 +102,16 @@ public:
     QString getDescription() const;
 
     /**
+     * @brief Sets the custom briefing description for this level.
+     *
+     * When populated, the brief screen should prefer this authored text
+     * over any synthesized fallback copy.
+     *
+     * @param newDescription The custom level description to display.
+     */
+    void setDescription(const QString& newDescription);
+
+    /**
      * @brief Grades the preparedness of the backpack.
      *
      * Evaluates the contents of the backpack and assigns
@@ -124,6 +134,18 @@ public:
      * @return True if the backpack passes the level; otherwise false.
      */
     virtual bool passesLevel(const std::vector<Item*>& backpack) const;
+
+    /**
+     * @brief Evaluates the backpack and returns the full scoring data.
+     *
+     * This is the black-box scoring API for the view/controller layer.
+     * It exposes the final results needed by the debrief screen without
+     * leaking the grading logic itself into UI code.
+     *
+     * @param backpack The collection of packed items being evaluated.
+     * @return The aggregated LevelResult for this attempt.
+     */
+    LevelResult evaluate(const std::vector<Item*>& backpack) const;
 
     /**
      * @brief Generates written feedback about the backpack.

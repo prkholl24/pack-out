@@ -18,17 +18,36 @@
 #include "backpack.h"
 #include "briefview.h"
 #include "debriefview.h"
+#include "drinkitem.h"
+#include "fooditem.h"
 #include "level.h"
-#include "levelresult.h"
 
 #include <QMenuBar>
 #include <QStackedWidget>
 #include <QStatusBar>
 
+namespace {
+
+Item* createPackedItemFromSceneName(const QString& itemName)
+{
+    if (itemName == QStringLiteral("BANANA"))
+        return new FoodItem(Food::BANANA);
+
+    if (itemName == QStringLiteral("POTATO"))
+        return new FoodItem(Food::POTATO);
+
+    if (itemName == QStringLiteral("BOTTLE"))
+        return new DrinkItem(DrinkType::WATER_BOTTLE);
+
+    return nullptr;
+}
+
+} // namespace
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , levelOne(0, 32.0, 2, TerrainType::FOREST, AdventureType::DAY_HIKE)
+    , levelOne(0, 32.0, 2, TerrainType::ALL, AdventureType::ALL)
     , levelTwo(1200, 64.0, 8, TerrainType::MOUNTAIN, AdventureType::BACKPACKING)
     , currentLevel(nullptr)
 {
@@ -59,6 +78,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Start on level one. currentLevel is a non-owning pointer into
     // the levelOne/levelTwo members, so no delete is needed.
+    levelOne.setDescription(
+        "Welcome to PACK OUT!\n\n"
+        "Your first trip is a short two-hour hike. It should be manageable, "
+        "but only if you bring enough to stay hydrated while you are out on the trail.\n\n"
+        "Pack what you think you need and see if your bag can get you through it!"
+    );
+    levelTwo.setDescription(
+        "The next trip is longer, steeper, and much less forgiving.\n\n"
+        "You are heading into the mountains for an extended backpacking trek. "
+        "This time, both food and water matter, and a weak packout can leave you in real trouble.\n\n"
+        "Think carefully about what you bring. Weight still matters, but so does being prepared for the terrain."
+    );
+
     currentLevel = &levelOne;
 
     // Initialize the brief view with the current level and start there.
@@ -69,10 +101,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(briefView, &BriefView::startPackingClicked,
             this, &MainWindow::showBackpackScene);
 
-    // When the packing scene completes (player clicked Cinch & Go
-    // and the button exited the screen), transition to the debrief.
-    connect(backpackScene, &BackpackScene::levelHasStarted,
-            this, &MainWindow::showDebriefView);
+    connectBackpackSceneSignals();
 
     // Connect DebriefView navigation signals.
     connect(debriefView, &DebriefView::retryLevelClicked, this, [this]() {
@@ -81,8 +110,7 @@ MainWindow::MainWindow(QWidget *parent)
         showBriefView();
     });
     connect(debriefView, &DebriefView::nextLevelClicked, this, [this]() {
-        // Next level: for now, just reload the same level.
-        // Future: advance to next level in sequence.
+        advanceToNextLevel();
         briefView->setLevel(*currentLevel);
         showBriefView();
     });
@@ -105,21 +133,79 @@ void MainWindow::showBriefView()
 
 void MainWindow::showBackpackScene()
 {
+    rebuildBackpackScene();
+    resetAttemptState();
     sceneStack->setCurrentWidget(backpackScene);
 }
 
 void MainWindow::showDebriefView()
 {
-    // Create a result from the current level.
-    // For now, use placeholder packed items (empty vector).
-    // Future: get actual packed items from BackpackScene.
-    std::vector<Item*> packedItems;
-    LevelResult result;
-    result.grade = currentLevel->gradeMyBag(packedItems);
-    result.passed = currentLevel->passesLevel(packedItems);
-    result.requiredCalories = currentLevel->getRequiredCalories();
-    result.requiredHydration = currentLevel->getRequiredHydration();
+    const std::vector<Item*>& packedItems = player.getBackpack();
+    const LevelResult result = currentLevel->evaluate(packedItems);
 
-    debriefView->setResults(result, packedItems);
+    debriefView->setResults(result);
     sceneStack->setCurrentWidget(debriefView);
+}
+
+void MainWindow::handlePackedItemAdded(const QString& itemName)
+{
+    Item* item = createPackedItemFromSceneName(itemName);
+
+    if (item == nullptr)
+        return;
+
+    player.addItem(item);
+    packedItemsByName[itemName].push_back(item);
+}
+
+void MainWindow::handlePackedItemRemoved(const QString& itemName)
+{
+    auto found = packedItemsByName.find(itemName);
+
+    if (found == packedItemsByName.end() || found->second.empty())
+        return;
+
+    Item* item = found->second.back();
+    found->second.pop_back();
+    player.removeItem(item);
+
+    if (found->second.empty())
+        packedItemsByName.erase(found);
+}
+
+void MainWindow::connectBackpackSceneSignals()
+{
+    connect(backpackScene, &BackpackScene::levelHasStarted,
+            this, &MainWindow::showDebriefView);
+    connect(backpackScene, &BackpackScene::itemAddedToBag,
+            this, &MainWindow::handlePackedItemAdded);
+    connect(backpackScene, &BackpackScene::itemRemovedFromBag,
+            this, &MainWindow::handlePackedItemRemoved);
+}
+
+void MainWindow::rebuildBackpackScene()
+{
+    const int backpackSceneIndex = sceneStack->indexOf(backpackScene);
+
+    if (backpackSceneIndex >= 0)
+    {
+        sceneStack->removeWidget(backpackScene);
+        backpackScene->deleteLater();
+    }
+
+    backpackScene = new BackpackScene(this);
+    sceneStack->insertWidget(backpackSceneIndex >= 0 ? backpackSceneIndex : 1, backpackScene);
+    connectBackpackSceneSignals();
+}
+
+void MainWindow::resetAttemptState()
+{
+    packedItemsByName.clear();
+    player.clearBackpack();
+}
+
+void MainWindow::advanceToNextLevel()
+{
+    if (currentLevel == &levelOne)
+        currentLevel = &levelTwo;
 }

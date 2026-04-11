@@ -11,6 +11,38 @@
 #include "briefview.h"
 #include "ui_briefview.h"
 #include "level.h"
+#include "tripconditions.h"
+
+namespace {
+
+// Converts a TerrainType enum to a human-readable string for the
+// trip-conditions panel. Kept local to briefview because the
+// mapping is purely presentational.
+QString terrainToString(TerrainType terrain)
+{
+    switch (terrain) {
+    case TerrainType::DESERT:   return QStringLiteral("Desert");
+    case TerrainType::FOREST:   return QStringLiteral("Forest");
+    case TerrainType::MOUNTAIN: return QStringLiteral("Mountain");
+    case TerrainType::ROCKY:    return QStringLiteral("Rocky");
+    case TerrainType::ALL:      return QStringLiteral("Open Choice");
+    }
+    return QStringLiteral("Unknown");
+}
+
+// Converts an AdventureType enum to a human-readable string.
+QString adventureToString(AdventureType adventure)
+{
+    switch (adventure) {
+    case AdventureType::BACKPACKING: return QStringLiteral("Backpacking");
+    case AdventureType::CAMPING:     return QStringLiteral("Camping");
+    case AdventureType::DAY_HIKE:    return QStringLiteral("Day Hike");
+    case AdventureType::ALL:         return QStringLiteral("Open Choice");
+    }
+    return QStringLiteral("Unknown");
+}
+
+} // namespace
 
 BriefView::BriefView(QWidget *parent)
     : QWidget(parent)
@@ -30,22 +62,11 @@ BriefView::~BriefView()
 
 void BriefView::setLevel(const Level& level)
 {
-    // Populate placeholder text for location/weather/terrain.
-    // These will be replaced when Level gains those properties.
-    ui->locationLabel->setText("Location TBD");
-    ui->weatherLabel->setText("Weather TBD");
-    ui->terrainLabel->setText("Terrain TBD");
-
-    // Populate actual data from the Level.
+    // Show only broad trip metadata here. The authored description
+    // carries the mission flavor; hidden scoring requirements stay
+    // out of the brief.
+    ui->adventureLabel->setText(adventureToString(level.getAdventure()));
+    ui->terrainLabel->setText(terrainToString(level.getTerrain()));
     ui->durationLabel->setText(QString::number(level.getDuration()) + " hours");
-    ui->caloriesLabel->setText(QString::number(level.getRequiredCalories()) + " cal");
-    ui->hydrationLabel->setText(QString::number(level.getRequiredHydration(), 'f', 1) + " oz");
-
-    // Placeholder packing hints.
-    ui->hintsTextEdit->setText(
-        "Packing Hints:\n"
-        "- Pack enough food to meet calorie requirements\n"
-        "- Bring water or sports drinks for hydration\n"
-        "- Avoid too much caffeine as it reduces hydration effectiveness"
-    );
+    ui->briefingTextEdit->setText(level.getDescription());
 }

@@ -31,6 +31,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <map>
+#include <vector>
 #include "level.h"
 #include "player.h"
 
@@ -100,6 +102,20 @@ private slots:
      */
     void showDebriefView();
 
+    /**
+     * @brief Adds a newly packed item to the player's model backpack.
+     *
+     * @param itemName The scene-level item identifier emitted by BackpackScene.
+     */
+    void handlePackedItemAdded(const QString& itemName);
+
+    /**
+     * @brief Removes an unpacked item from the player's model backpack.
+     *
+     * @param itemName The scene-level item identifier emitted by BackpackScene.
+     */
+    void handlePackedItemRemoved(const QString& itemName);
+
 private:
     /** @brief Auto-generated form from mainwindow.ui. */
     Ui::MainWindow* ui;
@@ -138,6 +154,12 @@ private:
     DebriefView* debriefView;
 
     /**
+     * @brief Mirrors bag contents by scene item name so removals can
+     *        delete the correct model object.
+     */
+    std::map<QString, std::vector<Item*>> packedItemsByName;
+
+    /**
      * @brief The player object managing the current session's backpack.
      */
     Player player;
@@ -166,5 +188,25 @@ private:
      * single reassignment.
      */
     Level* currentLevel;
+
+    /**
+     * @brief Wires the current BackpackScene instance into MainWindow.
+     */
+    void connectBackpackSceneSignals();
+
+    /**
+     * @brief Recreates the packing scene so each attempt starts fresh.
+     */
+    void rebuildBackpackScene();
+
+    /**
+     * @brief Clears the player's current packed-item attempt state.
+     */
+    void resetAttemptState();
+
+    /**
+     * @brief Advances to the next available level, if any.
+     */
+    void advanceToNextLevel();
 };
 #endif // MAINWINDOW_H

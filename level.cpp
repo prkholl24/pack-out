@@ -75,8 +75,16 @@ QString Level::getDescription() const
     return description;
 }
 
+void Level::setDescription(const QString& newDescription)
+{
+    description = newDescription;
+}
+
 double Level::gradeMyBag(const std::vector<Item*>& backpack) const
 {
+    const bool usesEnergyScore = requiredCalories > 0;
+    const bool usesHydrationScore = requiredHydration > 0;
+
     double totalCalories = calculateTotalCalories(backpack);
     double effectiveHydration = calculateEffectiveHydration(backpack);
     double totalCaffeine = calculateTotalCaffeine(backpack);
@@ -96,6 +104,18 @@ double Level::gradeMyBag(const std::vector<Item*>& backpack) const
     }
 
     double totalScore = energyScore + hydrationScore;
+    double activeScoreWeight = 0.0;
+
+    if (usesEnergyScore)
+        activeScoreWeight += ENERGY_SCORE_WEIGHT;
+
+    if (usesHydrationScore)
+        activeScoreWeight += HYDRATION_SCORE_WEIGHT;
+
+    if (activeScoreWeight > 0.0)
+        totalScore = (totalScore / activeScoreWeight) * 100.0;
+    else
+        totalScore = 100.0;
 
     // Apply penalty if required gear is missing
     if (!hasRequiredGear(backpack))
@@ -111,9 +131,14 @@ bool Level::passesLevel(const std::vector<Item*>& backpack) const
     return gradeMyBag(backpack) >= passingScore;
 }
 
+LevelResult Level::evaluate(const std::vector<Item*>& backpack) const
+{
+    return evaluateBackpack(backpack);
+}
+
 QString Level::getReport(const std::vector<Item*>& backpack) const
 {
-    LevelResult result = evaluateBackpack(backpack);
+    LevelResult result = evaluate(backpack);
     return LevelReportBuilder::buildReport(result);
 }
 

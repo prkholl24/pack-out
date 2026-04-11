@@ -1,10 +1,10 @@
 /**
  * @file briefview.h
- * @brief Pre-level briefing widget displaying trip requirements.
+ * @brief Pre-level briefing widget displaying authored trip descriptions.
  *
  * BriefView shows the player information about an upcoming level
- * before they start packing. It displays location, weather, terrain,
- * trip duration, required calories/hydration, and packing hints.
+ * before they start packing. It displays an authored mission
+ * description along with a few broad trip details.
  *
  * Team: Green Goombas
  * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
@@ -29,9 +29,9 @@ class Level;
  * @class BriefView
  * @brief Pre-level briefing widget.
  *
- * Displays trip information and requirements before the packing
- * phase begins. Intended to be hosted inside MainWindow's
- * QStackedWidget.
+ * Displays authored mission text and a few broad trip details
+ * before the packing phase begins. Intended to be hosted inside
+ * MainWindow's QStackedWidget.
  */
 class BriefView : public QWidget
 {
@@ -54,9 +54,8 @@ public:
     /**
      * @brief Populates the view with data from a Level.
      *
-     * Reads duration, required calories, and required hydration
-     * from the Level. Location, weather, and terrain display
-     * placeholder text for now.
+     * Reads the authored level description plus broad trip metadata
+     * such as duration, terrain, and activity type.
      *
      * @param level The level to display information for.
      */

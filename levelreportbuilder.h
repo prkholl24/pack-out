@@ -43,21 +43,16 @@ public:
 
 private:
     /**
-     * @brief Builds the summary portion of the report.
+     * @brief Builds the story-style outcome summary.
      *
-     * Includes overall grade, total calories, and hydration.
+     * This is the narrative text shown at the top of the debrief.
      */
-    static QString buildSummaryReport(const LevelResult& result);
+    static QString buildOutcomeSummary(const LevelResult& result);
 
     /**
-     * @brief Builds the pass message.
+     * @brief Builds the stat breakdown shown under the story summary.
      */
-    static QString buildPassReport();
-
-    /**
-     * @brief Builds the fail message.
-     */
-    static QString buildFailReport(const LevelResult& result);
+    static QString buildStatsReport(const LevelResult& result);
 };
 
 #endif // LEVELREPORTBUILDER_H

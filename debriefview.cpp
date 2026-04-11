@@ -10,8 +10,9 @@
  */
 #include "debriefview.h"
 #include "ui_debriefview.h"
-#include "levelresult.h"
 #include "levelreportbuilder.h"
+
+#include <QtGlobal>
 
 DebriefView::DebriefView(QWidget *parent)
     : QWidget(parent)
@@ -33,15 +34,13 @@ DebriefView::~DebriefView()
     delete ui;
 }
 
-void DebriefView::setResults(const LevelResult& result, const std::vector<Item*>& packedItems)
+void DebriefView::setResults(const LevelResult& result)
 {
-    Q_UNUSED(packedItems);
-
-    // Display the grade as a number.
-    ui->gradeLabel->setText(QString::number(static_cast<int>(result.grade)));
+    // Display the grade as a number with one decimal place.
+    ui->gradeLabel->setText(QString::number(result.grade, 'f', 1));
 
     // Update the progress bar to visualize the grade.
-    ui->gradeProgressBar->setValue(static_cast<int>(result.grade));
+    ui->gradeProgressBar->setValue(qRound(result.grade));
 
     // Display pass/fail status.
     if (result.passed) {
