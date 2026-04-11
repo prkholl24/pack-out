@@ -40,6 +40,9 @@ class QStackedWidget;
 QT_END_NAMESPACE
 
 class BackpackScene;
+class BriefView;
+class DebriefView;
+class Level;
 
 /**
  * @class MainWindow
@@ -73,6 +76,28 @@ public:
      */
     ~MainWindow();
 
+private slots:
+    /**
+     * @brief Switches to the BriefView.
+     *
+     * Shows the pre-level briefing with trip information.
+     */
+    void showBriefView();
+
+    /**
+     * @brief Switches to the BackpackScene.
+     *
+     * Shows the packing mini-game.
+     */
+    void showBackpackScene();
+
+    /**
+     * @brief Switches to the DebriefView.
+     *
+     * Shows the post-level results and feedback.
+     */
+    void showDebriefView();
+
 private:
     /** @brief Auto-generated form from mainwindow.ui. */
     Ui::MainWindow* ui;
@@ -91,9 +116,30 @@ private:
      * @brief The packing-phase scene (owned by the stack).
      *
      * When BackpackScene emits levelHasStarted(), MainWindow will
-     * (eventually) swap to the next scene via
-     * sceneStack->setCurrentWidget(nextScene).
+     * swap to the DebriefView via sceneStack->setCurrentWidget().
      */
     BackpackScene* backpackScene;
+
+    /**
+     * @brief The pre-level briefing view (owned by the stack).
+     *
+     * When BriefView emits startPackingClicked(), MainWindow swaps
+     * to the BackpackScene.
+     */
+    BriefView* briefView;
+
+    /**
+     * @brief The post-level results view (owned by the stack).
+     *
+     * Provides navigation to retry, advance, or return to menu.
+     */
+    DebriefView* debriefView;
+
+    /**
+     * @brief The current level being played.
+     *
+     * Stores level data for use across views (brief, packing, debrief).
+     */
+    Level* currentLevel;
 };
 #endif // MAINWINDOW_H

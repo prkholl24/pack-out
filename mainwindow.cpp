@@ -16,6 +16,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "backpack.h"
+#include "briefview.h"
+#include "debriefview.h"
+#include "level.h"
+#include "levelresult.h"
 
 #include <QMenuBar>
 #include <QStackedWidget>
@@ -24,6 +28,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , currentLevel(nullptr)
 {
     ui->setupUi(this);
 
@@ -40,24 +45,79 @@ MainWindow::MainWindow(QWidget *parent)
     sceneStack = new QStackedWidget(this);
     setCentralWidget(sceneStack);
 
-    // Start on the packing scene.  addWidget() parents the scene
-    // to the stack, so Qt's parent-child ownership handles cleanup.
+    // Create all scene views. addWidget() parents each to the stack,
+    // so Qt's parent-child ownership handles cleanup.
+    briefView = new BriefView(this);
     backpackScene = new BackpackScene(this);
+    debriefView = new DebriefView(this);
+
+    sceneStack->addWidget(briefView);
     sceneStack->addWidget(backpackScene);
-    sceneStack->setCurrentWidget(backpackScene);
+    sceneStack->addWidget(debriefView);
+
+    // Create a default level for testing.
+    currentLevel = new Level(2000, 64.0, 8);
+
+    // Initialize the brief view with the current level and start there.
+    briefView->setLevel(*currentLevel);
+    sceneStack->setCurrentWidget(briefView);
+
+    // Connect BriefView's start button to transition to packing.
+    connect(briefView, &BriefView::startPackingClicked,
+            this, &MainWindow::showBackpackScene);
 
     // When the packing scene completes (player clicked Cinch & Go
-    // and the button exited the screen), the model/controller layer
-    // will swap to the next scene here.  For now it's a no-op stub.
-    //
-    // Example of how a future transition would look:
-    //   sceneStack->setCurrentWidget(tripScene);
-    connect(backpackScene, &BackpackScene::levelHasStarted, this, [this]() {
-        // TODO: switch to the trip / grading scene
+    // and the button exited the screen), transition to the debrief.
+    connect(backpackScene, &BackpackScene::levelHasStarted,
+            this, &MainWindow::showDebriefView);
+
+    // Connect DebriefView navigation signals.
+    connect(debriefView, &DebriefView::retryLevelClicked, this, [this]() {
+        // Retry: show brief view for the same level.
+        briefView->setLevel(*currentLevel);
+        showBriefView();
+    });
+    connect(debriefView, &DebriefView::nextLevelClicked, this, [this]() {
+        // Next level: for now, just reload the same level.
+        // Future: advance to next level in sequence.
+        briefView->setLevel(*currentLevel);
+        showBriefView();
+    });
+    connect(debriefView, &DebriefView::returnToMenuClicked, this, [this]() {
+        // Return to menu: for now, just go back to brief view.
+        // Future: implement main menu.
+        showBriefView();
     });
 }
 
 MainWindow::~MainWindow()
 {
+    delete currentLevel;
     delete ui;
+}
+
+void MainWindow::showBriefView()
+{
+    sceneStack->setCurrentWidget(briefView);
+}
+
+void MainWindow::showBackpackScene()
+{
+    sceneStack->setCurrentWidget(backpackScene);
+}
+
+void MainWindow::showDebriefView()
+{
+    // Create a result from the current level.
+    // For now, use placeholder packed items (empty vector).
+    // Future: get actual packed items from BackpackScene.
+    std::vector<Item*> packedItems;
+    LevelResult result;
+    result.grade = currentLevel->gradeMyBag(packedItems);
+    result.passed = currentLevel->passesLevel(packedItems);
+    result.requiredCalories = currentLevel->getRequiredCalories();
+    result.requiredHydration = currentLevel->getRequiredHydration();
+
+    debriefView->setResults(result, packedItems);
+    sceneStack->setCurrentWidget(debriefView);
 }

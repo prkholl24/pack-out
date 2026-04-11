@@ -10,6 +10,8 @@ CONFIG += c++17
 
 SOURCES += \
     backpack.cpp \
+    briefview.cpp \
+    debriefview.cpp \
     Box2D/Collision/Shapes/b2ChainShape.cpp \
     Box2D/Collision/Shapes/b2CircleShape.cpp \
     Box2D/Collision/Shapes/b2EdgeShape.cpp \
@@ -68,6 +70,8 @@ SOURCES += \
 
 HEADERS += \
     backpack.h \
+    briefview.h \
+    debriefview.h \
     Box2D/Box2D.h \
     Box2D/Collision/Shapes/b2ChainShape.h \
     Box2D/Collision/Shapes/b2CircleShape.h \
@@ -127,6 +131,8 @@ HEADERS += \
 
 FORMS += \
     backpack.ui \
+    briefview.ui \
+    debriefview.ui \
     mainwindow.ui
 
 # Default rules for deployment.
