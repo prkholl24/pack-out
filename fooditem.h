@@ -100,7 +100,7 @@ static const std::map<Food, FoodStats> FoodRegistry = {
 };
 
 /**
- * @brief Represents a Food Item
+ * @brief Represents a FoodItem
  *
  * A FoodItem contains calories and a sustenance values.
  * Inherits from `Item`: weight, description.
