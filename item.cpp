@@ -1,31 +1,56 @@
-#include "Item.h"
-
 /**
- * @brief PackableItem Default constructor.
+ * @file item.cpp
+ * @brief Implementation of the Item base class.
+ *
+ * Implements shared functionality used by all packable items,
+ * including weight access, nutrition access, tooltip generation,
+ * and default stat reporting.
+ *
+ * Team: Green Goombas
+ * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
+ * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
+ *          Brady Nelson, Lindsey Reese, Kent Wilkison
+ * @date 4/9/2026
  */
-PackableItem::PackableItem() : weight(0.0), description(nullptr) {}
 
-double PackableItem::getWeight() const {
-    return this->weight;
+#include "item.h"
+
+Item::Item()
+{
+    weight = 0.0;
+    volumeLiters = 0.0;
+    producesWaste = false;
+    isCotton = false;
+    description = "";
+    nutrition = NutritionProfile{};
 }
 
-QString PackableItem::getToolTip() {
-    std::map<QString, double> stats = getStats();
-    QString toolTipText = "";
-
-    for (auto const& [name, value] : stats) {
-        toolTipText += name + ": " + QString::number(value) + "\n";
-    }
-
-    if (description != nullptr) {
-        toolTipText += "\n" + *description;
-    }
-
-    return toolTipText;
+double Item::getWeight() const
+{
+    return weight;
 }
 
-std::map<QString, double> PackableItem::getStats() {
-    std::map<QString, double> stats;
-    stats["Weight"] = weight;
-    return stats;
+double Item::getVolume() const
+{
+    return volumeLiters;
+}
+
+bool Item::generatesWaste() const
+{
+    return producesWaste;
+}
+
+bool Item::isCottonMaterial() const
+{
+    return isCotton;
+}
+
+QString Item::getDescription() const
+{
+    return description;
+}
+
+const NutritionProfile& Item::getNutrition() const
+{
+    return nutrition;
 }

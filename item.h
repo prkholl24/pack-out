@@ -1,76 +1,87 @@
 /**
  * @file item.h
- * @brief Header file for the PackableItem class
+ * @brief Base class for all packable items.
  */
+
 #ifndef ITEM_H
 #define ITEM_H
 
 #include <QString>
 #include <map>
+#include "nutritionprofile.h"
 
 /**
- * @class PackableItem
+ * @brief Base class representing an item that can be packed.
+ *
+ * All derived item types must provide their stats through getStatMap().
  */
-class PackableItem {
-    public:
-        /**
-         * @brief Constructor for PackableItem
-         *
-         * Constructs a new PackableItem and sets the weight.
-         * Also calls createToopTip to set the internal state
-         * of toolTip.
-         */
-        PackableItem();
+class Item {
+public:
+    /**
+     * @brief Constructs a new Item and sets default values.
+     */
+    Item();
 
-        /**
-         * @brief Gets the weight of this item
-         *
-         * Returns the weight as a constant double.
-         *
-         * @return The weight of this item
-         */
-        double getWeight() const;
+    /**
+     * @brief Virtual destructor for safe polymorphic cleanup.
+     */
+    virtual ~Item() = default;
 
-        /**
-         * @brief Gets a tool tip for this item
-         *
-         * A Tool-Tip is a short message detailing this item
-         * Example...
-         *
-         *      Banana:
-         *
-         * 105          Calories
-         * 0.5          Weight
-         *
-         * The potassium in a banana
-         * helps prevent muscle cramps
-         * and regulate fluid balance.
-         */
-        QString getToolTip();
+    // --- Physical Properties ---
 
-    protected:
-        /**
-         * @brief weight in pounds
-         *
-         * The weight of this item in pounds (lbs).
-         */
-        double weight = -1;
+    /**
+     * @brief Gets the weight of this item in pounds.
+     */
+    double getWeight() const;
 
-        const QString* description = nullptr;
+    /**
+     * @brief Gets the volume of this item in liters.
+     */
+    double getVolume() const;
 
-        /**
-         * @brief Gets the stats of this item
-         *
-         * Returns a structured output of this items
-         * stats
-         * Example:
-         *
-         * Calories               95
-         * Weight(lbs)           0.5
-         *
-         * @return a map containing the stat and its value
-         */
-        virtual std::map<QString, double> getStats();
+    /**
+     * @brief Whether this item produces waste (e.g. wrappers).
+     */
+    bool generatesWaste() const;
+
+    /**
+     * @brief Gets the narrative description of this item.
+     */
+    QString getDescription() const;
+
+    // --- Gameplay Logic ---
+
+    /**
+     * @brief Gets the nutrition profile associated with this item.
+     */
+    const NutritionProfile& getNutrition() const;
+
+    /**
+     * @brief Returns a map of numeric stats (programmatic IDs to values).
+     * @return A map used by the View layer for display.
+     */
+    virtual std::map<QString, double> getStatMap() const = 0;
+
+    // --- Type & Material Checks ---
+
+    virtual bool isFood() const { return false; }
+    virtual bool isDrink() const { return false; }
+    virtual bool isGear() const { return false; }
+    virtual bool isWasteStorage() const { return false; }
+    virtual bool isTrekkingPole() const { return false; }
+
+    /**
+     * @brief Whether this item is cotton (safety hazard in rain/snow).
+     */
+    bool isCottonMaterial() const;
+
+protected:
+    double weight;
+    double volumeLiters;
+    bool producesWaste;
+    bool isCotton;
+    QString description;
+    NutritionProfile nutrition;
 };
 
 #endif // ITEM_H

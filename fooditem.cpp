@@ -1,25 +1,29 @@
 /**
  * @file fooditem.cpp
- * @brief Implementation of the FoodItem class
+ * @brief Implementation of the FoodItem class.
  */
 
 #include "fooditem.h"
 
-FoodItem::FoodItem(Food foodEnum) {
-    // Looks up the foodEnum from the table
-    const FoodStats& foodStruct = FoodRegistry.at(foodEnum);
+FoodItem::FoodItem(Food foodEnum)
+{
+    const FoodStats& foodStats = FoodRegistry.at(foodEnum);
 
-    this->sustenance  = foodStruct.sustenance;
-    this->calories    = foodStruct.calories;
-    this->weight      = foodStruct.weight;
-    this->description = &foodStruct.description;
+    nutrition = foodStats.nutrition;
+    weight = foodStats.weight;
+    volumeLiters = foodStats.volume;
+    producesWaste = foodStats.producesWaste;
+    description = foodStats.description;
 }
 
-std::map<QString, double> FoodItem::getStats() {
-    std::map<QString, double> output;
-
-    output["Calories"] = this->calories;
-    output["Weight(lbs)"] = this->weight;
-
-    return output;
+std::map<QString, double> FoodItem::getStatMap() const
+{
+    // Return programmatic IDs, not UI labels
+    return {
+        { "calories", nutrition.calories },
+        { "carbs", nutrition.carbs },
+        { "protein", nutrition.protein },
+        { "fat", nutrition.fat },
+        { "fiber", nutrition.fiber }
+    };
 }

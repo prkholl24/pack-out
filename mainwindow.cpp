@@ -1,33 +1,48 @@
 /**
  * @file mainwindow.cpp
- * @brief Implementation of the MainWindow class
- *
- * Implements the MainWindow class, which handles:
- * - rendering objects using Qt
- * - managing the Box2D physics world
- * - handling mouse input for interaction
- *
- * Connects the UI with the physics simulation so the user
- * can create, move, and interact with items on the screen.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/7/2026
- * Reviewed by Lindsey Reese 4/8/2026
+ * @brief Implementation of the MainWindow scene switcher.
  */
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <iostream>
+#include "backpack.h"
+#include "levelreportbuilder.h"
+#include "trekregistry.h"
+
+#include <QMenuBar>
+#include <QStackedWidget>
+#include <QStatusBar>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , world(b2Vec2(0.0f, -10.0f))
-    , timer(new QTimer(this))
 {
     ui->setupUi(this);
+
+    // Lock the window geometry and strip chrome
+    setFixedSize(800, 600);
+    menuBar()->hide();
+    statusBar()->hide();
+
+    // Set up the scene stack
+    sceneStack = new QStackedWidget(this);
+    setCentralWidget(sceneStack);
+
+    // Initialize the packing scene
+    backpackScene = new BackpackScene(this);
+    sceneStack->addWidget(backpackScene);
+    sceneStack->setCurrentWidget(backpackScene);
+
+    // Initialize Utah Treks from external data
+    treks = TrekRegistry::loadTreks();
+
+    // Set up Signal/Slot connections for the Player Model
+    connect(&player, &Player::backpackChanged, this, &MainWindow::onBackpackChanged);
+    connect(&player, &Player::statsChanged, this, &MainWindow::onStatsChanged);
+
+    // Connect scene transition
+    connect(backpackScene, &BackpackScene::levelHasStarted, this, []() {
+        // TODO: switch to the trip / grading scene
+    });
 }
 
 MainWindow::~MainWindow()
@@ -35,42 +50,33 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::paintEvent(QPaintEvent *event)
+void MainWindow::addPackItem(Item* item)
 {
-    // TO-DO: Implement this
-}
-
-b2Vec2 MainWindow::screenToWorld(const QPoint& point)
-{
-    // Inverts the Y value such that the
-    // bottom of the screen is 0.
-    float worldY = this->height() - point.y();
-
-    return b2Vec2(point.x(), worldY);
-}
-
-void MainWindow::mousePressEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton) {
-        b2Vec2 worldPos = screenToWorld(event->pos());
-
-        // TO-DO: Remove this
-        std::cout << "Qt coordinate [X:" << event->pos().x() << ", " << event->pos().y() << ")" << std::endl
-                  << "Box2D coordinate (" << worldPos.x << ", " << worldPos.y << ")" << std::endl;
+    if (item) {
+        // MainWindow wraps raw pointer from UI into unique_ptr for Model
+        player.addItem(std::unique_ptr<Item>(item));
     }
 }
 
-void MainWindow::mouseMoveEvent(QMouseEvent *event)
+void MainWindow::evaluateTrek(int trekIndex)
 {
-    // TO-DO: Implement this
+    if (trekIndex < 0 || trekIndex >= (int)treks.size())
+        return;
+
+    LevelResult result = treks[trekIndex].evaluateBackpack(player.getBackpack(), player);
+    QString report = LevelReportBuilder::buildReport(result);
+
+    // TODO: Display report in UI
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+void MainWindow::onBackpackChanged()
 {
-    // TO-DO: Implement this
+    // TODO: Refresh the backpack list widget
 }
 
-void MainWindow::updatePhysics()
+void MainWindow::onStatsChanged(double weight, double volume)
 {
-    // TO-DO: Implement this
+    Q_UNUSED(weight);
+    Q_UNUSED(volume);
+    // TODO: Update weight/volume progress bars or labels
 }

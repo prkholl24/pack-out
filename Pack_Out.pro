@@ -6,9 +6,10 @@ CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+# DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    backpack.cpp \
     Box2D/Collision/Shapes/b2ChainShape.cpp \
     Box2D/Collision/Shapes/b2CircleShape.cpp \
     Box2D/Collision/Shapes/b2EdgeShape.cpp \
@@ -55,17 +56,25 @@ SOURCES += \
     Box2D/Dynamics/b2World.cpp \
     Box2D/Dynamics/b2WorldCallbacks.cpp \
     Box2D/Rope/b2Rope.cpp \
+    drinkitem.cpp \
     fooditem.cpp \
+    gearitem.cpp \
     item.cpp \
+    itemreportbuilder.cpp \
     level.cpp \
+    levelreportbuilder.cpp \
     main.cpp \
     mainwindow.cpp \
     player.cpp \
     trekbox2dphysics.cpp \
     trekview.cpp \
-    wateritem.cpp
+    trekregistry.cpp \
+    trekphysiology.cpp \
+    gearcheck.cpp \
+    trekrules.cpp
 
 HEADERS += \
+    backpack.h \
     Box2D/Box2D.h \
     Box2D/Collision/Shapes/b2ChainShape.h \
     Box2D/Collision/Shapes/b2CircleShape.h \
@@ -113,16 +122,27 @@ HEADERS += \
     Box2D/Dynamics/b2World.h \
     Box2D/Dynamics/b2WorldCallbacks.h \
     Box2D/Rope/b2Rope.h \
+    drinkitem.h \
     fooditem.h \
+    gearitem.h \
     item.h \
+    itemreportbuilder.h \
     level.h \
+    levelreportbuilder.h \
+    levelresult.h \
     mainwindow.h \
+    nutritionprofile.h \
     player.h \
+    tripconditions.h \
+    trekregistry.h \
+    trekphysiology.h \
+    gearcheck.h \
+    trekrules.h \
     trekbox2dphysics.h \
-    trekview.h \
-    wateritem.h
+    trekview.h
 
 FORMS += \
+    backpack.ui \
     mainwindow.ui \
     trekview.ui
 
@@ -131,9 +151,9 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+RESOURCES += \
+    resources.qrc
+
 DISTFILES += \
     Box2D/Box2DConfig.cmake \
     Box2D/CMakeLists.txt
-
-RESOURCES += \
-    Resources.qrc

@@ -1,45 +1,27 @@
 /**
  * @file mainwindow.h
- * @brief Contains the MainWindow class and handles rendering + user interaction.
- *
- * Defines the MainWindow class, which is responsible for:
- * - setting up the UI
- * - managing the Box2D physics world
- * - handling mouse input
- * - rendering objects to the screen
- *
- * This connects the physics simulation with the Qt interface so the user
- * can interact with items in a visual way.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/7/2026
- * Reviewed by Lindsey Reese 4/8/2026
+ * @brief Top-level application window and scene switcher.
  */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "Box2D/Box2D.h"
-#include <QTimer>
-#include <QPaintEvent>
-#include <QPainter>
-#include <QMouseEvent>
+#include <vector>
+#include "level.h"
+#include "player.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
 }
+class QStackedWidget;
 QT_END_NAMESPACE
+
+class BackpackScene;
 
 /**
  * @class MainWindow
- * @brief The main application window.
- *
- * This class handles the rendering of the simulation, user input,
- * and manages the Box2D physics world.
+ * @brief The main application window and scene switcher.
  */
 class MainWindow : public QMainWindow
 {
@@ -47,109 +29,61 @@ class MainWindow : public QMainWindow
 
 public:
     /**
-     * @brief Constructor for MainWindow
-     *
-     * Initializes the UI, creates the Box2D world, and starts the timer.
-     *
-     * @param parent widget
+     * @brief Constructs the main window.
+     * @param parent  Parent widget.
      */
     MainWindow(QWidget *parent = nullptr);
 
     /**
-     * @brief Destructor for MainWindow
+     * @brief Destroys the main window and its UI form.
      */
     ~MainWindow();
 
-protected:
     /**
-     * @brief QPainter uses this to know how to paint the scene
-     *
-     * Translates Box2D objects into rectangles that Qt can paint.
-     *
-     * @param event - The paint event created by Qt
+     * @brief Adds an item to the player's current backpack.
+     * @param item - The item to add.
      */
-    void paintEvent(QPaintEvent *event) override;
+    void addPackItem(Item* item);
 
     /**
-     * @brief Overrides the mouse press event to interact with physics objects.
-     *
-     * If the user clicks a spawner (say a banana spawner)
-     * -> create a new banana to render and attach it to the user's mouse.
-     * If the user clicks an existing item
-     * -> attach it to the user's mouse.
-     *
-     * @param event mouse event created by Qt
+     * @brief Evaluates the current backpack against a trek.
+     * @param trekIndex - The index of the trek to evaluate.
      */
-    void mousePressEvent(QMouseEvent *event) override;
-
-    /**
-     * @brief Overrides the mouse move event to update interaction state.
-     *
-     * Checks if the user is holding an item and allows them to drag it around if they are.
-     *
-     * @param event mouse event created by Qt
-     */
-    void mouseMoveEvent(QMouseEvent *event) override;
-
-    /**
-     * @brief Overrides the mouse release event to end interaction.
-     *
-     * If the user is holding an object -> release it.
-     *
-     * @param event mouse event created by Qt
-     */
-    void mouseReleaseEvent(QMouseEvent *event) override;
+    void evaluateTrek(int trekIndex);
 
 private slots:
     /**
-     * @brief Updates the physics world and repaints.
-     *
-     * Used by the timer to trigger an update to the view.
+     * @brief Triggered when the player's backpack items change.
      */
-    void updatePhysics();
+    void onBackpackChanged();
+
+    /**
+     * @brief Triggered when the player's totals change.
+     */
+    void onStatsChanged(double weight, double volume);
 
 private:
-    /**
-     * @brief Contains all of the Qt widgets and buttons.
-     */
+    /** @brief Auto-generated form from mainwindow.ui. */
     Ui::MainWindow* ui;
 
     /**
-     * @brief The Box2D physics world.
-     *
-     * Manages all physical bodies and handles the simulation steps.
+     * @brief Stack that holds every scene widget.
      */
-    b2World world;
+    QStackedWidget* sceneStack;
 
     /**
-     * @brief Timer for the game loop.
-     *
-     * Continuously calls `updatePhysics()`.
+     * @brief The packing-phase scene.
      */
-    QTimer* timer;
+    BackpackScene* backpackScene;
 
     /**
-     * @brief Used for mouse-based interaction with Box2D shapes.
-     *
-     * Allows the user to create a spring-y tension between
-     * the mouse and other objects.
+     * @brief The player object managing the current session's backpack.
      */
-    b2MouseJoint* mouseJoint = nullptr;
+    Player player;
 
     /**
-     * @brief Converts a Qt screen position to a Box2D world position
-     *
-     * Qt - Maps the TOP-LEFT of the screen as (0,0)
-     * - Moving RIGHT increases the X value
-     * - Moving DOWN increases the Y value
-     *
-     * Box2D - Maps the BOTTOM-LEFT as (0,0)
-     * - Moving RIGHT increases the X value
-     * - Moving UP increases the Y value
-     *
-     * @param point - The position according to Qt
-     * @return The corresponding position in the Box2D world
+     * @brief The collection of Utah treks for the player to progress through.
      */
-    b2Vec2 screenToWorld(const QPoint& point);
+    std::vector<Level> treks;
 };
 #endif // MAINWINDOW_H
