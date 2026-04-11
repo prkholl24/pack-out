@@ -110,7 +110,6 @@ void Level::applyDiureticPenalties(BackpackTotals& totals) const
 
 void Level::applyEvaluationScoring(LevelResult& result, const BackpackTotals& totals) const
 {
-    double weightE = TrekRules::get("scoring", "energy_score_weight");
     double norm = TrekRules::get("scoring", "normalization_factor");
     double perfect = TrekRules::get("scoring", "perfect_score");
 

@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&player, &Player::statsChanged, this, &MainWindow::onStatsChanged);
 
     // Connect scene transition
-    connect(backpackScene, &BackpackScene::levelHasStarted, this, [this]() {
+    connect(backpackScene, &BackpackScene::levelHasStarted, this, []() {
         // TODO: switch to the trip / grading scene
     });
 }
@@ -76,5 +76,7 @@ void MainWindow::onBackpackChanged()
 
 void MainWindow::onStatsChanged(double weight, double volume)
 {
+    Q_UNUSED(weight);
+    Q_UNUSED(volume);
     // TODO: Update weight/volume progress bars or labels
 }

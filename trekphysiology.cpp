@@ -5,13 +5,14 @@
 
 #include "trekphysiology.h"
 #include "trekrules.h"
+#include <algorithm>
 
 void TrekPhysiology::computeRequirements(LevelResult& result, 
                                          const TripRequirements& req, 
                                          const Player& player,
                                          bool hasPoles)
 {
-    // 1. Fetch Game Rules and Environmental Modifiers
+    // 1. Fetch Game Rules and Environmental Modifiers (Pure MVC: Modifiers are data)
     double hoursInDay = TrekRules::get("physiology", "hours_in_day");
     RuleModifier terrain = TrekRules::getTerrainModifier(req.terrain);
     RuleModifier weather = TrekRules::getWeatherModifier(req.weather);
