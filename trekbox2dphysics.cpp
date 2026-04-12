@@ -1,12 +1,14 @@
 #include "trekbox2dphysics.h"
 #include "trekview.h"
+#include <iostream>
 
 TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     : QObject{parent}
-    , world(b2Vec2(0.0,-10.0f))
+    , world(b2Vec2(0.0,0.0f))
     , timer(new QTimer(this))
 {
     connect(timer, &QTimer::timeout,this, &TrekBox2DPhysics::updateWorldSlot);
+
     timer->start(10);
 
     // Define the ground body.
@@ -30,7 +32,7 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     // Define the dynamic body. We set its position and call the body factory.
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(0.0f, 8.0f);
+    bodyDef.position.Set(0.0f, -10.0f);
     body = world.CreateBody(&bodyDef);
 
     // Define another box shape for our dynamic body.
@@ -57,29 +59,84 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
 TrekBox2DPhysics::~TrekBox2DPhysics(){
 }
 
+b2Vec2 TrekBox2DPhysics::screenToWorld(const QPointF& p) const {
+
+    float x = (p.x() - 400.0f);
+    float y = (p.y() - 300.0f);
+    return b2Vec2(x,y);
+
+}
+
+//THIS NEEDS TO BE CALLED FROM VIEW WITH A MOUSE POSITION!!!!!!!!!!!!!!!!!!!
+void TrekBox2DPhysics::setTargetFromMouse(const QPointF& mousePos){
+
+    std::cout << "Got mousePos: " << std::endl;
+    targetPoint = screenToWorld(mousePos);
+    hasTarget = true;
+
+}
+
+
 void TrekBox2DPhysics::updateWorldSlot(){
 
-    float32 timeStep = 1.0f / 60.0f;
-    int32 velocityIterations = 6;
-    int32 positionIterations = 2;
+    //std::cout << "UpdateWorldSlot" << std::endl;
+    float timeStep = 1.0f / 60.0f;
+    int velocityIterations = 6;
+    int positionIterations = 2;
 
-    // Instruct the world to perform a single step of simulation.
-    // It is generally best to keep the time step and iterations fixed.
-    world.Step(timeStep, velocityIterations, positionIterations);
+    if(hasTarget && body){
+        b2Vec2 currentPos = body->GetWorldCenter();
+        b2Vec2 toTarget = targetPoint - currentPos;
 
-    // Now print the position and angle of the body.
-    b2Vec2 position = body->GetPosition();
-    float32 angle = body->GetAngle();
+        float distance = toTarget.Length();
+
+        if(distance > 0.01f){
+
+            toTarget.Normalize();
+
+            //Scale force by distance so farther clicks pull harder
+            float forceMagnitude = qMin(distance * forceGain, maxForce);
+            b2Vec2 force = forceMagnitude * toTarget;
+
+            body->ApplyForceToCenter(force,true);
+        }
+
+        world.Step(timeStep, velocityIterations, positionIterations);
+
+        b2Vec2 position = body->GetPosition();
+        emit sendBodyLocation(position.x + 250, position.y * -20);
+
+    }
 
 
-    // positionVector.push_back(position);
 
-    emit sendBodyLocation(position.x+250, position.y*-20);
-
-    printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
-
-
-    ///WE NEED TO EMIT THE COORDINATE VALUES OF BOTH BODIES( GROUND AND DYNAMIC BOX)
 
 
 }
+
+// void TrekBox2DPhysics::updateWorldSlot(){
+
+//     float32 timeStep = 1.0f / 60.0f;
+//     int32 velocityIterations = 6;
+//     int32 positionIterations = 2;
+
+//     // Instruct the world to perform a single step of simulation.
+//     // It is generally best to keep the time step and iterations fixed.
+//     world.Step(timeStep, velocityIterations, positionIterations);
+
+//     // Now print the position and angle of the body.
+//     b2Vec2 position = body->GetPosition();
+//     float32 angle = body->GetAngle();
+
+
+//     // positionVector.push_back(position);
+
+//     emit sendBodyLocation(position.x+250, position.y*-20);
+
+//     printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
+
+
+//     ///WE NEED TO EMIT THE COORDINATE VALUES OF BOTH BODIES( GROUND AND DYNAMIC BOX)
+
+
+// }

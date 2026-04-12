@@ -16,20 +16,47 @@ public:
      */
     b2World world;
 
+    b2Vec2 targetPoint;
+
+    bool hasTarget = false;
+
+    //How many pixels mark one in game meter
+    float pixelsPerMeter = 20.0f;
+
+    //Gain on the force applied based on the distance
+    //From player to mouse
+    float forceGain = 25.0f;
+
+    //Maximum force that can be applied to hiker
+    float maxForce = 40.0f;
     /**
      * @brief body
      */
-    b2Body* body;
+    b2Body* body = nullptr;
 
     /**
      * @brief timer
      */
     QTimer* timer;
 
+private:
+
+    /**
+     * @brief Converts a point on the screen to a point in box2D based on the
+     *        screen size.
+     *        Method was acquired from ChatGPT GPT5.3
+     */
+    b2Vec2 screenToWorld(const QPointF& p) const;
+
+
+
 signals:
     void sendBodyLocation(float x, float y);
 
 public slots:
+
+    void setTargetFromMouse(const QPointF& mousePos);
+
     void updateWorldSlot();
 };
 

@@ -29,6 +29,12 @@ public:
     ~TrekView();
 
 public slots:
+
+    /**
+     * @brief Updates x and y position of the player icon.
+     * @param int x, x coordinate
+     * @param int y, y coordinate
+     */
     void bodyDisplay(float x, float y);
 
     /**
@@ -36,6 +42,14 @@ public slots:
      * @param int: level, what level the user is on.
      */
     void currentLevel(int level);
+
+signals:
+
+
+    //Signal which is heard by setTargetFromMouse slot
+    //in the physics engine.
+
+
 private:
     /**
      * @brief player's current level
@@ -47,7 +61,9 @@ private:
      */
     QVector<QString> imageFilePaths;
 
-    QImage backgroundImage;
+    //Stores the background image of the widget
+    QPixmap backgroundPixmap;
+
 
     /**
      * @brief ui

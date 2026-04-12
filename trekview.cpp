@@ -11,10 +11,8 @@ TrekView::TrekView(QWidget *parent)
     playerLevel = 1;
 
     imageFilePaths.append("://DryCanyonTrail.png");
-   // ui->centralwidget->setStyleSheet("border-image: url("+imageFilePaths[0]+") 0 0 0 0 stretch stretch");
 
-
-   // backgroundImage = QImage("://DryCanyonTrail.png");
+    backgroundPixmap.load(imageFilePaths[0]);
 
 }
 
@@ -34,16 +32,17 @@ void TrekView::bodyDisplay(float x, float y){
 
 
 
+
 void TrekView::paintEvent(QPaintEvent *event){
     QPainter painter(this);
 
-    //This works, but is extremely slow
-    //QPixmap background(imageFilePaths[playerLevel-1]);
-    //painter.drawPixmap(rect(), background);
+
+
+    painter.drawPixmap(rect(), backgroundPixmap);
 
     painter.setBrush(Qt::blue);
 
-    painter.drawRect(boxX,boxY,100,100);
+    painter.drawEllipse(boxX,boxY,100,100);
 
     update();
 }
