@@ -71,7 +71,8 @@ SOURCES += \
     trekregistry.cpp \
     trekphysiology.cpp \
     gearcheck.cpp \
-    trekrules.cpp
+    trekrules.cpp \
+    itemregistry.cpp
 
 HEADERS += \
     backpack.h \
@@ -139,7 +140,8 @@ HEADERS += \
     trekregistry.h \
     trekphysiology.h \
     gearcheck.h \
-    trekrules.h
+    trekrules.h \
+    itemregistry.h
 
 FORMS += \
     backpack.ui \

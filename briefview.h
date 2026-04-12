@@ -58,8 +58,9 @@ public:
      * such as duration, terrain, and activity type.
      *
      * @param level The level to display information for.
+     * @param trekNumber The sequence number of the current trek.
      */
-    void setLevel(const Level& level);
+    void setLevel(const Level& level, int trekNumber);
 
 signals:
     /**

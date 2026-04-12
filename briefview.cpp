@@ -12,34 +12,40 @@
 #include "ui_briefview.h"
 #include "level.h"
 #include "tripconditions.h"
+#include "trekrules.h"
+#include "levelreportbuilder.h"
 
 namespace {
 
-// Converts a TerrainType enum to a human-readable string for the
-// trip-conditions panel. Kept local to briefview because the
-// mapping is purely presentational.
-QString terrainToString(TerrainType terrain)
-{
-    switch (terrain) {
-    case TerrainType::DESERT:   return QStringLiteral("Desert");
-    case TerrainType::FOREST:   return QStringLiteral("Forest");
-    case TerrainType::MOUNTAIN: return QStringLiteral("Mountain");
-    case TerrainType::ROCKY:    return QStringLiteral("Rocky");
-    case TerrainType::ALL:      return QStringLiteral("Open Choice");
+// Clean display names for UI
+QString displayTerrain(TerrainType t) {
+    switch(t) {
+        case TerrainType::DESERT:   return "Desert";
+        case TerrainType::FOREST:   return "Forest";
+        case TerrainType::MOUNTAIN: return "Mountain";
+        case TerrainType::ROCKY:    return "Rocky";
+        default: return "Open Choice";
     }
-    return QStringLiteral("Unknown");
 }
 
-// Converts an AdventureType enum to a human-readable string.
-QString adventureToString(AdventureType adventure)
-{
-    switch (adventure) {
-    case AdventureType::BACKPACKING: return QStringLiteral("Backpacking");
-    case AdventureType::CAMPING:     return QStringLiteral("Camping");
-    case AdventureType::DAY_HIKE:    return QStringLiteral("Day Hike");
-    case AdventureType::ALL:         return QStringLiteral("Open Choice");
+QString displayWeather(WeatherType w) {
+    switch(w) {
+        case WeatherType::COLD:    return "Cold";
+        case WeatherType::HOT:     return "Hot";
+        case WeatherType::RAINY:   return "Rainy";
+        case WeatherType::WINDY:   return "Windy";
+        case WeatherType::SNOW:    return "Snow";
+        default: return "Clear";
     }
-    return QStringLiteral("Unknown");
+}
+
+QString displayAdventure(AdventureType a) {
+    switch(a) {
+        case AdventureType::BACKPACKING: return "Backpacking";
+        case AdventureType::CAMPING:     return "Camping";
+        case AdventureType::DAY_HIKE:    return "Day Hike";
+        default: return "Open Choice";
+    }
 }
 
 } // namespace
@@ -60,13 +66,61 @@ BriefView::~BriefView()
     delete ui;
 }
 
-void BriefView::setLevel(const Level& level)
+void BriefView::setLevel(const Level& level, int trekNumber)
 {
-    // Show only broad trip metadata here. The authored description
-    // carries the mission flavor; hidden scoring requirements stay
-    // out of the brief.
-    ui->adventureLabel->setText(adventureToString(level.getAdventure()));
-    ui->terrainLabel->setText(terrainToString(level.getTerrain()));
+    // Update Title with Trek Number and Name
+    QString title = QString("Trek %1: %2").arg(trekNumber).arg(level.getLocationName());
+    ui->titleLabel->setText(title);
+
+    // Populate metadata labels
+    ui->adventureLabel->setText(displayAdventure(level.getAdventure()));
+    ui->terrainLabel->setText(displayTerrain(level.getTerrain()));
     ui->durationLabel->setText(QString::number(level.getDuration()) + " hours");
-    ui->briefingTextEdit->setText(level.getDescription());
+    
+    // Safety check for UI elements that might have been lost in layout swaps
+    if (ui->milesLabel) ui->milesLabel->setText(QString::number(level.getMiles()) + " miles");
+    if (ui->elevationLabel) ui->elevationLabel->setText(QString::number(level.getElevationGain()) + " feet");
+    if (ui->weatherLabel) ui->weatherLabel->setText(displayWeather(level.getWeather()));
+
+    // Generate Madlibs-style Tips based on the trip conditions
+    QString tips = "\n\n--- Pro Tips for this Trek ---\n";
+    
+    // Fetch tips dynamically from feedback.json
+    QString weatherKey = TrekRules::weatherToString(level.getWeather());
+    QString weatherTip = TrekRules::getTip("weather", weatherKey);
+    QString itemWeatherTip = TrekRules::getTip("item_weather", weatherKey);
+    if (!weatherTip.isEmpty() || !itemWeatherTip.isEmpty()) {
+        tips += "• " + weatherTip + " " + itemWeatherTip + "\n";
+    }
+
+    QString terrainKey = TrekRules::terrainToString(level.getTerrain());
+    QString terrainTip = TrekRules::getTip("terrain", terrainKey);
+    QString itemTerrainTip = TrekRules::getTip("item_terrain", terrainKey);
+    if (!terrainTip.isEmpty() || !itemTerrainTip.isEmpty()) {
+        tips += "• " + terrainTip + " " + itemTerrainTip + "\n";
+    }
+
+    if (level.getAdventure() == AdventureType::BACKPACKING || level.getAdventure() == AdventureType::CAMPING) {
+        QString advTip = TrekRules::getTip("adventure", "OVERNIGHT");
+        QString itemAdvTip = TrekRules::getTip("item_adventure", "OVERNIGHT");
+        if (!advTip.isEmpty() || !itemAdvTip.isEmpty()) {
+            tips += "• " + advTip + " " + itemAdvTip + "\n";
+        }
+    }
+
+    if (level.getDuration() > 8) {
+        QString durTip = TrekRules::getTip("duration", "LONG");
+        if (!durTip.isEmpty()) tips += "• " + durTip + "\n";
+    }
+
+    // Set the final description
+    QString fullText = level.getDescription() + tips;
+    
+    // Append the specific scientific focus for this level
+    QString scienceTip = LevelReportBuilder::getLessonByKey(level.getScienceFocus());
+    if (!scienceTip.isEmpty()) {
+        fullText += scienceTip;
+    }
+    
+    ui->briefingTextEdit->setText(fullText);
 }

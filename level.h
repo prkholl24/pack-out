@@ -49,8 +49,11 @@ public:
     TerrainType getTerrain() const { return requirements.terrain; }
     AdventureType getAdventure() const { return requirements.adventure; }
     int getDuration() const { return requirements.durationHours; }
+    double getMiles() const { return requirements.miles; }
+    double getElevationGain() const { return requirements.elevationGain; }
     double getRequiredHydration() const { return requirements.customHydration; }
     int getRequiredCalories() const { return requirements.customCalories; }
+    QString getScienceFocus() const { return requirements.scienceFocus; }
     QString getDescription() const { return requirements.description; }
 
     /**

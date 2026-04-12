@@ -13,5 +13,42 @@
         "high_caffeine": "Jitters from excessive caffeine made your pace erratic and your heart race. ",
         "high_sugar": "A sugar crash left you feeling shaky and weak after an initial energy spike. ",
         "alcohol_penalty": "The alcohol you packed slowed your recovery and significantly dehydrated your system. "
+    },
+    "tips": {
+        "weather": {
+            "HOT": "Beat the heat! Make sure to pack extra water and sun protection.",
+            "COLD": "It's going to be chilly. Don't forget wool layers to stay warm.",
+            "RAINY": "Rain is in the forecast. A good rain jacket is essential to stay dry.",
+            "SNOW": "Snowy conditions await. Pack high-calorie food and thermal protection.",
+            "WINDY": "It's going to be windy. A windbreaker or shell will help you retain heat."
+        },
+        "item_weather": {
+            "HOT": "Gear Check: A Hat and Sunscreen are critical. Avoid Cotton Shirts, which trap sweat.",
+            "COLD": "Gear Check: Pack a Wool Shirt for insulation. Avoid Cotton Shirts, which lose all warmth when wet.",
+            "RAINY": "Gear Check: A Rain Jacket is non-negotiable. Consider Ziploc Bags to keep your matches dry.",
+            "SNOW": "Gear Check: Wool Shirts and a Rain Jacket (for snow melt) are required. Don't forget Sunscreen—snow reflects UV rays!",
+            "WINDY": "Gear Check: A Rain Jacket can double as a windbreaker. A Hat will help retain body heat."
+        },
+        "terrain": {
+            "ROCKY": "This rocky terrain can be tough on your joints. Trekking poles are highly recommended.",
+            "DESERT": "Desert environments are dry. Prioritize hydration above all else.",
+            "MOUNTAIN": "Mountain climbs require serious energy. Bring snacks with a good mix of carbs and protein.",
+            "FOREST": "Forest trails are beautiful but can have wildlife. Carry safety gear like a whistle or bear spray."
+        },
+        "item_terrain": {
+            "ROCKY": "Gear Check: Trekking Poles will save your knees on the steep rocky descents.",
+            "DESERT": "Gear Check: Bring a Water Filter if a water source exists, but expect to carry multiple Water Bottles.",
+            "MOUNTAIN": "Gear Check: Trekking Poles help with elevation gain. A Compass is vital if you lose the trail above the tree line.",
+            "FOREST": "Gear Check: Bear Spray is essential in dense woods. A Compass will help you navigate if the canopy blocks your view."
+        },
+        "adventure": {
+            "OVERNIGHT": "Since you'll be out overnight, shelter and a sleeping bag are mandatory."
+        },
+        "item_adventure": {
+            "OVERNIGHT": "Gear Check: A Sleeping Bag, Tent, and Flashlight are mandatory for surviving the night."
+        },
+        "duration": {
+            "LONG": "This is a long haul. Be mindful of pack weight—every ounce counts!"
+        }
     }
 }

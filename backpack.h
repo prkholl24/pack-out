@@ -104,6 +104,13 @@ public:
      */
     ~BackpackScene();
 
+    /**
+     * @brief Updates the displayed weight and volume.
+     * @param weight  Total weight in lbs.
+     * @param volume  Total volume in liters.
+     */
+    void updateStats(double weight, double volume);
+
 signals:
     /**
      * @brief Emitted once the Cinch & Go button exits the screen.
@@ -218,6 +225,12 @@ private:
     static constexpr int WINDOW_WIDTH_PX = 800;
     /** @brief Locked window height in pixels. */
     static constexpr int WINDOW_HEIGHT_PX = 600;
+
+    // -----------------------------------------------------------------
+    //  Backpack status
+    // -----------------------------------------------------------------
+    double currentWeight = 0.0;
+    double currentVolume = 0.0;
 
     // -----------------------------------------------------------------
     //  Core state

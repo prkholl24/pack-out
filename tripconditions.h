@@ -46,6 +46,7 @@ struct TripRequirements {
     WeatherType weather = WeatherType::DEFAULT;
     AdventureType adventure = AdventureType::ALL;
 
+    QString scienceFocus = "";
     double passingScore = 70.0;
 };
 

@@ -7,5 +7,6 @@
         <file>data/treks.json</file>
         <file>data/feedback.json</file>
         <file>data/tuning.json</file>
+        <file>data/items.json</file>
     </qresource>
 </RCC>

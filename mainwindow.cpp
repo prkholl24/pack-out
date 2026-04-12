@@ -9,6 +9,7 @@
 #include "debriefview.h"
 #include "drinkitem.h"
 #include "fooditem.h"
+#include "gearitem.h"
 #include "levelreportbuilder.h"
 #include "trekregistry.h"
 
@@ -16,18 +17,31 @@
 #include <QStackedWidget>
 #include <QStatusBar>
 
+#include "itemregistry.h"
+
 namespace {
 
 Item* createPackedItemFromSceneName(const QString& itemName)
 {
-    if (itemName == QStringLiteral("BANANA"))
-        return new FoodItem(Food::BANANA);
+    ItemRegistry::ensureLoaded();
 
-    if (itemName == QStringLiteral("POTATO"))
-        return new FoodItem(Food::POTATO);
+    // Check food
+    ItemStats stats = ItemRegistry::getFoodStats(itemName);
+    if (!stats.description.isEmpty()) {
+        return new FoodItem(itemName);
+    }
 
-    if (itemName == QStringLiteral("BOTTLE"))
-        return new DrinkItem(DrinkType::WATER_BOTTLE);
+    // Check drink
+    stats = ItemRegistry::getDrinkStats(itemName);
+    if (!stats.description.isEmpty()) {
+        return new DrinkItem(itemName);
+    }
+
+    // Check gear
+    stats = ItemRegistry::getGearStats(itemName);
+    if (!stats.description.isEmpty()) {
+        return new GearItem(itemName);
+    }
 
     return nullptr;
 }
@@ -116,14 +130,15 @@ void MainWindow::onBackpackChanged()
 
 void MainWindow::onStatsChanged(double weight, double volume)
 {
-    Q_UNUSED(weight);
-    Q_UNUSED(volume);
+    if (backpackScene) {
+        backpackScene->updateStats(weight, volume);
+    }
 }
 
 void MainWindow::showBriefView()
 {
     if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size()) {
-        briefView->setLevel(treks[currentTrekIndex]);
+        briefView->setLevel(treks[currentTrekIndex], currentTrekIndex + 1);
     }
     sceneStack->setCurrentWidget(briefView);
 }
