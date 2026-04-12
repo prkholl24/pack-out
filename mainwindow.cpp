@@ -7,6 +7,7 @@
 #include "backpack.h"
 #include "levelreportbuilder.h"
 #include "trekregistry.h"
+#include "trekview.h"
 
 #include <QMenuBar>
 #include <QStackedWidget>
@@ -31,6 +32,12 @@ MainWindow::MainWindow(QWidget *parent)
     backpackScene = new BackpackScene(this);
     sceneStack->addWidget(backpackScene);
     sceneStack->setCurrentWidget(backpackScene);
+
+    //Initilize the trek-view scene
+    trekViewScene = new TrekView(this);
+    //Adds the trek-view scene to the scene stack
+    sceneStack->addWidget(trekViewScene);
+    sceneStack->setCurrentWidget(trekViewScene);
 
     // Initialize Utah Treks from external data
     treks = TrekRegistry::loadTreks();

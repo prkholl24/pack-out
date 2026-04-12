@@ -13,14 +13,14 @@
 #define TREKVIEW_H
 
 #include "trekbox2dphysics.h"
-#include <QMainWindow>
+#include <QWidget>
 #include <Box2D/Box2D.h>
 
 namespace Ui {
 class TrekView;
 }
 
-class TrekView : public QMainWindow
+class TrekView : public QWidget
 {
     Q_OBJECT
 
@@ -37,9 +37,14 @@ public slots:
      */
     void currentLevel(int level);
 private:
-    //Current level the player is on.
+    /**
+     * @brief player's current level
+     */
     int playerLevel;
 
+    /**
+     * @brief vector of FilePaths
+     */
     QVector<QString> imageFilePaths;
 
     QImage backgroundImage;

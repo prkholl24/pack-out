@@ -9,6 +9,7 @@
 #include <vector>
 #include "level.h"
 #include "player.h"
+#include "trekview.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -75,6 +76,11 @@ private:
      * @brief The packing-phase scene.
      */
     BackpackScene* backpackScene;
+
+    /**
+     * @brief The trek view scene.
+     */
+    TrekView* trekViewScene;
 
     /**
      * @brief The player object managing the current session's backpack.

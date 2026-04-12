@@ -3,10 +3,10 @@
 #include <QPainter>
 
 TrekView::TrekView(QWidget *parent)
-    : QMainWindow(parent)
+    : QWidget(parent)
     , ui(new Ui::TrekView)
 {
-    ui->setupUi(this);
+    ui->setupUi(parent);
     connect(phys,&TrekBox2DPhysics::sendBodyLocation,this,&TrekView::bodyDisplay);
     playerLevel = 1;
 
