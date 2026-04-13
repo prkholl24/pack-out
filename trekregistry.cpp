@@ -44,6 +44,7 @@ TripRequirements TrekRegistry::parseTrip(const QJsonObject& obj)
     req.terrain = stringToTerrain(obj.value("terrain").toString());
     req.weather = stringToWeather(obj.value("weather").toString());
     req.adventure = stringToAdventure(obj.value("adventure").toString());
+    req.scienceFocus = obj.value("scienceFocus").toString();
     
     return req;
 }

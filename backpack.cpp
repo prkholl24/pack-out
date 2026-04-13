@@ -420,6 +420,21 @@ void BackpackScene::paintEvent(QPaintEvent *event)
             painter.drawText(labelRect, Qt::AlignCenter, label);
         }
     }
+
+    // --- Draw Backpack Totals ---
+    //
+    // Draw the current weight and volume in the top-right corner.
+    painter.setFont(labelFont);
+    painter.setPen(Qt::white);
+    painter.drawText(600, 30, QString("Weight: %1 lbs").arg(currentWeight, 0, 'f', 1));
+    painter.drawText(600, 55, QString("Volume: %1 L").arg(currentVolume, 0, 'f', 1));
+}
+
+void BackpackScene::updateStats(double weight, double volume)
+{
+    currentWeight = weight;
+    currentVolume = volume;
+    update();
 }
 
 // =========================================================================

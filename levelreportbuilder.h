@@ -34,6 +34,13 @@ public:
      */
     static QString buildReport(const LevelResult& result);
 
+    /**
+     * @brief Fetches a specific educational lesson by its string key.
+     * @param key The key string (e.g., "COTTON_CLOTHING_WARNING").
+     * @return Formatted lesson string with title and body.
+     */
+    static QString getLessonByKey(const QString& key);
+
 private:
     /**
      * @brief Ensures the lesson registry and feedback data are loaded from JSON.

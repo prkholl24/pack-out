@@ -128,6 +128,12 @@ public:
      */
     DrinkItem(DrinkType drinkEnum);
 
+    /**
+     * @brief Constructs a DrinkItem from a string identifier.
+     * @param name The name of the drink in the registry.
+     */
+    DrinkItem(const QString& name);
+
     virtual bool isDrink() const override { return true; }
 
     /**

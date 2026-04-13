@@ -52,15 +52,30 @@ void LevelReportBuilder::ensureContentLoaded()
     }
 }
 
+QString LevelReportBuilder::getLessonByKey(const QString& key)
+{
+    // We don't need the enum map here, just read directly from the raw JSON object
+    // but we need to ensure the raw JSON is loaded into feedbackData or a local.
+    // Actually, ensureContentLoaded loads lessonRegistry, but that uses enums.
+    
+    QFile lessonFile(":/data/lessons.json");
+    if (lessonFile.open(QIODevice::ReadOnly)) {
+        QJsonObject root = QJsonDocument::fromJson(lessonFile.readAll()).object();
+        if (root.contains(key)) {
+            QJsonObject obj = root.value(key).toObject();
+            return "\n\n--- Expedition Science: " + obj.value("title").toString() + " ---\n" + obj.value("body").toString();
+        }
+    }
+    return QString();
+}
+
 QString LevelReportBuilder::buildReport(const LevelResult& result)
 {
     ensureContentLoaded();
     QString report = buildSummaryReport(result);
 
-    if (result.passed)
-        report += buildPassReport();
-    else
-        report += buildFailReport(result);
+    if (result.passed) report += "\n" + buildPassReport();
+    else report += "\n" + buildFailReport(result);
 
     report += "\n" + buildScienceTip(result);
     return report;
