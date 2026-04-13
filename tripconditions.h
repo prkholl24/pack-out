@@ -2,6 +2,7 @@
 #define TRIPCONDITIONS_H
 
 #include <QString>
+#include <QStringList>
 
 enum class WeatherType {
     COLD,
@@ -48,6 +49,9 @@ struct TripRequirements {
 
     QString scienceFocus = "";
     double passingScore = 70.0;
+
+    /// Item names available for the player to choose from in this level.
+    QStringList availableItems;
 };
 
 #endif // TRIPCONDITIONS_H
