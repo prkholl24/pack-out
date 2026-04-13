@@ -28,6 +28,8 @@ public:
     explicit TrekView(QWidget *parent = nullptr);
     ~TrekView();
 
+
+
 public slots:
 
     /**
@@ -48,6 +50,9 @@ signals:
 
     //Signal which is heard by setTargetFromMouse slot
     //in the physics engine.
+    void updatePhysicsMousePosition(QPointF position);
+
+    void leftMouseButtonClickedSignal(bool clicked);
 
 
 private:
@@ -74,6 +79,10 @@ private:
     float boxY;
 protected:
     void paintEvent(QPaintEvent *event) override;
+
+    void mousePressEvent(QMouseEvent *event) override;
+
+    void mouseMoveEvent(QMouseEvent *event) override;
 };
 
 #endif // TREKVIEW_H

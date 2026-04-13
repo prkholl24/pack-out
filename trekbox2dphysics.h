@@ -25,10 +25,10 @@ public:
 
     //Gain on the force applied based on the distance
     //From player to mouse
-    float forceGain = 25.0f;
+    float forceGain = 5.0f;
 
     //Maximum force that can be applied to hiker
-    float maxForce = 40.0f;
+    float maxForce = 10.0f;
     /**
      * @brief body
      */
@@ -41,12 +41,17 @@ public:
 
 private:
 
+    int widgetWidth = 800;
+    int widgetHeight = 600;
+
     /**
      * @brief Converts a point on the screen to a point in box2D based on the
      *        screen size.
      *        Method was acquired from ChatGPT GPT5.3
      */
     b2Vec2 screenToWorld(const QPointF& p) const;
+
+    QPointF worldToScreen(const b2Vec2& p) const;
 
 
 
@@ -58,6 +63,8 @@ public slots:
     void setTargetFromMouse(const QPointF& mousePos);
 
     void updateWorldSlot();
+
+    void leftMouseButtonClickedSlot(bool clicked);
 };
 
 #endif // TREKBOX2DPHYSICS_H
