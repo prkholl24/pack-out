@@ -224,7 +224,6 @@ private:
     // -----------------------------------------------------------------
     //  Scene construction helpers
     // -----------------------------------------------------------------
-    void createShelf();
     void createBackpack();
     void createTabs();
     void createCinchAndGoButton();

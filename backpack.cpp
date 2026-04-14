@@ -23,6 +23,7 @@
 #include <QFont>
 #include <QPen>
 #include <QPolygonF>
+#include <QRandomGenerator>
 #include <QRectF>
 
 #include <algorithm>
@@ -96,7 +97,7 @@ QColor colorFor(BodyKind kind) {
 
 QString labelFor(BodyKind kind) {
     switch (kind) {
-        case BodyKind::CinchAndGoIdle: return QStringLiteral("CINCH & GO");
+        case BodyKind::CinchAndGoIdle: return QStringLiteral("Go!");
         default:                       return QString();
     }
 }
@@ -204,7 +205,6 @@ BackpackScene::BackpackScene(const QStringList& availableItems, QWidget *parent)
 
     // --- Scene construction ---
     createMouseAnchor();
-    createShelf();
     createBackpack();
     createCinchAndGoButton();
     createTabs();
@@ -243,9 +243,7 @@ void BackpackScene::paintEvent(QPaintEvent *event)
     labelFont.setBold(true);
     labelFont.setPointSize(12);
 
-    QFont smallFont = painter.font();
-    smallFont.setBold(true);
-    smallFont.setPointSize(8);
+
 
     for (b2Body* body = world.GetBodyList(); body; body = body->GetNext()) {
         BodyKind kind = kindOf(body);
@@ -325,26 +323,13 @@ void BackpackScene::paintEvent(QPaintEvent *event)
             painter.restore();
         }
 
-        // --- Labels ---
-        // Structural labels (Cinch & Go)
+        // "Go!" label on the Cinch & Go button
         QString label = labelFor(kind);
         if (!label.isEmpty()) {
             painter.setFont(labelFont);
             painter.setPen(Qt::white);
             QRectF labelRect(screenPos.x() - 80.0, screenPos.y() - 42.0, 160.0, 22.0);
             painter.drawText(labelRect, Qt::AlignCenter, label);
-        }
-
-        // Spawner item names
-        if (kind == BodyKind::Spawner) {
-            auto nameIt = bodyNames.find(body);
-            if (nameIt != bodyNames.end()) {
-                painter.setFont(smallFont);
-                painter.setPen(Qt::white);
-                QString display = nameIt->second.toLower().replace("_", " ");
-                QRectF labelRect(screenPos.x() - 60.0, screenPos.y() - 32.0, 120.0, 16.0);
-                painter.drawText(labelRect, Qt::AlignCenter, display);
-            }
         }
 
         // Tab labels
@@ -356,18 +341,6 @@ void BackpackScene::paintEvent(QPaintEvent *event)
                 QString display = nameIt->second;
                 display[0] = display[0].toUpper();
                 QRectF labelRect(screenPos.x() - 50.0, screenPos.y() - 10.0, 100.0, 20.0);
-                painter.drawText(labelRect, Qt::AlignCenter, display);
-            }
-        }
-
-        // Item body name labels (small, drawn on the physics body)
-        if (kind == BodyKind::Item) {
-            auto nameIt = bodyNames.find(body);
-            if (nameIt != bodyNames.end()) {
-                painter.setFont(smallFont);
-                painter.setPen(Qt::white);
-                QString display = nameIt->second.toLower().replace("_", " ");
-                QRectF labelRect(screenPos.x() - 50.0, screenPos.y() - 6.0, 100.0, 12.0);
                 painter.drawText(labelRect, Qt::AlignCenter, display);
             }
         }
@@ -469,7 +442,11 @@ void BackpackScene::mousePressEvent(QMouseEvent *event)
         case BodyKind::CinchAndGoIdle: {
             hit->SetType(b2_dynamicBody);
             hit->SetAwake(true);
-            hit->SetLinearVelocity(b2Vec2(0.0f, 15.0f));
+            // Random launch: speed 12-18, angle biased upward (30°-150°)
+            float speed = 12.0f + QRandomGenerator::global()->bounded(6.0f);
+            float angle = (30.0f + QRandomGenerator::global()->bounded(120.0f)) * b2_pi / 180.0f;
+            hit->SetLinearVelocity(b2Vec2(speed * std::cos(angle), speed * std::sin(angle)));
+            hit->SetAngularVelocity(QRandomGenerator::global()->bounded(20.0f) - 10.0f);
             hit->SetUserData(tagFor(BodyKind::CinchAndGoActivated));
             break;
         }
@@ -571,24 +548,6 @@ void BackpackScene::createMouseAnchor()
     mouseJointAnchor->SetUserData(tagFor(BodyKind::MouseAnchor));
 }
 
-void BackpackScene::createShelf()
-{
-    // Wider shelf spanning the left ~9m of the scene
-    b2BodyDef def;
-    def.type = b2_staticBody;
-    def.position.Set(5.0f, 2.5f);
-    b2Body* body = world.CreateBody(&def);
-
-    b2PolygonShape box;
-    box.SetAsBox(4.5f, 0.1f);  // 9 m wide, 0.2 m tall
-
-    b2FixtureDef fix;
-    fix.shape = &box;
-    fix.friction = 0.6f;
-    body->CreateFixture(&fix);
-
-    body->SetUserData(tagFor(BodyKind::Shelf));
-}
 
 void BackpackScene::createBackpack()
 {
@@ -661,44 +620,24 @@ void BackpackScene::createTabs()
 
 void BackpackScene::createCinchAndGoButton()
 {
-    // Ledge
-    {
-        b2BodyDef def;
-        def.type = b2_staticBody;
-        def.position.Set(9.5f, 1.1f);
-        b2Body* body = world.CreateBody(&def);
+    // Static button — turns dynamic when clicked.
+    b2BodyDef def;
+    def.type = b2_staticBody;
+    def.position.Set(9.5f, 1.45f);
+    def.linearDamping = 0.0f;
+    def.angularDamping = 0.5f;
+    cinchAndGoButton = world.CreateBody(&def);
 
-        b2PolygonShape box;
-        box.SetAsBox(0.7f, 0.1f);
+    b2PolygonShape box;
+    box.SetAsBox(0.5f, 0.25f);
 
-        b2FixtureDef fix;
-        fix.shape = &box;
-        fix.friction = 0.5f;
-        body->CreateFixture(&fix);
+    b2FixtureDef fix;
+    fix.shape = &box;
+    fix.density = 1.0f;
+    fix.friction = 0.5f;
+    cinchAndGoButton->CreateFixture(&fix);
 
-        body->SetUserData(tagFor(BodyKind::CinchAndGoLedge));
-    }
-
-    // Button
-    {
-        b2BodyDef def;
-        def.type = b2_staticBody;
-        def.position.Set(9.5f, 1.45f);
-        def.linearDamping = 0.0f;
-        def.angularDamping = 0.5f;
-        cinchAndGoButton = world.CreateBody(&def);
-
-        b2PolygonShape box;
-        box.SetAsBox(0.5f, 0.25f);
-
-        b2FixtureDef fix;
-        fix.shape = &box;
-        fix.density = 1.0f;
-        fix.friction = 0.5f;
-        cinchAndGoButton->CreateFixture(&fix);
-
-        cinchAndGoButton->SetUserData(tagFor(BodyKind::CinchAndGoIdle));
-    }
+    cinchAndGoButton->SetUserData(tagFor(BodyKind::CinchAndGoIdle));
 }
 
 // =========================================================================
