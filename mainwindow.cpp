@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Lock the window geometry and strip chrome
-    setFixedSize(1920, 1080);
+    setFixedSize(1920,1080);
     menuBar()->hide();
     statusBar()->hide();
 
