@@ -17,7 +17,6 @@
 #include "spritecache.h"
 
 #include <QApplication>
-#include <QCoreApplication>
 
 int main(int argc, char *argv[])
 {
@@ -26,10 +25,8 @@ int main(int argc, char *argv[])
     // any QWidget.
     QApplication a(argc, argv);
 
-    // Load (or auto-generate) sprite images for all items.
-    // Templates are created for any item that doesn't have a PNG yet.
-    // SPRITES_DIR is defined in Pack_Out.pro as $$PWD/sprites.
-    SpriteCache::init(SPRITES_DIR);
+    // Load sprite images for all items from Qt resources (:/sprites/).
+    SpriteCache::init();
 
     // MainWindow is the top-level window. Its constructor builds
     // a QStackedWidget and populates it with game scenes.

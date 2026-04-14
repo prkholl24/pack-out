@@ -35,8 +35,8 @@ public:
     static constexpr int   SPRITE_SCALE = 4;     // 4x resolution multiplier
     static constexpr float EFFECTIVE_PPM = 50.0f * SPRITE_SCALE; // 200 px/m
 
-    /// Load (or generate) sprites for every item.  Call once at startup.
-    static void init(const QString& spritesDir);
+    /// Load sprites for every item from Qt resources.  Call once at startup.
+    static void init();
 
     /// Returns the sprite entry for an item, or an invalid entry.
     static const SpriteEntry& get(const QString& itemName);
@@ -45,10 +45,6 @@ public:
     static bool has(const QString& itemName);
 
 private:
-    /// Generates a template PNG for one item and saves it to path.
-    static void generateTemplate(const QString& itemName, const QString& filePath,
-                                 const ItemShape& shape, const ItemAABB& aabb);
-
     static std::map<QString, SpriteEntry> cache_;
 };
 
