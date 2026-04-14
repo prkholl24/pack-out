@@ -97,6 +97,30 @@ ItemStats ItemRegistry::parseStats(const QJsonObject& obj) {
     return stats;
 }
 
+ItemAABB ItemRegistry::computeAABB(const ItemShape& shape) {
+    ItemAABB aabb;
+    for (const ItemFixture& fix : shape.fixtures) {
+        if (fix.isBox) {
+            float x0 = fix.centerX - fix.halfW;
+            float y0 = fix.centerY - fix.halfH;
+            float x1 = fix.centerX + fix.halfW;
+            float y1 = fix.centerY + fix.halfH;
+            aabb.minX = std::min(aabb.minX, x0);
+            aabb.minY = std::min(aabb.minY, y0);
+            aabb.maxX = std::max(aabb.maxX, x1);
+            aabb.maxY = std::max(aabb.maxY, y1);
+        } else {
+            for (const auto& [vx, vy] : fix.vertices) {
+                aabb.minX = std::min(aabb.minX, vx);
+                aabb.minY = std::min(aabb.minY, vy);
+                aabb.maxX = std::max(aabb.maxX, vx);
+                aabb.maxY = std::max(aabb.maxY, vy);
+            }
+        }
+    }
+    return aabb;
+}
+
 ItemShape ItemRegistry::parseShape(const QJsonObject& obj) {
     ItemShape shape;
     if (obj.isEmpty()) return shape;

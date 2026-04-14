@@ -8,7 +8,22 @@
 #include <map>
 #include <vector>
 #include <utility>
+#include <algorithm>
+#include <cmath>
+#include <cfloat>
 #include "nutritionprofile.h"
+
+/**
+ * @brief Axis-aligned bounding box for an item's combined fixtures, in Box2D meters.
+ */
+struct ItemAABB {
+    float minX =  FLT_MAX, minY =  FLT_MAX;
+    float maxX = -FLT_MAX, maxY = -FLT_MAX;
+    float width()   const { return maxX - minX; }
+    float height()  const { return maxY - minY; }
+    float centerX() const { return (minX + maxX) * 0.5f; }
+    float centerY() const { return (minY + maxY) * 0.5f; }
+};
 
 /**
  * @brief Describes a single Box2D fixture for an item's physics shape.
@@ -64,6 +79,9 @@ public:
     static QStringList getFoodNames();
     static QStringList getDrinkNames();
     static QStringList getGearNames();
+
+    /// Computes the axis-aligned bounding box of all fixtures in a shape.
+    static ItemAABB computeAABB(const ItemShape& shape);
 
 private:
     static QJsonObject itemsRoot;

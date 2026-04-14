@@ -15,6 +15,7 @@
  * @date 4/9/2026
  */
 #include "backpack.h"
+#include "spritecache.h"
 #include "ui_backpack.h"
 #include "itemregistry.h"
 
@@ -278,25 +279,51 @@ void BackpackScene::paintEvent(QPaintEvent *event)
 
         QPointF screenPos = worldToScreen(body->GetPosition());
 
-        painter.save();
-        painter.translate(screenPos);
-        painter.rotate(-body->GetAngle() * 180.0f / b2_pi);
-        painter.scale(PIXELS_PER_METER, PIXELS_PER_METER);
-        painter.setBrush(fill);
-        painter.setPen(outlinePen);
-
-        for (b2Fixture* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
-            if (fixture->GetShape()->GetType() != b2Shape::e_polygon) continue;
-            auto* poly = static_cast<b2PolygonShape*>(fixture->GetShape());
-            QPolygonF qPoly;
-            for (int32 i = 0; i < poly->GetVertexCount(); ++i) {
-                b2Vec2 v = poly->GetVertex(i);
-                qPoly << QPointF(v.x, -v.y);
+        // --- Try sprite rendering for items and spawners ---
+        bool drewSprite = false;
+        if (kind == BodyKind::Item || kind == BodyKind::Spawner) {
+            auto nameIt = bodyNames.find(body);
+            if (nameIt != bodyNames.end() && SpriteCache::has(nameIt->second)) {
+                const SpriteEntry& sprite = SpriteCache::get(nameIt->second);
+                painter.save();
+                painter.translate(screenPos);
+                painter.rotate(-body->GetAngle() * 180.0f / b2_pi);
+                // Map the sprite image to the AABB in screen pixels.
+                // Y is negated because Box2D Y-up → screen Y-down.
+                QRectF target(
+                    sprite.aabb.minX * PIXELS_PER_METER,
+                    -sprite.aabb.maxY * PIXELS_PER_METER,
+                    sprite.aabb.width() * PIXELS_PER_METER,
+                    sprite.aabb.height() * PIXELS_PER_METER
+                );
+                painter.drawPixmap(target, sprite.pixmap, QRectF(sprite.pixmap.rect()));
+                painter.restore();
+                drewSprite = true;
             }
-            painter.drawPolygon(qPoly);
         }
 
-        painter.restore();
+        // --- Fallback: polygon rendering ---
+        if (!drewSprite) {
+            painter.save();
+            painter.translate(screenPos);
+            painter.rotate(-body->GetAngle() * 180.0f / b2_pi);
+            painter.scale(PIXELS_PER_METER, PIXELS_PER_METER);
+            painter.setBrush(fill);
+            painter.setPen(outlinePen);
+
+            for (b2Fixture* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+                if (fixture->GetShape()->GetType() != b2Shape::e_polygon) continue;
+                auto* poly = static_cast<b2PolygonShape*>(fixture->GetShape());
+                QPolygonF qPoly;
+                for (int32 i = 0; i < poly->GetVertexCount(); ++i) {
+                    b2Vec2 v = poly->GetVertex(i);
+                    qPoly << QPointF(v.x, -v.y);
+                }
+                painter.drawPolygon(qPoly);
+            }
+
+            painter.restore();
+        }
 
         // --- Labels ---
         // Structural labels (Cinch & Go)
