@@ -23,7 +23,7 @@ TrekView::TrekView(QWidget *parent)
     connect(this, &TrekView::leftMouseButtonClickedSignal, phys, &TrekBox2DPhysics::leftMouseButtonClickedSlot);
     playerLevel = 1;
 
-    imageFilePaths.append("://DryCanyonTrail.png");
+    imageFilePaths.append("://BryceArchesBackground.jpg");
 
     backgroundPixmap.load(imageFilePaths[0]);
 
@@ -71,7 +71,7 @@ void TrekView::paintEvent(QPaintEvent *event){
 
 
 
-  //  painter.drawPixmap(rect(), backgroundPixmap);
+   painter.drawPixmap(rect(), backgroundPixmap);
 
     painter.setBrush(Qt::blue);
 
