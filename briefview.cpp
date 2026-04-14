@@ -12,8 +12,6 @@
 #include "ui_briefview.h"
 #include "level.h"
 #include "tripconditions.h"
-#include "trekrules.h"
-#include "levelreportbuilder.h"
 
 namespace {
 
@@ -82,45 +80,5 @@ void BriefView::setLevel(const Level& level, int trekNumber)
     if (ui->elevationLabel) ui->elevationLabel->setText(QString::number(level.getElevationGain()) + " feet");
     if (ui->weatherLabel) ui->weatherLabel->setText(displayWeather(level.getWeather()));
 
-    // Generate Madlibs-style Tips based on the trip conditions
-    QString tips = "\n\n--- Pro Tips for this Trek ---\n";
-    
-    // Fetch tips dynamically from feedback.json
-    QString weatherKey = TrekRules::weatherToString(level.getWeather());
-    QString weatherTip = TrekRules::getTip("weather", weatherKey);
-    QString itemWeatherTip = TrekRules::getTip("item_weather", weatherKey);
-    if (!weatherTip.isEmpty() || !itemWeatherTip.isEmpty()) {
-        tips += "• " + weatherTip + " " + itemWeatherTip + "\n";
-    }
-
-    QString terrainKey = TrekRules::terrainToString(level.getTerrain());
-    QString terrainTip = TrekRules::getTip("terrain", terrainKey);
-    QString itemTerrainTip = TrekRules::getTip("item_terrain", terrainKey);
-    if (!terrainTip.isEmpty() || !itemTerrainTip.isEmpty()) {
-        tips += "• " + terrainTip + " " + itemTerrainTip + "\n";
-    }
-
-    if (level.getAdventure() == AdventureType::BACKPACKING || level.getAdventure() == AdventureType::CAMPING) {
-        QString advTip = TrekRules::getTip("adventure", "OVERNIGHT");
-        QString itemAdvTip = TrekRules::getTip("item_adventure", "OVERNIGHT");
-        if (!advTip.isEmpty() || !itemAdvTip.isEmpty()) {
-            tips += "• " + advTip + " " + itemAdvTip + "\n";
-        }
-    }
-
-    if (level.getDuration() > 8) {
-        QString durTip = TrekRules::getTip("duration", "LONG");
-        if (!durTip.isEmpty()) tips += "• " + durTip + "\n";
-    }
-
-    // Set the final description
-    QString fullText = level.getDescription() + tips;
-    
-    // Append the specific scientific focus for this level
-    QString scienceTip = LevelReportBuilder::getLessonByKey(level.getScienceFocus());
-    if (!scienceTip.isEmpty()) {
-        fullText += scienceTip;
-    }
-    
-    ui->briefingTextEdit->setText(fullText);
+    ui->briefingTextEdit->setText(level.getDescription());
 }

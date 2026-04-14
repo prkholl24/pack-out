@@ -37,7 +37,12 @@ void TrekPhysiology::computeRequirements(LevelResult& result,
 
     // Final Requirement Sum
     double totalCals = result.bmrBurn + result.distanceBurn + result.climbBurn + result.loadPenalty;
-    result.requiredCalories = (req.customCalories > 0) ? req.customCalories : static_cast<int>(totalCals);
+    if (req.customCalories == 0)
+        result.requiredCalories = 0;               // water-only level: calories not scored
+    else if (req.customCalories > 0)
+        result.requiredCalories = req.customCalories;
+    else
+        result.requiredCalories = static_cast<int>(totalCals);
     
     // 6. Hydration Calculation
     double baseRate = TrekRules::get("physiology", "hydration_oz_per_hour");
