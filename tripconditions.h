@@ -2,6 +2,7 @@
 #define TRIPCONDITIONS_H
 
 #include <QString>
+#include <QStringList>
 
 enum class WeatherType {
     COLD,
@@ -46,7 +47,13 @@ struct TripRequirements {
     WeatherType weather = WeatherType::DEFAULT;
     AdventureType adventure = AdventureType::ALL;
 
+    QString scienceFocus = "";
     double passingScore = 70.0;
+
+    // If true, all gear checks are skipped for this level (used for beginner levels)
+    bool skipGearCheck = false;
+    /// Item names available for the player to choose from in this level.
+    QStringList availableItems;
 };
 
 #endif // TRIPCONDITIONS_H

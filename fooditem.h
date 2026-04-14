@@ -122,6 +122,12 @@ public:
      */
     FoodItem(Food foodEnum);
 
+    /**
+     * @brief Constructs a FoodItem from a string identifier.
+     * @param name The name of the food in the registry.
+     */
+    FoodItem(const QString& name);
+
     virtual bool isFood() const override { return true; }
 
     /**

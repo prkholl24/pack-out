@@ -164,20 +164,17 @@ double Level::calculateHydrationScore(double effective, double required) const
 
 ScienceLesson Level::determineScienceLesson(const LevelResult& result) const
 {
-    double bmrRatio = TrekRules::get("health_thresholds", "starving_bmr_ratio_threshold");
+    // Level focus flags — used to suppress lessons for variables that this
+    // level doesn't teach yet. Keeps early-level feedback on topic.
+    bool waterOnly = (requirements.customCalories == 0);
+    bool gearScored = !requirements.skipGearCheck;
 
-    if (result.leftTrashBehind) return ScienceLesson::LEAVE_NO_TRACE_VIOLATION;
-    if (result.missingEssentials) return ScienceLesson::TEN_ESSENTIALS_MISSING;
-    if (result.totals.hasCotton && (requirements.weather == WeatherType::RAINY || requirements.weather == WeatherType::SNOW))
-        return ScienceLesson::COTTON_CLOTHING_WARNING;
-    if (result.totals.sodium > 2300.0) return ScienceLesson::SODIUM_HYDRATION_LOAD;
-    if (result.totals.sugar > 50.0 && result.totals.fiber < 10.0) return ScienceLesson::FIBER_ENERGY_STABILITY;
-    
     bool isHighCaffeine = false;
     bool isAlcohol = false;
     bool isStarving = false;
     bool isTooBulky = false;
     bool isTooHeavy = false;
+    bool isDehydrated = false;
 
     for (TripCondition c : result.conditions) {
         if (c == TripCondition::HIGH_CAFFEINE) isHighCaffeine = true;
@@ -185,13 +182,42 @@ ScienceLesson Level::determineScienceLesson(const LevelResult& result) const
         if (c == TripCondition::STARVING) isStarving = true;
         if (c == TripCondition::TOO_BULKY) isTooBulky = true;
         if (c == TripCondition::TOO_HEAVY) isTooHeavy = true;
+        if (c == TripCondition::DEHYDRATED) isDehydrated = true;
     }
 
+    // Level 1 (water-only): keep tips strictly water-related so the player
+    // learns hydration before any other variable is introduced.
+    if (waterOnly) {
+        if (isHighCaffeine || isAlcohol) return ScienceLesson::HYDRATION_DIURETICS;
+        return ScienceLesson::HYDRATION_BASICS;
+    }
+
+    // Gear-scoped lessons only apply once gear checks are enabled (Level 3+).
+    if (gearScored) {
+        if (result.leftTrashBehind) return ScienceLesson::LEAVE_NO_TRACE_VIOLATION;
+        if (result.missingEssentials) return ScienceLesson::TEN_ESSENTIALS_MISSING;
+        if (result.totals.hasCotton && (requirements.weather == WeatherType::RAINY || requirements.weather == WeatherType::SNOW))
+            return ScienceLesson::COTTON_CLOTHING_WARNING;
+    }
+
+    // Food + water lessons (Level 2+).
     if (isHighCaffeine || isAlcohol) return ScienceLesson::HYDRATION_DIURETICS;
+    if (isDehydrated) return ScienceLesson::HYDRATION_BASICS;
+    if (result.totals.sodium > 2300.0) return ScienceLesson::SODIUM_HYDRATION_LOAD;
+    if (result.totals.sugar > 50.0 && result.totals.fiber < 10.0) return ScienceLesson::FIBER_ENERGY_STABILITY;
+
+    double bmrRatio = TrekRules::get("health_thresholds", "starving_bmr_ratio_threshold");
     if (isStarving && result.bmrBurn > (result.requiredCalories * bmrRatio)) return ScienceLesson::BMR_BASE_METABOLISM;
-    if (isTooBulky) return ScienceLesson::VOLUME_OVERFLOW;
-    if (isTooHeavy) return ScienceLesson::PANDOLF_WEIGHT_PENALTY;
-    return ScienceLesson::PACK_WEIGHT_RATIO;
+    if (isStarving) return ScienceLesson::WHOLE_FOOD_FUEL;
+
+    // Pack-weight/volume lessons are only meaningful once gear is part of
+    // the scoring — before then, weight is dominated by food/water choices.
+    if (gearScored && isTooBulky) return ScienceLesson::VOLUME_OVERFLOW;
+    if (gearScored && isTooHeavy) return ScienceLesson::PANDOLF_WEIGHT_PENALTY;
+    if (gearScored) return ScienceLesson::PACK_WEIGHT_RATIO;
+
+    // Fallback for Level 2 (food + water, no gear) when nothing went wrong.
+    return ScienceLesson::WHOLE_FOOD_FUEL;
 }
 
 double Level::gradeMyBag(const std::vector<std::unique_ptr<Item>>& backpack, const Player& player) const
@@ -202,4 +228,9 @@ double Level::gradeMyBag(const std::vector<std::unique_ptr<Item>>& backpack, con
 bool Level::passesLevel(const std::vector<std::unique_ptr<Item>>& backpack, const Player& player) const
 {
     return evaluateBackpack(backpack, player).passed;
+}
+
+void Level::setDescription(const QString& newDescription)
+{
+    requirements.description = newDescription;
 }

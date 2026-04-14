@@ -44,13 +44,20 @@ public:
      */
     static QStringList getWeatherKeywords(WeatherType weather);
 
+    /**
+     * @brief Gets a tip string from data/feedback.json based on category and key.
+     */
+    static QString getTip(const QString& category, const QString& key);
+
+    // --- Enum Conversion Helpers ---
+    static QString terrainToString(TerrainType t);
+    static QString weatherToString(WeatherType w);
+    static QString adventureToString(AdventureType a);
+
 private:
     static void ensureLoaded();
     static QJsonObject rulesRoot;
-
-    // Helper to map enums to JSON keys
-    static QString terrainToString(TerrainType t);
-    static QString weatherToString(WeatherType w);
+    static QJsonObject feedbackRoot;
 };
 
 #endif // TREKRULES_H

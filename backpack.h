@@ -58,7 +58,10 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QStringList>
 #include <memory>
+#include <unordered_map>
+#include <vector>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -88,13 +91,14 @@ public:
      *
      * Sets up the Box2D world with gravity, registers destruction and
      * contact listeners, builds the static scene geometry (shelf,
-     * pack, spawners, Cinch & Go button), and starts a 60 Hz timer
-     * that drives the physics step + repaint loop.
+     * pack, tabs, spawners, Cinch & Go button), and starts a 60 Hz
+     * timer that drives the physics step + repaint loop.
      *
+     * @param availableItems  Registry item names available for the level.
      * @param parent  Owner widget (typically the QStackedWidget
      *                inside MainWindow).
      */
-    BackpackScene(QWidget *parent = nullptr);
+    BackpackScene(const QStringList& availableItems, QWidget *parent = nullptr);
 
     /**
      * @brief Tears down the scene.
@@ -103,6 +107,13 @@ public:
      * dangling-pointer callbacks, then deletes the UI form.
      */
     ~BackpackScene();
+
+    /**
+     * @brief Updates the displayed weight and volume.
+     * @param weight  Total weight in lbs.
+     * @param volume  Total volume in liters.
+     */
+    void updateStats(double weight, double volume);
 
 signals:
     /**
@@ -132,287 +143,117 @@ signals:
     void itemRemovedFromBag(const QString& itemName);
 
 protected:
-    /**
-     * @brief Renders every Box2D body as a colored Qt polygon.
-     *
-     * For each body the painter is translated to the body's screen
-     * position, rotated by the body's angle, and scaled by
-     * PIXELS_PER_METER so that fixture vertices (in meters) map to
-     * pixels. A local Y-flip (`QPointF(v.x, -v.y)`) converts from
-     * Box2D's Y-up to Qt's Y-down.
-     *
-     * Labels (spawner names, "CINCH & GO") are drawn in unscaled
-     * screen space after the transform is restored.
-     *
-     * @param event  The paint event issued by Qt's repaint system.
-     */
     void paintEvent(QPaintEvent *event) override;
-
-    /**
-     * @brief Handles clicks: spawning items, grabbing items,
-     *        or activating the Cinch & Go button.
-     *
-     * Hit-tests the click position against every body's fixtures
-     * (via findBodyAt), then branches on the body's BodyKind tag:
-     * - Spawner  -> create a new item + immediately attach it to the
-     *   mouse joint so the user can drag in one continuous gesture.
-     * - Dynamic item -> attach the mouse joint for rearranging.
-     * - Cinch & Go (idle) -> flip from static to dynamic, retag,
-     *   and launch upward at 15 m/s.
-     *
-     * @param event  Mouse event from Qt.
-     */
     void mousePressEvent(QMouseEvent *event) override;
-
-    /**
-     * @brief Updates the mouse joint target so the held item follows
-     *        the cursor with spring-like tension.
-     *
-     * @param event  Mouse event from Qt.
-     */
     void mouseMoveEvent(QMouseEvent *event) override;
-
-    /**
-     * @brief Releases the held item by destroying the mouse joint.
-     *
-     * @param event  Mouse event from Qt.
-     */
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 private slots:
-    /**
-     * @brief Advances the physics world by one time step and repaints.
-     *
-     * Called 60 times per second by `timer`. After stepping, sweeps
-     * all dynamic bodies and destroys any that have left the visible
-     * screen area (the "destroy-on-exit" pattern that replaces
-     * traditional world-boundary walls).
-     */
     void updatePhysics();
 
 private:
     // -----------------------------------------------------------------
     //  Constants
     // -----------------------------------------------------------------
-
-    /**
-     * @brief Target frames per second for the physics + render loop.
-     */
     const int REFRESH_RATE = 60;
-
-    /**
-     * @brief Converts between Box2D meters and Qt pixels.
-     *
-     * Box2D is numerically stable for objects in the 0.1 – 10 m
-     * range.  At 50 px/m a 0.7 m banana is 35 px on screen and the
-     * 800 px-wide window spans 16 m of world space — both well
-     * inside Box2D's comfort zone.
-     */
     static constexpr float PIXELS_PER_METER = 50.0f;
-
-    /** @brief World width derived from window width / scale. */
     static constexpr float WORLD_WIDTH_M = 16.0f;
-    /** @brief World height derived from window height / scale. */
     static constexpr float WORLD_HEIGHT_M = 12.0f;
-    /** @brief Locked window width in pixels. */
     static constexpr int WINDOW_WIDTH_PX = 800;
-    /** @brief Locked window height in pixels. */
     static constexpr int WINDOW_HEIGHT_PX = 600;
+
+    // -----------------------------------------------------------------
+    //  Backpack status
+    // -----------------------------------------------------------------
+    double currentWeight = 0.0;
+    double currentVolume = 0.0;
 
     // -----------------------------------------------------------------
     //  Core state
     // -----------------------------------------------------------------
-
-    /** @brief Auto-generated form (empty — reserved for future Designer use). */
     Ui::BackpackScene* ui;
-
-    /**
-     * @brief The Box2D physics world.
-     *
-     * A b2World owns every body, fixture, joint, and contact in the
-     * simulation.  Constructed with downward gravity (0, -10) m/s^2.
-     * Calling world.Step() moves bodies, resolves collisions, and
-     * fires contact callbacks.
-     */
     b2World world;
-
-    /**
-     * @brief Timer driving the game loop (physics step + repaint).
-     *
-     * Fires at REFRESH_RATE Hz.  Each tick calls updatePhysics().
-     */
     QTimer* timer;
 
     // -----------------------------------------------------------------
     //  Mouse interaction
     // -----------------------------------------------------------------
-
-    /**
-     * @brief The active mouse joint, or nullptr if nothing is held.
-     *
-     * A b2MouseJoint is a soft spring connecting a body to a target
-     * point (the cursor).  bodyA is a static anchor; bodyB is the
-     * item being dragged.  maxForce, frequency, and damping control
-     * how "snappy" the drag feels.
-     */
     b2MouseJoint* mouseJoint = nullptr;
-
-    /**
-     * @brief Invisible zero-mass static body used as bodyA of the
-     *        mouse joint.
-     *
-     * Every b2Joint needs two bodies. The anchor never moves —
-     * the joint's target (set to the cursor position each frame)
-     * pulls bodyB toward it.
-     */
     b2Body* mouseJointAnchor = nullptr;
 
     // -----------------------------------------------------------------
     //  Scene-specific tracked bodies
     // -----------------------------------------------------------------
-
-    /**
-     * @brief The Cinch & Go button body (static while idle, dynamic
-     *        after activation).  Nullptr after it exits the screen
-     *        and is destroyed.
-     */
     b2Body* cinchAndGoButton = nullptr;
-
-    /** @brief One-shot guard so levelHasStarted() emits exactly once. */
     bool levelStarted = false;
+
+    // -----------------------------------------------------------------
+    //  Body → name mapping
+    // -----------------------------------------------------------------
+    /// Maps spawner and item bodies to their registry name (e.g. "BANANA").
+    std::unordered_map<b2Body*, QString> bodyNames;
+
+    // -----------------------------------------------------------------
+    //  Available items and category state
+    // -----------------------------------------------------------------
+    QStringList allAvailableItems;
+    QStringList foodItems;
+    QStringList drinkItems;
+    QStringList gearItems;
+    QString activeTab = "food";
+
+    /// Current spawner bodies (destroyed/recreated on tab switch).
+    std::vector<b2Body*> spawnerBodies;
+
+    // -----------------------------------------------------------------
+    //  Hover tooltip state
+    // -----------------------------------------------------------------
+    b2Body* hoveredBody = nullptr;
 
     // -----------------------------------------------------------------
     //  Box2D listeners
     // -----------------------------------------------------------------
-
-    /**
-     * @brief Clears mouseJoint when Box2D auto-destroys it.
-     *
-     * When a body is destroyed, Box2D silently destroys every joint
-     * attached to it — but our raw mouseJoint pointer would dangle.
-     * The destruction listener's SayGoodbye(b2Joint*) nulls it.
-     */
     class DestructionListener;
     std::unique_ptr<DestructionListener> destructionListener;
 
-    /**
-     * @brief Converts pack-sensor contacts into bag signals.
-     *
-     * A sensor fixture filling the pack's interior fires
-     * BeginContact / EndContact when items enter or leave.
-     * The listener de-duplicates per body (using a contact count)
-     * and emits itemAddedToBag / itemRemovedFromBag.
-     */
     class ContactListener;
     std::unique_ptr<ContactListener> contactListener;
 
-    /**
-     * @brief Static sensor body filling the pack's interior volume.
-     *
-     * Its single fixture has isSensor = true, so it detects overlap
-     * with item bodies without physically blocking them.  Contact
-     * callbacks from this fixture drive the bag-contents signals.
-     */
     b2Body* packSensor = nullptr;
 
     // -----------------------------------------------------------------
     //  Scene construction helpers
     // -----------------------------------------------------------------
-
-    /** @brief Creates the item shelf (static platform, left side). */
-    void createShelf();
-    /** @brief Creates the U-shaped pack walls + interior sensor. */
     void createBackpack();
-    /** @brief Creates the three spawner buttons on the shelf. */
-    void createSpawners();
-    /** @brief Creates the Cinch & Go ledge + button. */
+    void createTabs();
     void createCinchAndGoButton();
-    /** @brief Creates the invisible mouse-joint anchor body. */
     void createMouseAnchor();
 
     // -----------------------------------------------------------------
-    //  Item spawn helpers
+    //  Dynamic spawner management
     // -----------------------------------------------------------------
+    /// Switches the shelf to show items in the given category.
+    void showCategory(const QString& category);
+    /// Lays out spawner bodies for a list of item names.
+    void layoutSpawners(const QStringList& items);
 
-    /**
-     * @brief Spawns a banana (two convex quads forming a crescent).
-     * @param position  Center in world meters.
-     * @return The new dynamic body, already tagged ItemBanana.
-     */
-    b2Body* spawnBanana(const b2Vec2& position);
-
-    /**
-     * @brief Spawns a potato (single 6-vertex convex blob).
-     * @param position  Center in world meters.
-     * @return The new dynamic body, already tagged ItemPotato.
-     */
-    b2Body* spawnPotato(const b2Vec2& position);
-
-    /**
-     * @brief Spawns a water bottle (body rect + cap rect).
-     * @param position  Center in world meters.
-     * @return The new dynamic body, already tagged ItemBottle.
-     */
-    b2Body* spawnBottle(const b2Vec2& position);
+    // -----------------------------------------------------------------
+    //  Item spawn (data-driven from shape in items.json)
+    // -----------------------------------------------------------------
+    /// Spawns a dynamic item body using the shape data from ItemRegistry.
+    b2Body* spawnItem(const b2Vec2& position, const QString& itemName);
 
     // -----------------------------------------------------------------
     //  Picking and dragging
     // -----------------------------------------------------------------
-
-    /**
-     * @brief Returns the first body whose fixtures contain @p worldPos.
-     *
-     * Iterates the world body list and calls b2Fixture::TestPoint on
-     * each fixture.  For the small body count in this scene (< 30)
-     * this linear scan is simpler than b2World::QueryAABB.
-     *
-     * @param worldPos  Point in Box2D world coordinates (meters).
-     * @return The hit body, or nullptr if no fixture contains the point.
-     */
     b2Body* findBodyAt(const b2Vec2& worldPos);
-
-    /**
-     * @brief Attaches the mouse joint between the anchor and @p body.
-     *
-     * maxForce is set to `1000 * body->GetMass()` — high enough to
-     * drag heavy items without lag, but still spring-like.  A
-     * maxForce of 0 (Box2D's default) is a classic trap: the joint
-     * silently does nothing.
-     *
-     * @param body      The dynamic body to drag.
-     * @param worldPos  Initial cursor position (meters).
-     */
     void beginDragging(b2Body* body, const b2Vec2& worldPos);
-
-    /** @brief Destroys the current mouse joint, if any. */
     void endDragging();
 
     // -----------------------------------------------------------------
     //  Coordinate conversion
     // -----------------------------------------------------------------
-
-    /**
-     * @brief Converts a Qt screen position to Box2D world meters.
-     *
-     * Qt:    origin at top-left, Y increases downward.
-     * Box2D: origin at bottom-left, Y increases upward.
-     *
-     * The conversion flips Y and scales by 1/PIXELS_PER_METER.
-     *
-     * @param point  Position in Qt widget-relative pixels.
-     * @return Equivalent position in the Box2D world (meters).
-     */
     b2Vec2 screenToWorld(const QPoint& point);
-
-    /**
-     * @brief Converts a Box2D world position to Qt screen pixels.
-     *
-     * Inverse of screenToWorld(): scales by PIXELS_PER_METER and
-     * flips Y so that world-y = 0 lands at the bottom of the widget.
-     *
-     * @param point  Position in Box2D world meters.
-     * @return Equivalent position in Qt widget-relative pixels.
-     */
     QPointF worldToScreen(const b2Vec2& point);
 };
 

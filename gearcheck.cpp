@@ -13,6 +13,8 @@ void GearCheck::validate(const std::vector<std::unique_ptr<Item>>& backpack,
                          const TripRequirements& req,
                          LevelResult& result)
 {
+    if (req.skipGearCheck) return;
+
     if (!hasTerrainGear(backpack, req)) {
         result.hasMissingGear = true;
         result.conditions.push_back(TripCondition::MISSING_GEAR);

@@ -10,10 +10,11 @@
 #include <QDebug>
 
 QJsonObject TrekRules::rulesRoot;
+QJsonObject TrekRules::feedbackRoot;
 
 void TrekRules::ensureLoaded()
 {
-    if (!rulesRoot.isEmpty()) return;
+    if (!rulesRoot.isEmpty() && !feedbackRoot.isEmpty()) return;
 
     QFile file(":/data/tuning.json");
     if (file.open(QIODevice::ReadOnly)) {
@@ -21,12 +22,31 @@ void TrekRules::ensureLoaded()
     } else {
         qWarning() << "CRITICAL: Could not load tuning.json from resources!";
     }
+    file.close();
+
+    QFile feedbackFile(":/data/feedback.json");
+    if (feedbackFile.open(QIODevice::ReadOnly)) {
+        feedbackRoot = QJsonDocument::fromJson(feedbackFile.readAll()).object();
+    } else {
+        qWarning() << "CRITICAL: Could not load feedback.json from resources!";
+    }
+    feedbackFile.close();
 }
 
 double TrekRules::get(const QString& category, const QString& key)
 {
     ensureLoaded();
     return rulesRoot.value(category).toObject().value(key).toDouble();
+}
+
+QString TrekRules::getTip(const QString& category, const QString& key)
+{
+    ensureLoaded();
+    QJsonObject catObj = feedbackRoot.value("tips").toObject().value(category).toObject();
+    if (catObj.contains(key)) {
+        return catObj.value(key).toString();
+    }
+    return QString();
 }
 
 RuleModifier TrekRules::getTerrainModifier(TerrainType terrain)
@@ -77,5 +97,15 @@ QString TrekRules::weatherToString(WeatherType w)
         case WeatherType::COLD:  return "COLD";
         case WeatherType::RAINY: return "RAINY";
         default: return "DEFAULT";
+    }
+}
+
+QString TrekRules::adventureToString(AdventureType a)
+{
+    switch(a) {
+        case AdventureType::BACKPACKING: return "BACKPACKING";
+        case AdventureType::CAMPING:     return "CAMPING";
+        case AdventureType::DAY_HIKE:    return "DAY_HIKE";
+        default: return "ALL";
     }
 }
