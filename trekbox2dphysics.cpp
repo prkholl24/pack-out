@@ -11,6 +11,11 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
 
     timer->start(10);
 
+    createPhysicsStructure();
+
+    createPhysicsObjects();
+
+
     // Blueprint for a body. No actual body yet
     b2BodyDef groundBodyDef;
     //Sets it as static, infinite mass. Doesn't move
@@ -132,6 +137,38 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 
         bodyDef.angle = phys.angle * (b2_pi / 180.0f);
 
+        b2Body* body = world.CreateBody(&bodyDef);
+
+        if(phys.shapeType == "box")
+        {
+            b2PolygonShape  shape;
+            shape.SetAsBox((phys.width / pixelsPerMeter) * 0.5f, (phys.height / pixelsPerMeter) * 0.5f );
+
+            b2FixtureDef fixtureDef;
+            fixtureDef.shape = &shape;
+            fixtureDef.density = phys.isStatic ? 0.0f : 1.0f;
+            fixtureDef.friction = phys.friction;
+            fixtureDef.restitution = phys.restitution;
+
+            body->CreateFixture(&fixtureDef);
+        }else if (phys.shapeType == "circle") {
+
+            b2CircleShape shape;
+            shape.m_radius = (phys.width * 0.5f) / pixelsPerMeter;
+
+            b2FixtureDef fixtureDef;
+            fixtureDef.shape = &shape;
+            fixtureDef.density = phys.isStatic ? 0.0f : 1.0f;
+            fixtureDef.friction = phys.friction;
+            fixtureDef.restitution = phys.restitution;
+
+            body->CreateFixture(&fixtureDef);
+
+
+        }
+
+        //phys.body = body;
+
     }
 
 
@@ -165,7 +202,6 @@ void TrekBox2DPhysics::updateWorldSlot(){
 
         world.Step(timeStep, velocityIterations, positionIterations);
 
-        b2Vec2 position = body->GetPosition();
 
         if (body)
         {
@@ -179,5 +215,22 @@ void TrekBox2DPhysics::updateWorldSlot(){
 
 
 void TrekBox2DPhysics::createPhysicsStructure(){
+
+    PhysicsObjectDef p1;
+    p1.type = "ABoxCuh";
+    p1.shapeType = "circle";
+    p1.x = 0;
+    p1.y = 0;
+    p1.width = 10;
+    p1.height = 10;
+    p1.angle = 0;
+    p1.isStatic = true;
+    p1.friction = 0.3f;
+    p1.restitution = 0.9f;
+
+    p1.color = {255,0,0,0};
+
+
+    objectsVector.append(p1);
 
 }
