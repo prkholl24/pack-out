@@ -51,6 +51,9 @@ TripRequirements TrekRegistry::parseTrip(const QJsonObject& obj)
 
     req.skipGearCheck = obj.value("skipGearCheck").toBool(false);
 
+    for (const QJsonValue& v : obj.value("availableItems").toArray())
+        req.availableItems << v.toString();
+
     return req;
 }
 

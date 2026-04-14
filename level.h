@@ -55,6 +55,7 @@ public:
     int getRequiredCalories() const { return requirements.customCalories; }
     QString getScienceFocus() const { return requirements.scienceFocus; }
     QString getDescription() const { return requirements.description; }
+    QStringList getAvailableItems() const { return requirements.availableItems; }
 
     /**
      * @brief Sets the custom briefing description for this level.
