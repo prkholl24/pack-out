@@ -109,16 +109,33 @@ void TrekBox2DPhysics::setTargetFromMouse(const QPointF& mousePos){
 
     std::cout << "World Transformation X:  "<< targetPoint.x << " Y: " << targetPoint.y << std::endl;
 
-
     hasTarget = true;
-
 }
 
 void TrekBox2DPhysics::leftMouseButtonClickedSlot(bool clicked){
-
     hasTarget = false;
 }
 
+void TrekBox2DPhysics::createPhysicsObjects(){
+
+    for(PhysicsObjectDef phys : objectsVector){
+
+        b2BodyDef bodyDef;
+
+        if(phys.isStatic){
+            bodyDef.type = b2_staticBody;
+        }else{
+            bodyDef.type = b2_dynamicBody;
+        }
+
+        bodyDef.position.Set(phys.x / pixelsPerMeter, phys.y / pixelsPerMeter);
+
+        bodyDef.angle = phys.angle * (b2_pi / 180.0f);
+
+    }
+
+
+}
 
 void TrekBox2DPhysics::updateWorldSlot(){
 
@@ -150,47 +167,17 @@ void TrekBox2DPhysics::updateWorldSlot(){
 
         b2Vec2 position = body->GetPosition();
 
-
         if (body)
         {
             b2Vec2 position = body->GetPosition();
             QPointF screen = worldToScreen(position);
             emit sendBodyLocation(screen.x(), screen.y());
         }
-
-
-
     }
-
-
-
-
-
 }
 
-// void TrekBox2DPhysics::updateWorldSlot(){
-
-//     float32 timeStep = 1.0f / 60.0f;
-//     int32 velocityIterations = 6;
-//     int32 positionIterations = 2;
-
-//     // Instruct the world to perform a single step of simulation.
-//     // It is generally best to keep the time step and iterations fixed.
-//     world.Step(timeStep, velocityIterations, positionIterations);
-
-//     // Now print the position and angle of the body.
-//     b2Vec2 position = body->GetPosition();
-//     float32 angle = body->GetAngle();
 
 
-//     // positionVector.push_back(position);
+void TrekBox2DPhysics::createPhysicsStructure(){
 
-//     emit sendBodyLocation(position.x+250, position.y*-20);
-
-//     printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
-
-
-//     ///WE NEED TO EMIT THE COORDINATE VALUES OF BOTH BODIES( GROUND AND DYNAMIC BOX)
-
-
-// }
+}

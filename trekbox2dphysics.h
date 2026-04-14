@@ -53,24 +53,30 @@ private:
         bool isStatic;
         float friction;
         float restitution;
+        QVector<int> color;
     };
 
     //Vector for each objects struct
     QVector<PhysicsObjectDef> objectsVector;
 
 
+    /**
+     * @brief Turns the objects stored in the objects vector into a physical
+     * objects in box2D
+     */
     void createPhysicsObjects();
 
 
     /**
-     * @brief Temporary
+     * @brief Temporary to create the struct values to be drawn.
+     * Then can be saved into semi permanent jsons per level.
      *
      */
     void createPhysicsStructure();
 
 
-    int widgetWidth = 800;
-    int widgetHeight = 600;
+    int widgetWidth = 1920;
+    int widgetHeight = 1080;
 
     /**
      * @brief Converts a point on the screen to a point in box2D based on the
@@ -87,6 +93,7 @@ signals:
     void sendBodyLocation(float x, float y);
 
 public slots:
+
 
     void setTargetFromMouse(const QPointF& mousePos);
 
