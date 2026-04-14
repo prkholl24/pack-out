@@ -41,6 +41,34 @@ public:
 
 private:
 
+    //Struct for all the objects on each level
+    struct PhysicsObjectDef{
+        QString type;
+        QString shapeType;
+        float x;
+        float y;
+        float width;
+        float height;
+        float angle;
+        bool isStatic;
+        float friction;
+        float restitution;
+    };
+
+    //Vector for each objects struct
+    QVector<PhysicsObjectDef> objectsVector;
+
+
+    void createPhysicsObjects();
+
+
+    /**
+     * @brief Temporary
+     *
+     */
+    void createPhysicsStructure();
+
+
     int widgetWidth = 800;
     int widgetHeight = 600;
 

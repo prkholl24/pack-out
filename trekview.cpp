@@ -41,6 +41,7 @@ void TrekView::currentLevel(int level){
 void TrekView::bodyDisplay(float x, float y){
     boxX = x;
     boxY = y;
+    update();
 }
 
 void TrekView::mousePressEvent(QMouseEvent *event){
@@ -74,7 +75,11 @@ void TrekView::paintEvent(QPaintEvent *event){
 
     painter.setBrush(Qt::blue);
 
-    painter.drawEllipse(boxX,boxY,100,100);
+    painter.drawEllipse(boxX - 50, boxY - 50, 90, 90);
 
-    update();
+    painter.setBrush(Qt::red);
+    painter.drawEllipse(boxX - 50, boxY - 50, 10,10);
+   // painter.drawEllipse(boxX,boxY,100,100);
+
+  //  update();
 }
