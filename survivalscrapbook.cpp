@@ -1,6 +1,6 @@
 #include "survivalscrapbook.h"
 
-// The use of AI was utilized to generate the visual for this Widget.
+// The use of Claude AI was utilized to generate the visual for this Widget.
 SurvivalScrapbook::SurvivalScrapbook(QWidget* parent) : QWidget(parent)
 {
     pages = { titlePage, page1 };
@@ -34,6 +34,8 @@ SurvivalScrapbook::SurvivalScrapbook(QWidget* parent) : QWidget(parent)
     connect( rightButton, &QPushButton::clicked, this, &SurvivalScrapbook::onRightClicked );
 
     this->setStyleSheet("border: 1px solid black; border-radius: 8px;");
+
+    setFixedSize(400, 340);
 }
 
 void SurvivalScrapbook::setText( const QString &text )
@@ -43,7 +45,6 @@ void SurvivalScrapbook::setText( const QString &text )
 
 void SurvivalScrapbook::onLeftClicked()
 {
-
     if ( currentPage > 0)
     {
         setText( pages.at( --currentPage ) );
@@ -63,5 +64,9 @@ void SurvivalScrapbook::onRightClicked()
     {
         return;
     }
+}
 
+void SurvivalScrapbook::toggleVisibility()
+{
+    setVisible(!isVisible());
 }
