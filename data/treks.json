@@ -1,7 +1,7 @@
 [
     {
         "name": "Delicate Arch",
-        "description": "Delicate Arch — a 2-hour desert day hike at Arches National Park. The exposed slickrock offers no shade. Pack enough water and get moving.",
+        "description": "Delicate Arch, a 2-hour desert day hike at Arches National Park. The exposed slickrock offers no shade. Pack enough water and get moving.",
         "miles": 3.0,
         "elevationGain": 480.0,
         "duration": 2,
@@ -14,7 +14,7 @@
     },
     {
         "name": "Grandview Point",
-        "description": "Grandview Point — a breezy desert walk above the canyon at Canyonlands. The mesa is wide open and exposed. Keep your energy up. Pack food and water.",
+        "description": "Grandview Point, a breezy desert walk above the canyon at Canyonlands. The mesa is wide open and exposed. Keep your energy up. Pack food and water.",
         "miles": 2.0,
         "elevationGain": 160.0,
         "duration": 1,
@@ -25,7 +25,7 @@
         "skipGearCheck": true
     },
     {
-        "name": "Level 3 — Coming Soon",
+        "name": "Level 3: Coming Soon",
         "description": "This trail is still being mapped. Check back later.",
         "miles": 6.9,
         "elevationGain": 2700.0,
@@ -36,7 +36,7 @@
         "scienceFocus": "TEN_ESSENTIALS_MISSING"
     },
     {
-        "name": "Level 4 — Coming Soon",
+        "name": "Level 4: Coming Soon",
         "description": "An advanced mountain challenge. Details pending.",
         "miles": 8.0,
         "elevationGain": 2500.0,
@@ -47,7 +47,7 @@
         "scienceFocus": "PANDOLF_WEIGHT_PENALTY"
     },
     {
-        "name": "Level 5 — Coming Soon",
+        "name": "Level 5: Coming Soon",
         "description": "The ultimate overnight expedition. Details pending.",
         "miles": 15.0,
         "elevationGain": 3500.0,
