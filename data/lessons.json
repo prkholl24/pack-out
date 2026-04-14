@@ -7,6 +7,10 @@
         "title": "The Pandolf Penalty",
         "body": "The Pandolf Equation shows that carrying a pack increases effort exponentially. A heavy pack can feel twice as heavy on steep terrain!"
     },
+    "HYDRATION_BASICS": {
+        "title": "Hydration Fundamentals",
+        "body": "On any hike you lose water through sweat and breathing, faster in heat and at elevation. Aim for at least half a liter per hour of activity, and drink steadily rather than waiting until you feel thirsty. By the time you notice thirst, you're already behind."
+    },
     "HYDRATION_DIURETICS": {
         "title": "Hydration Interference",
         "body": "Diuretics like caffeine and alcohol tell your kidneys to release water. They can effectively 'cancel out' your hydration!"

@@ -1,7 +1,25 @@
-{
-    "grandview_point": {
+[
+    {
+        "name": "Delicate Arch",
+        "description": "Delicate Arch, a 2-hour desert day hike at Arches National Park. The exposed slickrock offers no shade. Pack enough water and get moving.",
+        "miles": 3.0,
+        "elevationGain": 480.0,
+        "duration": 2,
+        "terrain": "DESERT",
+        "weather": "HOT",
+        "adventure": "DAY_HIKE",
+        "scienceFocus": "SODIUM_HYDRATION_LOAD",
+        "customCalories": 0,
+        "skipGearCheck": true,
+        "availableItems": [
+            "BANANA", "GRANOLA_BAR",
+            "WATER_BOTTLE",
+            "HAT", "SUNSCREEN", "TRASH_BAG"
+        ]
+    },
+    {
         "name": "Grandview Point",
-        "description": "Walking along the Island in the Sky mesa provides a bird's-eye view of the immense canyon systems carved by the convergence of the Green and Colorado rivers. This high-desert plateau is highly exposed to the elements, featuring sweeping vistas and sparse vegetation. It is a fantastic place to observe how ancient rivers dictated the geography of the American Southwest.",
+        "description": "Grandview Point, a breezy desert walk above the canyon at Canyonlands. The mesa is wide open and exposed. Keep your energy up. Pack food and water.",
         "miles": 2.0,
         "elevationGain": 160.0,
         "duration": 1,
@@ -9,54 +27,39 @@
         "weather": "WINDY",
         "adventure": "DAY_HIKE",
         "scienceFocus": "PACK_WEIGHT_RATIO",
-        "availableItems": [
-            "BANANA", "GRANOLA_BAR",
-            "WATER_BOTTLE",
-            "HAT", "SUNSCREEN", "TRASH_BAG"
-        ]
-    },
-    "delicate_arch": {
-        "name": "Delicate Arch",
-        "description": "This iconic hike leads to the largest free-standing arch in Arches National Park. Formed from Entrada Sandstone, the arch is a masterclass in the slow, relentless forces of weathering, frost wedging, and wind erosion. The trail crosses an open slickrock bowl with absolutely zero shade. The high desert sun is punishing, so carrying sufficient water and sun protection is your top priority.",
-        "miles": 3.0,
-        "elevationGain": 480.0,
-        "duration": 2,
-        "terrain": "DESERT",
-        "weather": "HOT",
-        "adventure": "DAY_HIKE",
-        "scienceFocus": "FIBER_ENERGY_STABILITY",
+        "skipGearCheck": true,
         "availableItems": [
             "BANANA", "GRANOLA_BAR", "TRAIL_MIX",
             "WATER_BOTTLE", "SPORTS_DRINK",
             "HAT", "SUNSCREEN", "FIRST_AID_KIT", "TRASH_BAG"
         ]
     },
-    "wall_street_bryce": {
-        "name": "Wall Street (Bryce)",
-        "description": "Descend into the heart of Bryce Canyon's amphitheater. The towering orange 'hoodoos' were formed by frost wedging—water freezing and expanding inside the Claron Formation rock over 200 days a year. Despite the desert appearance, Bryce Canyon sits at a high elevation (over 8,000 feet). The thin air will test your lungs on the steep switchbacks climbing back to the rim.",
-        "miles": 3.2,
-        "elevationGain": 600.0,
-        "duration": 3,
+    {
+        "name": "Level 3: Coming Soon",
+        "description": "This trail is still being mapped. Check back later.",
+        "miles": 6.9,
+        "elevationGain": 2700.0,
+        "duration": 5,
         "terrain": "ROCKY",
-        "weather": "HOT",
+        "weather": "COLD",
         "adventure": "DAY_HIKE",
-        "scienceFocus": "PANDOLF_WEIGHT_PENALTY",
+        "scienceFocus": "TEN_ESSENTIALS_MISSING",
         "availableItems": [
             "BANANA", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX",
             "WATER_BOTTLE", "SPORTS_DRINK", "SODA",
             "HAT", "SUNSCREEN", "FIRST_AID_KIT", "FLASHLIGHT", "TRASH_BAG", "ZIPLOC_BAG"
         ]
     },
-    "angels_landing": {
-        "name": "Angels Landing",
-        "description": "Zion National Park's most infamous hike takes you up a fin of solid Navajo Sandstone. Carved by the Virgin River over millions of years, the sheer 1,500-foot drop-offs require absolute focus. The final half-mile involves gripping chained cables along a narrow ridge. Temperatures here radiate off the exposed rock, making early starts and ample hydration critical for your safety.",
-        "miles": 5.4,
-        "elevationGain": 1488.0,
-        "duration": 4,
-        "terrain": "ROCKY",
-        "weather": "HOT",
+    {
+        "name": "Level 4: Coming Soon",
+        "description": "An advanced mountain challenge. Details pending.",
+        "miles": 8.0,
+        "elevationGain": 2500.0,
+        "duration": 7,
+        "terrain": "MOUNTAIN",
+        "weather": "SNOW",
         "adventure": "DAY_HIKE",
-        "scienceFocus": "SODIUM_HYDRATION_LOAD",
+        "scienceFocus": "PANDOLF_WEIGHT_PENALTY",
         "availableItems": [
             "BANANA", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX", "BEEF_JERKY",
             "WATER_BOTTLE", "SPORTS_DRINK", "ENERGY_DRINK", "SODA",
@@ -64,122 +67,21 @@
             "TRASH_BAG", "ZIPLOC_BAG"
         ]
     },
-    "lake_blanche": {
-        "name": "Lake Blanche",
-        "description": "Situated in the Twin Peaks Wilderness, this hike is a textbook example of glacial geology. Thousands of years ago, massive glaciers carved the U-shaped valleys and deposited the rocky moraines you will hike through. The steep trail transitions from scrub oak into dense conifer forests before revealing Lake Blanche, nestled beneath the dramatic quartzite spire of Sundial Peak.",
-        "miles": 6.9,
-        "elevationGain": 2700.0,
-        "duration": 5,
-        "terrain": "FOREST",
-        "weather": "COLD",
-        "adventure": "DAY_HIKE",
-        "scienceFocus": "WHOLE_FOOD_FUEL",
+    {
+        "name": "Level 5: Coming Soon",
+        "description": "The ultimate overnight expedition. Details pending.",
+        "miles": 15.0,
+        "elevationGain": 3500.0,
+        "duration": 24,
+        "terrain": "MOUNTAIN",
+        "weather": "RAINY",
+        "adventure": "BACKPACKING",
+        "scienceFocus": "BMR_BASE_METABOLISM",
         "availableItems": [
             "BANANA", "POTATO", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX", "PEANUT_BUTTER_SANDWICH",
             "WATER_BOTTLE", "SPORTS_DRINK", "ENERGY_DRINK",
             "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET", "FIRST_AID_KIT", "FLASHLIGHT",
             "COMPASS", "POCKET_KNIFE", "MATCHES", "TRASH_BAG", "ZIPLOC_BAG"
         ]
-    },
-    "the_narrows": {
-        "name": "The Narrows",
-        "description": "Welcome to one of the world's premier slot canyons. Here, the trail *is* the Virgin River. You will be wading through cold, rushing water between sandstone walls that tower a thousand feet above you. This unique environment teaches the power of water erosion. Always be vigilant of the weather—slot canyons are highly susceptible to sudden and deadly flash floods.",
-        "miles": 9.4,
-        "elevationGain": 334.0,
-        "duration": 8,
-        "terrain": "ROCKY",
-        "weather": "RAINY",
-        "adventure": "DAY_HIKE",
-        "scienceFocus": "COTTON_CLOTHING_WARNING",
-        "availableItems": [
-            "BANANA", "POTATO", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX",
-            "PEANUT_BUTTER_SANDWICH", "BEEF_JERKY",
-            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "ENERGY_DRINK",
-            "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET", "FIRST_AID_KIT", "FLASHLIGHT",
-            "COMPASS", "POCKET_KNIFE", "WHISTLE", "TREKKING_POLES",
-            "TRASH_BAG", "ZIPLOC_BAG"
-        ]
-    },
-    "mt_timpanogos": {
-        "name": "Mount Timpanogos",
-        "description": "Towering over Utah Valley, Mt. Timpanogos is a massive limestone block featuring classic alpine ecosystems. As you ascend, you will pass through distinct ecological zones, from dense forests to stunning alpine meadows dotted with wildflowers, before reaching the rocky summit ridge. Be prepared to cross a perennial snowfield (a rock glacier) and face unpredictable, rapidly changing mountain weather.",
-        "miles": 14.0,
-        "elevationGain": 4400.0,
-        "duration": 10,
-        "terrain": "MOUNTAIN",
-        "weather": "SNOW",
-        "adventure": "DAY_HIKE",
-        "scienceFocus": "TEN_ESSENTIALS_MISSING",
-        "availableItems": [
-            "BANANA", "POTATO", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX",
-            "PEANUT_BUTTER_SANDWICH", "BEEF_JERKY",
-            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "ENERGY_DRINK", "SODA",
-            "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET", "FIRST_AID_KIT", "FLASHLIGHT",
-            "COMPASS", "POCKET_KNIFE", "WHISTLE", "MATCHES", "FIRESTARTER",
-            "HAT", "SUNSCREEN", "TREKKING_POLES",
-            "TRASH_BAG", "ZIPLOC_BAG"
-        ]
-    },
-    "lone_peak": {
-        "name": "Lone Peak",
-        "description": "Lone Peak is one of the most rugged and physically demanding climbs in the Wasatch Range. Reaching the dramatic granite cirque at the summit requires navigating steep, unshaded inclines, boulder fields, and significant exposure. This trek pushes the limits of human endurance and requires excellent route-finding skills, robust hydration, and high-calorie fuel.",
-        "miles": 11.0,
-        "elevationGain": 5500.0,
-        "duration": 12,
-        "terrain": "MOUNTAIN",
-        "weather": "COLD",
-        "adventure": "DAY_HIKE",
-        "scienceFocus": "VOLUME_OVERFLOW",
-        "availableItems": [
-            "BANANA", "POTATO", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX",
-            "PEANUT_BUTTER_SANDWICH", "BEEF_JERKY",
-            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "ENERGY_DRINK", "BEER", "SODA",
-            "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET", "FIRST_AID_KIT", "FLASHLIGHT",
-            "COMPASS", "POCKET_KNIFE", "WHISTLE", "MATCHES", "FIRESTARTER",
-            "HAT", "SUNSCREEN", "TREKKING_POLES", "BEAR_SPRAY",
-            "TRASH_BAG", "ZIPLOC_BAG", "CAST_IRON_SKILLET"
-        ]
-    },
-    "uinta_camping": {
-        "name": "Uinta Camping",
-        "description": "The Uinta Mountains are rare: they are the highest mountain range in the contiguous United States that runs east to west rather than north to south. Camping at these high altitudes immerses you in an alpine tundra environment. You must be prepared for extreme temperature drops at night, afternoon thunderstorms, and proper bear country food storage protocols.",
-        "miles": 5.0,
-        "elevationGain": 1000.0,
-        "duration": 24,
-        "terrain": "FOREST",
-        "weather": "RAINY",
-        "adventure": "CAMPING",
-        "scienceFocus": "HYDRATION_DIURETICS",
-        "availableItems": [
-            "BANANA", "POTATO", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX",
-            "PEANUT_BUTTER_SANDWICH", "BEEF_JERKY",
-            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "ENERGY_DRINK", "BEER", "SODA",
-            "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET", "SLEEPING_BAG", "TENT",
-            "FIRST_AID_KIT", "FLASHLIGHT", "COMPASS", "POCKET_KNIFE",
-            "WHISTLE", "MATCHES", "FIRESTARTER", "WATER_FILTER",
-            "HAT", "SUNSCREEN", "TREKKING_POLES", "BEAR_SPRAY",
-            "TRASH_BAG", "ZIPLOC_BAG", "CAST_IRON_SKILLET"
-        ]
-    },
-    "canyonlands_needles": {
-        "name": "Canyonlands Backpacking",
-        "description": "Deep in the Needles District of Canyonlands, you will navigate a maze of Cedar Mesa Sandstone spires. This arid, remote environment requires careful logistical planning. Water sources are incredibly scarce, meaning you must pack in almost everything you need. You must also practice strict Leave No Trace principles to protect the fragile cryptobiotic soil crusts that sustain this desert ecosystem.",
-        "miles": 25.0,
-        "elevationGain": 3000.0,
-        "duration": 48,
-        "terrain": "DESERT",
-        "weather": "WINDY",
-        "adventure": "BACKPACKING",
-        "scienceFocus": "LEAVE_NO_TRACE_VIOLATION",
-        "availableItems": [
-            "BANANA", "POTATO", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX",
-            "PEANUT_BUTTER_SANDWICH", "BEEF_JERKY",
-            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "ENERGY_DRINK", "BEER", "SODA",
-            "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET", "SLEEPING_BAG", "TENT",
-            "FIRST_AID_KIT", "FLASHLIGHT", "COMPASS", "POCKET_KNIFE",
-            "WHISTLE", "MATCHES", "FIRESTARTER", "WATER_FILTER",
-            "HAT", "SUNSCREEN", "TREKKING_POLES", "BEAR_SPRAY",
-            "TRASH_BAG", "ZIPLOC_BAG", "CAST_IRON_SKILLET"
-        ]
     }
-}
+]

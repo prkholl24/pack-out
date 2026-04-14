@@ -21,11 +21,10 @@ std::vector<Level> TrekRegistry::loadTreks()
         return treks;
     }
 
-    QJsonObject root = QJsonDocument::fromJson(file.readAll()).object();
+    QJsonArray root = QJsonDocument::fromJson(file.readAll()).array();
 
-    // Use std::as_const to prevent detachment of the QJsonObject
-    for (auto it = std::as_const(root).begin(); it != std::as_const(root).end(); ++it) {
-        treks.push_back(Level(parseTrip(it.value().toObject())));
+    for (int i = 0; i < root.size(); ++i) {
+        treks.push_back(Level(parseTrip(root[i].toObject())));
     }
 
     return treks;
@@ -46,10 +45,14 @@ TripRequirements TrekRegistry::parseTrip(const QJsonObject& obj)
     req.adventure = stringToAdventure(obj.value("adventure").toString());
     req.scienceFocus = obj.value("scienceFocus").toString();
 
-    QJsonArray itemsArr = obj.value("availableItems").toArray();
-    for (const auto& v : itemsArr) {
-        req.availableItems.append(v.toString());
-    }
+    // Optional overrides: 0 = water-only level, -1 (default) = auto-calculate
+    if (obj.contains("customCalories"))
+        req.customCalories = obj.value("customCalories").toInt(-1);
+
+    req.skipGearCheck = obj.value("skipGearCheck").toBool(false);
+
+    for (const QJsonValue& v : obj.value("availableItems").toArray())
+        req.availableItems << v.toString();
 
     return req;
 }
