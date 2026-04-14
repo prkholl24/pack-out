@@ -69,15 +69,14 @@ MainWindow::MainWindow(QWidget *parent)
     briefView = new BriefView(this);
     backpackScene = new BackpackScene(QStringList(), this);
     debriefView = new DebriefView(this);
+    trekViewScene = new TrekView(this);
+
 
     sceneStack->addWidget(briefView);
     sceneStack->addWidget(backpackScene);
     sceneStack->addWidget(debriefView);
-
-    //Initilize the trek-view scene
-    trekViewScene = new TrekView(this);
-    //Adds the trek-view scene to the scene stack
     sceneStack->addWidget(trekViewScene);
+
     sceneStack->setCurrentWidget(trekViewScene);
 
     // Initialize Utah Treks from external data
@@ -106,6 +105,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Start on the first trek
     showBriefView();
+
+    showTrekView();
 }
 
 MainWindow::~MainWindow()
@@ -148,6 +149,12 @@ void MainWindow::showBriefView()
         briefView->setLevel(treks[currentTrekIndex], currentTrekIndex + 1);
     }
     sceneStack->setCurrentWidget(briefView);
+}
+
+void MainWindow::showTrekView(){
+
+    sceneStack->setCurrentWidget(trekViewScene);
+
 }
 
 void MainWindow::showBackpackScene()

@@ -22,6 +22,7 @@ QT_END_NAMESPACE
 class BackpackScene;
 class BriefView;
 class DebriefView;
+class TrekView;
 class Level;
 
 /**
@@ -61,6 +62,12 @@ private slots:
      * @brief Switches to the BriefView.
      */
     void showBriefView();
+
+    /**
+     * @brief Switches to the TrekView
+     */
+    void showTrekView();
+
 
     /**
      * @brief Switches to the BackpackScene.
