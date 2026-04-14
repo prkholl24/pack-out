@@ -116,6 +116,12 @@ public:
      */
     GearItem(GearType gearEnum);
 
+    /**
+     * @brief Constructs a GearItem from a string identifier.
+     * @param name The name of the gear in the registry.
+     */
+    GearItem(const QString& name);
+
     virtual bool isGear() const override { return true; }
     virtual bool isWasteStorage() const override { return wasteStorage; }
     virtual bool isTrekkingPole() const override { return isPole; }

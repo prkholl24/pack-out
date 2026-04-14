@@ -9,5 +9,39 @@
         <file>data/feedback.json</file>
         <file>data/tuning.json</file>
         <file>BryceArchesBackground.jpg</file>
+        <file>data/items.json</file>
+        <file>sprites/BANANA.png</file>
+        <file>sprites/BEAR_SPRAY.png</file>
+        <file>sprites/BEEF_JERKY.png</file>
+        <file>sprites/BEER.png</file>
+        <file>sprites/CAST_IRON_SKILLET.png</file>
+        <file>sprites/COMPASS.png</file>
+        <file>sprites/COTTON_SHIRT.png</file>
+        <file>sprites/ENERGY_DRINK.png</file>
+        <file>sprites/FIRESTARTER.png</file>
+        <file>sprites/FIRST_AID_KIT.png</file>
+        <file>sprites/FLASHLIGHT.png</file>
+        <file>sprites/GRANOLA_BAR.png</file>
+        <file>sprites/HAT.png</file>
+        <file>sprites/MATCHES.png</file>
+        <file>sprites/MIXED_NUTS.png</file>
+        <file>sprites/PEANUT_BUTTER_SANDWICH.png</file>
+        <file>sprites/POCKET_KNIFE.png</file>
+        <file>sprites/POTATO.png</file>
+        <file>sprites/RAIN_JACKET.png</file>
+        <file>sprites/SLEEPING_BAG.png</file>
+        <file>sprites/SODA.png</file>
+        <file>sprites/SPORTS_DRINK.png</file>
+        <file>sprites/SUNSCREEN.png</file>
+        <file>sprites/TENT.png</file>
+        <file>sprites/TRAIL_MIX.png</file>
+        <file>sprites/TRASH_BAG.png</file>
+        <file>sprites/TREKKING_POLES.png</file>
+        <file>sprites/WATER_BOTTLE.png</file>
+        <file>sprites/WATER_CAMELBAK.png</file>
+        <file>sprites/WATER_FILTER.png</file>
+        <file>sprites/WHISTLE.png</file>
+        <file>sprites/WOOL_SHIRT.png</file>
+        <file>sprites/ZIPLOC_BAG.png</file>
     </qresource>
 </RCC>

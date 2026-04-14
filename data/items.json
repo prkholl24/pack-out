@@ -1,0 +1,496 @@
+{
+    "food": {
+        "BANANA": {
+            "calories": 105.0,
+            "sugar": 14.0,
+            "carbs": 27.0,
+            "protein": 1.3,
+            "fat": 0.4,
+            "fiber": 3.1,
+            "sodium": 1.0,
+            "weight": 0.26,
+            "volume": 0.4,
+            "produces_waste": true,
+            "description": "The potassium in a banana helps support muscle function on the trail.",
+            "shape": {
+                "color": "#FFE13C",
+                "density": 0.5,
+                "fixtures": [
+                    {"vertices": [[-0.70, 0.05], [0.00, -0.13], [0.00, 0.07], [-0.70, 0.10]]},
+                    {"vertices": [[0.00, -0.13], [0.70, 0.05], [0.70, 0.10], [0.00, 0.07]]}
+                ]
+            }
+        },
+        "BEEF_JERKY": {
+            "calories": 116.0,
+            "sugar": 2.0,
+            "carbs": 3.0,
+            "protein": 9.0,
+            "fat": 7.0,
+            "fiber": 0.0,
+            "sodium": 600.0,
+            "weight": 0.10,
+            "volume": 0.1,
+            "produces_waste": true,
+            "description": "Beef jerky is high in protein and lightweight, making it a great trail snack.",
+            "shape": {
+                "color": "#8B4513",
+                "density": 0.8,
+                "fixtures": [
+                    {"vertices": [[-0.35, -0.06], [0.30, -0.10], [0.38, 0.02], [0.20, 0.10], [-0.30, 0.08]]}
+                ]
+            }
+        },
+        "GRANOLA_BAR": {
+            "calories": 190.0,
+            "sugar": 11.0,
+            "carbs": 29.0,
+            "protein": 3.0,
+            "fat": 7.0,
+            "fiber": 2.0,
+            "sodium": 140.0,
+            "weight": 0.12,
+            "volume": 0.1,
+            "produces_waste": true,
+            "description": "Granola bars provide quick energy from carbs and sugars.",
+            "shape": {
+                "color": "#D4A76A",
+                "density": 1.0,
+                "fixtures": [
+                    {"box": [0.30, 0.10]}
+                ]
+            }
+        },
+        "MIXED_NUTS": {
+            "calories": 170.0,
+            "sugar": 2.0,
+            "carbs": 6.0,
+            "protein": 5.0,
+            "fat": 15.0,
+            "fiber": 3.0,
+            "sodium": 190.0,
+            "weight": 0.15,
+            "volume": 0.2,
+            "produces_waste": true,
+            "description": "Mixed nuts are calorie-dense and rich in healthy fats for sustained energy.",
+            "shape": {
+                "color": "#C4A265",
+                "density": 1.2,
+                "fixtures": [
+                    {"vertices": [[-0.20, -0.15], [0.20, -0.15], [0.25, 0.05], [0.10, 0.18], [-0.10, 0.18], [-0.25, 0.05]]}
+                ]
+            }
+        },
+        "PEANUT_BUTTER_SANDWICH": {
+            "calories": 350.0,
+            "sugar": 8.0,
+            "carbs": 30.0,
+            "protein": 12.0,
+            "fat": 18.0,
+            "fiber": 4.0,
+            "sodium": 450.0,
+            "weight": 0.40,
+            "volume": 0.3,
+            "produces_waste": true,
+            "description": "A peanut butter sandwich offers a balance of fats, protein, and carbs.",
+            "shape": {
+                "color": "#E8C87A",
+                "density": 1.0,
+                "fixtures": [
+                    {"vertices": [[-0.28, -0.12], [0.28, -0.12], [0.25, 0.12], [-0.25, 0.12]]}
+                ]
+            }
+        },
+        "POTATO": {
+            "calories": 160.0,
+            "sugar": 2.0,
+            "carbs": 37.0,
+            "protein": 4.0,
+            "fat": 0.2,
+            "fiber": 4.7,
+            "sodium": 15.0,
+            "weight": 0.38,
+            "volume": 0.5,
+            "produces_waste": true,
+            "description": "A potato provides steady carbs, but it is heavier and bulkier to carry.",
+            "shape": {
+                "color": "#966437",
+                "density": 1.5,
+                "fixtures": [
+                    {"vertices": [[-0.33, -0.08], [-0.15, -0.26], [0.21, -0.23], [0.36, 0.03], [0.12, 0.26], [-0.24, 0.21]]}
+                ]
+            }
+        },
+        "TRAIL_MIX": {
+            "calories": 300.0,
+            "sugar": 20.0,
+            "carbs": 32.0,
+            "protein": 8.0,
+            "fat": 18.0,
+            "fiber": 4.0,
+            "sodium": 150.0,
+            "weight": 0.20,
+            "volume": 0.2,
+            "produces_waste": true,
+            "description": "Trail mix combines nuts and dried fruit for quick and sustained energy.",
+            "shape": {
+                "color": "#A0785A",
+                "density": 1.2,
+                "fixtures": [
+                    {"vertices": [[-0.18, -0.18], [0.18, -0.18], [0.22, 0.08], [0.08, 0.20], [-0.08, 0.20], [-0.22, 0.08]]}
+                ]
+            }
+        }
+    },
+    "drink": {
+        "BEER": {
+            "calories": 150.0,
+            "oz": 12.0,
+            "protein": 1.0,
+            "carbs": 13.0,
+            "fat": 0.0,
+            "sugar": 1.0,
+            "alcohol": 5.0,
+            "weight": 0.85,
+            "volume": 0.4,
+            "produces_waste": true,
+            "hydration_multiplier": 0.25,
+            "description": "Beer provides calories, but alcohol reduces hydration effectiveness.",
+            "shape": {
+                "color": "#D4A840",
+                "density": 1.2,
+                "fixtures": [
+                    {"box": [0.14, 0.30]},
+                    {"box": [0.12, 0.03], "center": [0.00, 0.33]}
+                ]
+            }
+        },
+        "ENERGY_DRINK": {
+            "calories": 10.0,
+            "oz": 16.0,
+            "protein": 0.0,
+            "carbs": 3.0,
+            "fat": 0.0,
+            "sugar": 0.0,
+            "caffeine": 160.0,
+            "weight": 1.10,
+            "volume": 0.5,
+            "produces_waste": true,
+            "hydration_multiplier": 0.60,
+            "description": "An energy drink provides caffeine, but too much can hurt hydration.",
+            "shape": {
+                "color": "#00C850",
+                "density": 1.2,
+                "fixtures": [
+                    {"box": [0.12, 0.38]},
+                    {"box": [0.10, 0.03], "center": [0.00, 0.41]}
+                ]
+            }
+        },
+        "SODA": {
+            "calories": 150.0,
+            "oz": 12.0,
+            "protein": 0.0,
+            "carbs": 39.0,
+            "fat": 0.0,
+            "sugar": 39.0,
+            "caffeine": 34.0,
+            "weight": 0.85,
+            "volume": 0.4,
+            "produces_waste": true,
+            "hydration_multiplier": 0.25,
+            "description": "Soda gives quick sugar and some fluid, but is not a strong hydration choice.",
+            "shape": {
+                "color": "#CC2222",
+                "density": 1.2,
+                "fixtures": [
+                    {"box": [0.14, 0.30]},
+                    {"box": [0.12, 0.03], "center": [0.00, 0.33]}
+                ]
+            }
+        },
+        "SPORTS_DRINK": {
+            "calories": 80.0,
+            "oz": 20.0,
+            "protein": 0.0,
+            "carbs": 21.0,
+            "fat": 0.0,
+            "sugar": 21.0,
+            "weight": 1.45,
+            "volume": 0.6,
+            "produces_waste": true,
+            "hydration_multiplier": 0.80,
+            "description": "A sports drink provides fluid and quick carbohydrates.",
+            "shape": {
+                "color": "#3399FF",
+                "density": 1.2,
+                "fixtures": [
+                    {"box": [0.16, 0.35]},
+                    {"box": [0.10, 0.08], "center": [0.00, 0.43]}
+                ]
+            }
+        },
+        "WATER_BOTTLE": {
+            "calories": 0.0,
+            "oz": 32.0,
+            "weight": 2.28,
+            "volume": 1.0,
+            "produces_waste": true,
+            "hydration_multiplier": 1.00,
+            "description": "A 32 oz water bottle. A basic hydration option that can be packed in the bag.",
+            "shape": {
+                "color": "#82C8E6",
+                "density": 1.0,
+                "fixtures": [
+                    {"box": [0.17, 0.50]},
+                    {"box": [0.10, 0.07], "center": [0.00, 0.57]}
+                ]
+            }
+        },
+        "WATER_CAMELBAK": {
+            "calories": 0.0,
+            "oz": 64.0,
+            "weight": 4.67,
+            "volume": 2.0,
+            "produces_waste": false,
+            "hydration_multiplier": 1.00,
+            "description": "A 64 oz camelbak-style water reservoir for carrying more water.",
+            "shape": {
+                "color": "#4488BB",
+                "density": 1.3,
+                "fixtures": [
+                    {"vertices": [[-0.28, -0.35], [0.28, -0.35], [0.25, 0.30], [0.08, 0.42], [-0.08, 0.42], [-0.25, 0.30]]}
+                ]
+            }
+        }
+    },
+    "gear": {
+        "BEAR_SPRAY": {
+            "weight": 0.75, "volume": 0.5, "category": "SAFETY",
+            "description": "Essential for safety in bear country.",
+            "shape": {
+                "color": "#FF6600",
+                "density": 1.5,
+                "fixtures": [
+                    {"box": [0.12, 0.32]},
+                    {"box": [0.06, 0.08], "center": [0.00, 0.40]}
+                ]
+            }
+        },
+        "COMPASS": {
+            "weight": 0.10, "volume": 0.1, "category": "NAVIGATION",
+            "description": "Analog navigation tool that works without batteries.",
+            "shape": {
+                "color": "#888888",
+                "density": 2.0,
+                "fixtures": [
+                    {"vertices": [[0.15, 0.00], [0.11, 0.11], [0.00, 0.15], [-0.11, 0.11], [-0.15, 0.00], [-0.11, -0.11], [0.00, -0.15], [0.11, -0.11]]}
+                ]
+            }
+        },
+        "FIRESTARTER": {
+            "weight": 0.15, "volume": 0.1, "category": "FIRE",
+            "description": "Helps you get a fire going in damp conditions.",
+            "shape": {
+                "color": "#CC4400",
+                "density": 1.5,
+                "fixtures": [
+                    {"box": [0.08, 0.22]}
+                ]
+            }
+        },
+        "FIRST_AID_KIT": {
+            "weight": 1.50, "volume": 1.0, "category": "FIRST_AID",
+            "description": "Contains basic medical supplies for the trail.",
+            "shape": {
+                "color": "#EE3333",
+                "density": 1.5,
+                "fixtures": [
+                    {"box": [0.28, 0.20]}
+                ]
+            }
+        },
+        "FLASHLIGHT": {
+            "weight": 0.50, "volume": 0.3, "category": "ILLUMINATION",
+            "description": "Provides light for night activities.",
+            "shape": {
+                "color": "#444444",
+                "density": 1.5,
+                "fixtures": [
+                    {"box": [0.08, 0.28]},
+                    {"box": [0.12, 0.06], "center": [0.00, 0.34]}
+                ]
+            }
+        },
+        "HAT": {
+            "weight": 0.20, "volume": 0.5, "category": "SUN_PROTECTION",
+            "description": "Protects your head from the sun and cold.",
+            "shape": {
+                "color": "#CC9955",
+                "density": 0.3,
+                "fixtures": [
+                    {"vertices": [[-0.35, -0.05], [0.35, -0.05], [0.30, 0.03], [-0.30, 0.03]]},
+                    {"vertices": [[-0.20, 0.03], [0.20, 0.03], [0.18, 0.22], [-0.18, 0.22]]}
+                ]
+            }
+        },
+        "MATCHES": {
+            "weight": 0.05, "volume": 0.1, "category": "FIRE",
+            "description": "Simple, reliable way to start a fire.",
+            "shape": {
+                "color": "#884422",
+                "density": 0.5,
+                "fixtures": [
+                    {"box": [0.12, 0.08]}
+                ]
+            }
+        },
+        "POCKET_KNIFE": {
+            "weight": 0.30, "volume": 0.1, "category": "KNIFE_TOOL",
+            "description": "A versatile tool for various tasks.",
+            "shape": {
+                "color": "#AA3333",
+                "density": 3.0,
+                "fixtures": [
+                    {"vertices": [[-0.18, -0.06], [0.18, -0.06], [0.18, 0.06], [-0.18, 0.06]]}
+                ]
+            }
+        },
+        "RAIN_JACKET": {
+            "weight": 0.80, "volume": 1.5, "category": "INSULATION",
+            "description": "Keeps you dry during unexpected rain.",
+            "shape": {
+                "color": "#FFDD00",
+                "density": 0.5,
+                "fixtures": [
+                    {"vertices": [[-0.30, -0.14], [0.30, -0.14], [0.28, 0.14], [-0.28, 0.14]]}
+                ]
+            }
+        },
+        "SLEEPING_BAG": {
+            "weight": 3.00, "volume": 10.0, "category": "SHELTER",
+            "description": "Provides warmth for overnight trips.",
+            "shape": {
+                "color": "#5544AA",
+                "density": 0.4,
+                "fixtures": [
+                    {"vertices": [[0.35, 0.00], [0.25, 0.25], [-0.25, 0.25], [-0.35, 0.00], [-0.25, -0.25], [0.25, -0.25]]}
+                ]
+            }
+        },
+        "SUNSCREEN": {
+            "weight": 0.25, "volume": 0.2, "category": "SUN_PROTECTION",
+            "description": "Protects your skin from UV rays. Essential even in snow.",
+            "shape": {
+                "color": "#FFB347",
+                "density": 1.5,
+                "fixtures": [
+                    {"box": [0.10, 0.22]},
+                    {"box": [0.06, 0.04], "center": [0.00, 0.26]}
+                ]
+            }
+        },
+        "TENT": {
+            "weight": 5.00, "volume": 15.0, "category": "SHELTER",
+            "description": "A portable shelter for camping.",
+            "shape": {
+                "color": "#339933",
+                "density": 0.6,
+                "fixtures": [
+                    {"vertices": [[-0.45, -0.20], [0.45, -0.20], [0.00, 0.35]]}
+                ]
+            }
+        },
+        "WATER_FILTER": {
+            "weight": 0.40, "volume": 0.5, "category": "SAFETY",
+            "description": "Makes stream water safe to drink.",
+            "shape": {
+                "color": "#66AACC",
+                "density": 1.5,
+                "fixtures": [
+                    {"box": [0.10, 0.30]},
+                    {"box": [0.06, 0.06], "center": [0.00, 0.36]}
+                ]
+            }
+        },
+        "WHISTLE": {
+            "weight": 0.05, "volume": 0.1, "category": "SAFETY",
+            "description": "A simple signaling device for emergencies.",
+            "shape": {
+                "color": "#FF8800",
+                "density": 2.0,
+                "fixtures": [
+                    {"vertices": [[-0.18, -0.05], [0.12, -0.05], [0.18, 0.00], [0.12, 0.05], [-0.18, 0.05]]}
+                ]
+            }
+        },
+        "COTTON_SHIRT": {
+            "weight": 0.80, "volume": 1.0, "category": "INSULATION", "is_cotton": true,
+            "description": "A basic t-shirt. Comfortable until it gets wet.",
+            "shape": {
+                "color": "#EEEEEE",
+                "density": 0.3,
+                "fixtures": [
+                    {"vertices": [[-0.28, -0.12], [0.28, -0.12], [0.26, 0.12], [-0.26, 0.12]]}
+                ]
+            }
+        },
+        "WOOL_SHIRT": {
+            "weight": 0.50, "volume": 1.0, "category": "INSULATION",
+            "description": "Moisture-wicking and stays warm when wet. Essential for safety.",
+            "shape": {
+                "color": "#336633",
+                "density": 0.4,
+                "fixtures": [
+                    {"vertices": [[-0.28, -0.12], [0.28, -0.12], [0.26, 0.12], [-0.26, 0.12]]}
+                ]
+            }
+        },
+        "CAST_IRON_SKILLET": {
+            "weight": 8.00, "volume": 4.0, "category": "OTHER",
+            "description": "Great for cooking, but very heavy for the trail.",
+            "shape": {
+                "color": "#333333",
+                "density": 5.0,
+                "fixtures": [
+                    {"vertices": [[0.30, 0.00], [0.21, 0.21], [0.00, 0.30], [-0.21, 0.21], [-0.30, 0.00], [-0.21, -0.06], [0.21, -0.06]]},
+                    {"box": [0.04, 0.18], "center": [0.00, -0.24]}
+                ]
+            }
+        },
+        "TRASH_BAG": {
+            "weight": 0.10, "volume": 0.1, "category": "OTHER", "is_waste_storage": true,
+            "description": "A heavy-duty bag for packing out all trash and waste.",
+            "shape": {
+                "color": "#222222",
+                "density": 0.1,
+                "fixtures": [
+                    {"vertices": [[-0.22, -0.25], [0.22, -0.25], [0.25, 0.15], [0.12, 0.28], [-0.12, 0.28], [-0.25, 0.15]]}
+                ]
+            }
+        },
+        "ZIPLOC_BAG": {
+            "weight": 0.01, "volume": 0.05, "category": "OTHER", "is_waste_storage": true,
+            "description": "A small sealable bag for snacks and small pieces of trash.",
+            "shape": {
+                "color": "#AACCFF",
+                "density": 0.1,
+                "fixtures": [
+                    {"box": [0.15, 0.12]}
+                ]
+            }
+        },
+        "TREKKING_POLES": {
+            "weight": 1.00, "volume": 1.0, "category": "OTHER", "is_pole": true,
+            "description": "Reduces impact on knees and provides stability.",
+            "shape": {
+                "color": "#888888",
+                "density": 0.8,
+                "fixtures": [
+                    {"box": [0.03, 0.50], "center": [-0.08, 0.00]},
+                    {"box": [0.03, 0.50], "center": [0.08, 0.00]}
+                ]
+            }
+        }
+    }
+}

@@ -4,18 +4,36 @@
  */
 
 #include "drinkitem.h"
+#include "itemregistry.h"
+
+namespace {
+QString drinkEnumToString(DrinkType d) {
+    switch(d) {
+        case DrinkType::BEER: return "BEER";
+        case DrinkType::ENERGY_DRINK: return "ENERGY_DRINK";
+        case DrinkType::SODA: return "SODA";
+        case DrinkType::SPORTS_DRINK: return "SPORTS_DRINK";
+        case DrinkType::WATER_BOTTLE: return "WATER_BOTTLE";
+        case DrinkType::WATER_CAMELBAK: return "WATER_CAMELBAK";
+    }
+    return "";
+}
+}
 
 DrinkItem::DrinkItem(DrinkType drinkEnum)
-    : hydrationMultiplier(0.0)
+    : DrinkItem(drinkEnumToString(drinkEnum))
 {
-    const DrinkStats& drinkStats = DrinkRegistry.at(drinkEnum);
+}
 
-    nutrition = drinkStats.nutrition;
-    weight = drinkStats.weight;
-    volumeLiters = drinkStats.volume;
-    producesWaste = drinkStats.producesWaste;
-    description = drinkStats.description;
-    hydrationMultiplier = drinkStats.hydrationMultiplier;
+DrinkItem::DrinkItem(const QString& name)
+{
+    ItemStats stats = ItemRegistry::getDrinkStats(name);
+    nutrition = stats.nutrition;
+    weight = stats.weight;
+    volumeLiters = stats.volume;
+    producesWaste = stats.producesWaste;
+    description = stats.description;
+    hydrationMultiplier = stats.hydrationMultiplier;
 }
 
 std::map<QString, double> DrinkItem::getStatMap() const

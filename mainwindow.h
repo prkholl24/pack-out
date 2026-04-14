@@ -6,6 +6,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <map>
 #include <vector>
 #include "level.h"
 #include "player.h"
@@ -19,6 +20,9 @@ class QStackedWidget;
 QT_END_NAMESPACE
 
 class BackpackScene;
+class BriefView;
+class DebriefView;
+class Level;
 
 /**
  * @class MainWindow
@@ -54,6 +58,21 @@ public:
 
 private slots:
     /**
+     * @brief Switches to the BriefView.
+     */
+    void showBriefView();
+
+    /**
+     * @brief Switches to the BackpackScene.
+     */
+    void showBackpackScene();
+
+    /**
+     * @brief Switches to the DebriefView.
+     */
+    void showDebriefView();
+
+    /**
      * @brief Triggered when the player's backpack items change.
      */
     void onBackpackChanged();
@@ -62,6 +81,18 @@ private slots:
      * @brief Triggered when the player's totals change.
      */
     void onStatsChanged(double weight, double volume);
+
+    /**
+     * @brief Adds a newly packed item to the player's model backpack.
+     * @param itemName The scene-level item identifier emitted by BackpackScene.
+     */
+    void handlePackedItemAdded(const QString& itemName);
+
+    /**
+     * @brief Removes an unpacked item from the player's model backpack.
+     * @param itemName The scene-level item identifier emitted by BackpackScene.
+     */
+    void handlePackedItemRemoved(const QString& itemName);
 
 private:
     /** @brief Auto-generated form from mainwindow.ui. */
@@ -81,6 +112,22 @@ private:
      * @brief The trek view scene.
      */
     TrekView* trekViewScene;
+    
+     /**   
+     * @brief The pre-level briefing view.
+     */
+    BriefView* briefView;
+
+    /**
+     * @brief The post-level results view.
+     */
+    DebriefView* debriefView;
+
+    /**
+     * @brief Mirrors bag contents by scene item name so removals can
+     *        delete the correct model object.
+     */
+    std::map<QString, std::vector<Item*>> packedItemsByName;
 
     /**
      * @brief The player object managing the current session's backpack.
@@ -91,5 +138,30 @@ private:
      * @brief The collection of Utah treks for the player to progress through.
      */
     std::vector<Level> treks;
+
+    /**
+     * @brief The index of the current trek being played.
+     */
+    int currentTrekIndex;
+
+    /**
+     * @brief Wires the current BackpackScene instance into MainWindow.
+     */
+    void connectBackpackSceneSignals();
+
+    /**
+     * @brief Recreates the packing scene so each attempt starts fresh.
+     */
+    void rebuildBackpackScene();
+
+    /**
+     * @brief Clears the player's current packed-item attempt state.
+     */
+    void resetAttemptState();
+
+    /**
+     * @brief Advances to the next available level, if any.
+     */
+    void advanceToNextLevel();
 };
 #endif // MAINWINDOW_H

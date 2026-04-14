@@ -15,6 +15,7 @@
  */
 #include "mainwindow.h"
 #include "trekview.h"
+#include "spritecache.h"
 
 #include <QApplication>
 
@@ -24,6 +25,9 @@ int main(int argc, char *argv[])
     // platform integration, fonts, styles). Must be created before
     // any QWidget.
     QApplication a(argc, argv);
+
+    // Load sprite images for all items from Qt resources (:/sprites/).
+    SpriteCache::init();
 
     // MainWindow is the top-level window. Its constructor builds
     // a QStackedWidget and populates it with game scenes.

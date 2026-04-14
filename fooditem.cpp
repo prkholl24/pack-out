@@ -4,16 +4,36 @@
  */
 
 #include "fooditem.h"
+#include "itemregistry.h"
+
+namespace {
+QString foodEnumToString(Food f) {
+    switch(f) {
+        case Food::BANANA: return "BANANA";
+        case Food::BEEF_JERKY: return "BEEF_JERKY";
+        case Food::GRANOLA_BAR: return "GRANOLA_BAR";
+        case Food::MIXED_NUTS: return "MIXED_NUTS";
+        case Food::PEANUT_BUTTER_SANDWICH: return "PEANUT_BUTTER_SANDWICH";
+        case Food::POTATO: return "POTATO";
+        case Food::TRAIL_MIX: return "TRAIL_MIX";
+    }
+    return "";
+}
+}
 
 FoodItem::FoodItem(Food foodEnum)
+    : FoodItem(foodEnumToString(foodEnum))
 {
-    const FoodStats& foodStats = FoodRegistry.at(foodEnum);
+}
 
-    nutrition = foodStats.nutrition;
-    weight = foodStats.weight;
-    volumeLiters = foodStats.volume;
-    producesWaste = foodStats.producesWaste;
-    description = foodStats.description;
+FoodItem::FoodItem(const QString& name)
+{
+    ItemStats stats = ItemRegistry::getFoodStats(name);
+    nutrition = stats.nutrition;
+    weight = stats.weight;
+    volumeLiters = stats.volume;
+    producesWaste = stats.producesWaste;
+    description = stats.description;
 }
 
 std::map<QString, double> FoodItem::getStatMap() const

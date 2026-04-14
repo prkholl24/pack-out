@@ -49,9 +49,19 @@ public:
     TerrainType getTerrain() const { return requirements.terrain; }
     AdventureType getAdventure() const { return requirements.adventure; }
     int getDuration() const { return requirements.durationHours; }
+    double getMiles() const { return requirements.miles; }
+    double getElevationGain() const { return requirements.elevationGain; }
     double getRequiredHydration() const { return requirements.customHydration; }
     int getRequiredCalories() const { return requirements.customCalories; }
+    QString getScienceFocus() const { return requirements.scienceFocus; }
     QString getDescription() const { return requirements.description; }
+    QStringList getAvailableItems() const { return requirements.availableItems; }
+
+    /**
+     * @brief Sets the custom briefing description for this level.
+     * @param newDescription The custom level description to display.
+     */
+    void setDescription(const QString& newDescription);
 
 private:
     // --- Orchestration Phases ---
