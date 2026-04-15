@@ -4,6 +4,7 @@
 #include <QObject>
 #include <Box2D/Box2D.h>
 #include <QTimer>
+#include "physicsObjects.h"
 
 class TrekBox2DPhysics : public QObject
 {
@@ -41,20 +42,7 @@ public:
 
 private:
 
-    //Struct for all the objects on each level
-    struct PhysicsObjectDef{
-        QString type;
-        QString shapeType;
-        float x;
-        float y;
-        float width;
-        float height;
-        float angle;
-        bool isStatic;
-        float friction;
-        float restitution;
-        QVector<int> color;
-    };
+
 
     //Vector for each objects struct
     QVector<PhysicsObjectDef> objectsVector;
@@ -64,8 +52,8 @@ private:
      * @brief Turns the objects stored in the objects vector into a physical
      * objects in box2D
      */
+    void extracted();
     void createPhysicsObjects();
-
 
     /**
      * @brief Temporary to create the struct values to be drawn.
@@ -91,6 +79,8 @@ private:
 
 signals:
     void sendBodyLocation(float x, float y);
+
+    void loadVisualObjectsSignal(QVector<PhysicsObjectDef>& objectsVector);
 
 public slots:
 

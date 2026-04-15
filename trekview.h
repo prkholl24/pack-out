@@ -15,6 +15,10 @@
 #include "trekbox2dphysics.h"
 #include <QWidget>
 #include <Box2D/Box2D.h>
+#include "physicsObjects.h"
+
+//Fowards Declaration
+struct PhysicsObjectDef;
 
 namespace Ui {
 class TrekView;
@@ -45,6 +49,14 @@ public slots:
      */
     void currentLevel(int level);
 
+    /**
+     * @brief loadVisualObjectsSlot Loads the objects from the physics engine
+     *        into a vector of objects that can be drawn.
+     * @param objectsVector Vector of objects from the physics engine
+     *        to be parsed into drawable objects
+     */
+    void loadVisualObjectsSlot(QVector<PhysicsObjectDef>& objectsVector);
+
 signals:
 
 
@@ -56,6 +68,25 @@ signals:
 
 
 private:
+
+
+    //Stores information relating to visual objects
+    struct VisualObjectDef{
+        QString shapeType;
+        float x;
+        float y;
+        float width;
+        float height;
+        float angle;
+        QVector<int> color;
+    };
+
+
+    QVector<VisualObjectDef> visualVector;
+
+
+
+
     /**
      * @brief player's current level
      */

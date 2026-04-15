@@ -63,6 +63,11 @@ void TrekView::mouseMoveEvent(QMouseEvent *event) {
 
 }
 
+void TrekView::loadVisualObjectsSlot(QVector<PhysicsObjectDef>& objectsVector){
+
+
+}
+
 
 
 

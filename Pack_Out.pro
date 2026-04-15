@@ -138,6 +138,7 @@ HEADERS += \
     levelresult.h \
     mainwindow.h \
     nutritionprofile.h \
+    physicsObjects.h \
     player.h \
     tripconditions.h \
     trekregistry.h \
