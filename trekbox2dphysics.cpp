@@ -77,12 +77,14 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     bodyVector.append(qMakePair(temp,body));
 
     // Define another box shape for our dynamic body.
-    b2PolygonShape dynamicBox;
-    dynamicBox.SetAsBox(1.0f, 1.0f);
+    b2CircleShape circle;
+    circle.m_radius = (temp.width * 0.5) / 20;
+    // dynamicCircle.SetAsBox(1.0f, 1.0f);
+
 
     // Define the dynamic body geometry, size.
     b2FixtureDef fixtureDef;
-    fixtureDef.shape = &dynamicBox;
+    fixtureDef.shape = &circle;
 
     // Set the box density to be non-zero, so it will be dynamic.
     fixtureDef.density = 1.0f;
@@ -228,10 +230,8 @@ void TrekBox2DPhysics::updateWorldSlot(){
                 // emit sendBodyLocation(screen.x(), screen.y());
                 // std::cout << screen.x() << std::endl;
                 PhysicsObjectDef tempBody = def;
-                tempBody.x = screen.x()+100) + (tempBody.height * 0.5f) / pixelsPerMeter;
-                tempBody.y = screen.y() - (tempBody.width * 0.5f) / pixelsPerMeter;
-                tempBody.height = ((tempBody.height * 0.5f));
-                tempBody.width = ((tempBody.width * 0.5f));
+                tempBody.x = screen.x();
+                tempBody.y = screen.y();
                 liveBody.append(tempBody);
             }
             emit loadVisualObjectsSignal(liveBody);

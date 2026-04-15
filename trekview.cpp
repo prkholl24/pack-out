@@ -96,7 +96,7 @@ void TrekView::paintEvent(QPaintEvent *event){
         for (VisualObjectDef visual : visualVector) {
             QColor color(visual.color[0],visual.color[1],visual.color[2]);
             painter.setBrush(color);
-            painter.drawEllipse(visual.x, visual.y, visual.width * 2.0f, visual.height * 2.0f);
+            painter.drawEllipse(visual.x - (visual.width * 0.5f), visual.y - (visual.height * 0.5f), visual.width, visual.height);
         }
     // }
    // painter.drawEllipse(boxX,boxY,100,100);
