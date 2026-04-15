@@ -17,6 +17,8 @@ TrekView::TrekView(QWidget *parent)
     //bodyDisplay in trekView
     connect(phys,&TrekBox2DPhysics::sendBodyLocation,this,&TrekView::bodyDisplay);
 
+    connect(phys, &TrekBox2DPhysics::loadVisualObjectsSignal, this, &TrekView::loadVisualObjectsSlot);
+
     //Connects updateMousePosition in view, to setMousePosition in physics
     connect(this, &TrekView::updatePhysicsMousePosition, phys, &TrekBox2DPhysics::setTargetFromMouse);
 
@@ -64,8 +66,19 @@ void TrekView::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void TrekView::loadVisualObjectsSlot(QVector<PhysicsObjectDef>& objectsVector){
-
-
+    visualVector.clear();
+    for (PhysicsObjectDef physics : objectsVector){
+        VisualObjectDef visual;
+        visual.shapeType = physics.shapeType;
+        visual.x = physics.x;
+        visual.y = physics.y;
+        visual.width = physics.width;
+        visual.height = physics.height;
+        visual.angle = physics.angle;
+        visual.color = physics.color;
+        visualVector.append(visual);
+    }
+    update();
 }
 
 
@@ -73,18 +86,19 @@ void TrekView::loadVisualObjectsSlot(QVector<PhysicsObjectDef>& objectsVector){
 
 void TrekView::paintEvent(QPaintEvent *event){
     QPainter painter(this);
-
-
-
-   painter.drawPixmap(rect(), backgroundPixmap);
-
+    //Paints the current background
+    painter.drawPixmap(rect(), backgroundPixmap);
     painter.setBrush(Qt::blue);
-
-    painter.drawEllipse(boxX - 50, boxY - 50, 90, 90);
-
+    // painter.drawEllipse(boxX - 50, boxY - 50, 90, 90);
     painter.setBrush(Qt::red);
-    painter.drawEllipse(boxX - 50, boxY - 50, 10,10);
+
+    // if (!visualVector.empty()) {
+        for (VisualObjectDef visual : visualVector) {
+            QColor color(visual.color[0],visual.color[1],visual.color[2]);
+            painter.setBrush(color);
+            painter.drawEllipse(visual.x, visual.y, visual.width * 2.0f, visual.height * 2.0f);
+        }
+    // }
    // painter.drawEllipse(boxX,boxY,100,100);
 
-  //  update();
 }

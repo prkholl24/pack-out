@@ -47,6 +47,9 @@ private:
     //Vector for each objects struct
     QVector<PhysicsObjectDef> objectsVector;
 
+    //QPair the PhysicsObjectDef with its corresponding body
+    QVector<QPair<PhysicsObjectDef,b2Body*>> bodyVector;
+
 
     /**
      * @brief Turns the objects stored in the objects vector into a physical
@@ -75,11 +78,10 @@ private:
 
     QPointF worldToScreen(const b2Vec2& p) const;
 
-
-
 signals:
     void sendBodyLocation(float x, float y);
 
+    //sends live b2world body information
     void loadVisualObjectsSignal(QVector<PhysicsObjectDef>& objectsVector);
 
 public slots:

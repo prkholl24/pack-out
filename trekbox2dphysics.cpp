@@ -11,8 +11,10 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
 
     timer->start(10);
 
+    //Creates the bodydef of other objects and adds them to vector
     createPhysicsStructure();
 
+    //create and adds every body from vector to the b2world
     createPhysicsObjects();
 
 
@@ -67,6 +69,12 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(height / 2, width / 2);
     body = world.CreateBody(&bodyDef);
+    PhysicsObjectDef temp;
+    temp.x = bodyDef.position.x;
+    temp.y = bodyDef.position.y;
+    temp.width = 20;
+    temp.height = 20;
+    bodyVector.append(qMakePair(temp,body));
 
     // Define another box shape for our dynamic body.
     b2PolygonShape dynamicBox;
@@ -139,6 +147,8 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 
         b2Body* body = world.CreateBody(&bodyDef);
 
+        bodyVector.append(qMakePair(phys,body));
+
         if(phys.shapeType == "box")
         {
             b2PolygonShape  shape;
@@ -155,7 +165,6 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 
             b2CircleShape shape;
             shape.m_radius = (phys.width * 0.5f) / pixelsPerMeter;
-
             b2FixtureDef fixtureDef;
             fixtureDef.shape = &shape;
             fixtureDef.density = phys.isStatic ? 0.0f : 1.0f;
@@ -205,9 +214,28 @@ void TrekBox2DPhysics::updateWorldSlot(){
 
         if (body)
         {
-            b2Vec2 position = body->GetPosition();
-            QPointF screen = worldToScreen(position);
-            emit sendBodyLocation(screen.x(), screen.y());
+
+
+            // (phys.width * 0.5f) / pixelsPerMeter
+
+            // emit loadVisualObjectsSignal(objectsVector);
+            // emit sendBodyLocation(screen.x(), screen.y());
+            // emit loadVisualObjectsSignal(objectsVector);
+            QVector<PhysicsObjectDef> liveBody;
+            for (auto& [def,vis] : bodyVector){
+                b2Vec2 position = vis->GetPosition();
+                QPointF screen = worldToScreen(position);
+                // emit sendBodyLocation(screen.x(), screen.y());
+                // std::cout << screen.x() << std::endl;
+                PhysicsObjectDef tempBody = def;
+                tempBody.x = screen.x()+100) + (tempBody.height * 0.5f) / pixelsPerMeter;
+                tempBody.y = screen.y() - (tempBody.width * 0.5f) / pixelsPerMeter;
+                tempBody.height = ((tempBody.height * 0.5f));
+                tempBody.width = ((tempBody.width * 0.5f));
+                liveBody.append(tempBody);
+            }
+            emit loadVisualObjectsSignal(liveBody);
+
         }
     }
 }
@@ -221,8 +249,8 @@ void TrekBox2DPhysics::createPhysicsStructure(){
     p1.shapeType = "circle";
     p1.x = 0;
     p1.y = 0;
-    p1.width = 10;
-    p1.height = 10;
+    p1.width = 100;
+    p1.height = 100;
     p1.angle = 0;
     p1.isStatic = true;
     p1.friction = 0.3f;
@@ -233,4 +261,23 @@ void TrekBox2DPhysics::createPhysicsStructure(){
 
     objectsVector.append(p1);
 
+    // PhysicsObjectDef p2;
+    // p2.type = "ABoxCuh";
+    // p2.shapeType = "circle";
+    // p2.x = 10;
+    // p2.y = 20;
+    // p2.width = 50;
+    // p2.height = 50;
+    // p2.angle = 0;
+    // p2.isStatic = static;
+    // p2.friction = 0.3f;
+    // p2.restitution = 0.9f;
+
+    // p2.color = {255,255,0,0};
+
+
+    // objectsVector.append(p2);
+
 }
+
+

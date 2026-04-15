@@ -12,17 +12,17 @@
 
 //Struct for all the objects on each level
 struct PhysicsObjectDef{
-    QString type;
-    QString shapeType;
-    float x;
-    float y;
-    float width;
-    float height;
-    float angle;
-    bool isStatic;
-    float friction;
-    float restitution;
-    QVector<int> color;
+    QString type = " ";
+    QString shapeType = " ";
+    float x = 0.0;
+    float y = 0.0;
+    float width = 0.0;
+    float height = 0.0;
+    float angle = 0;
+    bool isStatic = true;
+    float friction = 0.3f;
+    float restitution = 0.9f;
+    QVector<int> color = {255,255,255};
 };
 
 
