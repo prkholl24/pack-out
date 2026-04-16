@@ -16,7 +16,7 @@ Level::Level(const TripRequirements& req) : requirements(req) {}
 LevelResult Level::evaluateBackpack(const std::vector<std::unique_ptr<Item>>& backpack, const Player& player) const
 {
     LevelResult result;
-    result.maxVolume = player.getMaxVolumeCapacity();
+    result.maxVolume = (requirements.packVolumeL > 0) ? requirements.packVolumeL : player.getMaxVolumeCapacity();
     
     // 1. Data Aggregation
     result.totals = gatherBackpackTotals(backpack);

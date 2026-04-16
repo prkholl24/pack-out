@@ -48,6 +48,10 @@ TripRequirements TrekRegistry::parseTrip(const QJsonObject& obj)
     // Optional overrides: 0 = water-only level, -1 (default) = auto-calculate
     if (obj.contains("customCalories"))
         req.customCalories = obj.value("customCalories").toInt(-1);
+    if (obj.contains("customHydration"))
+        req.customHydration = obj.value("customHydration").toDouble(-1);
+    if (obj.contains("packVolumeL"))
+        req.packVolumeL = obj.value("packVolumeL").toDouble(20.0);
 
     req.skipGearCheck = obj.value("skipGearCheck").toBool(false);
 
