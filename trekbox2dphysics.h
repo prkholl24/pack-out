@@ -26,10 +26,10 @@ public:
 
     //Gain on the force applied based on the distance
     //From player to mouse
-    float forceGain = 5.0f;
+    float forceGain = 200.0f;
 
     //Maximum force that can be applied to hiker
-    float maxForce = 10.0f;
+    float maxForce = 1000.0f;
     /**
      * @brief body
      */
@@ -56,6 +56,11 @@ private:
      * objects in box2D
      */
     void extracted();
+
+    /**
+     * @brief createPhysicsObjects a method unused except for creating the levels
+     * which can then later be saved to json
+     */
     void createPhysicsObjects();
 
     /**
@@ -65,8 +70,15 @@ private:
      */
     void createPhysicsStructure();
 
+    /**
+     * @brief toJsonLevel converts the physics structure to a json that can be loaded later
+     */
+    void toJsonLevel();
 
+
+    //Width in pixels of the overall widget
     int widgetWidth = 1920;
+    //Height in pixels of the overall widget
     int widgetHeight = 1080;
 
     /**
@@ -76,9 +88,18 @@ private:
      */
     b2Vec2 screenToWorld(const QPointF& p) const;
 
+    /**
+     * @brief worldToScreen Convert a point in the box2D world to a point on the screen
+     *        Method was acquired from ChatGPT5.3
+     * @param
+     * @return
+     */
     QPointF worldToScreen(const b2Vec2& p) const;
 
+
+
 signals:
+
     void sendBodyLocation(float x, float y);
 
     //sends live b2world body information

@@ -72,8 +72,8 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     PhysicsObjectDef temp;
     temp.x = bodyDef.position.x;
     temp.y = bodyDef.position.y;
-    temp.width = 20;
-    temp.height = 20;
+    temp.width = 200;
+    temp.height = 200;
     bodyVector.append(qMakePair(temp,body));
 
     // Define another box shape for our dynamic body.
@@ -178,7 +178,7 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 
         }
 
-        //phys.body = body;
+
 
     }
 
@@ -252,7 +252,7 @@ void TrekBox2DPhysics::createPhysicsStructure(){
     p1.width = 100;
     p1.height = 100;
     p1.angle = 0;
-    p1.isStatic = true;
+    p1.isStatic = false;
     p1.friction = 0.3f;
     p1.restitution = 0.9f;
 
@@ -261,23 +261,25 @@ void TrekBox2DPhysics::createPhysicsStructure(){
 
     objectsVector.append(p1);
 
-    // PhysicsObjectDef p2;
-    // p2.type = "ABoxCuh";
-    // p2.shapeType = "circle";
-    // p2.x = 10;
-    // p2.y = 20;
-    // p2.width = 50;
-    // p2.height = 50;
-    // p2.angle = 0;
-    // p2.isStatic = static;
-    // p2.friction = 0.3f;
-    // p2.restitution = 0.9f;
+    PhysicsObjectDef p2;
+    p2.type = "ABoxCuh";
+    p2.shapeType = "circle";
+    p2.x = 10;
+    p2.y = 20;
+    p2.width = 50;
+    p2.height = 50;
+    p2.angle = 0;
+    p2.isStatic = false;
+    p2.friction = 0.3f;
+    p2.restitution = 0.9f;
 
-    // p2.color = {255,255,0,0};
+    p2.color = {255,255,0,0};
 
 
-    // objectsVector.append(p2);
+    objectsVector.append(p2);
 
 }
+
+
 
 
