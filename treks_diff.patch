@@ -1,0 +1,13 @@
+--- treks_brady.json	2026-04-16 11:16:43
++++ data/treks.json	2026-04-16 10:50:22
+@@ -12,9 +12,7 @@
+         "customCalories": 0,
+         "skipGearCheck": true,
+         "availableItems": [
+-            "BANANA", "GRANOLA_BAR",
+-            "WATER_BOTTLE",
+-            "HAT", "SUNSCREEN", "TRASH_BAG"
++            "WATER_BOTTLE", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER"
+         ]
+     },
+     {

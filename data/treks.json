@@ -1,87 +1,93 @@
 [
     {
         "name": "Delicate Arch",
-        "description": "Delicate Arch, a 2-hour desert day hike at Arches National Park. The exposed slickrock offers no shade. Pack enough water and get moving.",
+        "description": "The exposed slickrock offers no shade. This high-desert bowl radiates heat. This level focuses on Hydration Science.",
         "miles": 3.0,
         "elevationGain": 480.0,
         "duration": 2,
         "terrain": "DESERT",
         "weather": "HOT",
         "adventure": "DAY_HIKE",
-        "scienceFocus": "SODIUM_HYDRATION_LOAD",
+        "scienceFocus": "HYDRATION_BASICS",
         "customCalories": 0,
         "skipGearCheck": true,
         "availableItems": [
-            "BANANA", "GRANOLA_BAR",
-            "WATER_BOTTLE",
-            "HAT", "SUNSCREEN", "TRASH_BAG"
+            "WATER_BOTTLE", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
+            "BEEF_JERKY", "MIXED_NUTS"
         ]
     },
     {
-        "name": "Grandview Point",
-        "description": "Grandview Point, a breezy desert walk above the canyon at Canyonlands. The mesa is wide open and exposed. Keep your energy up. Pack food and water.",
-        "miles": 2.0,
-        "elevationGain": 160.0,
-        "duration": 1,
-        "terrain": "DESERT",
+        "name": "Fish Lake Loop",
+        "description": "A breezy walk around the largest natural mountain lake in Utah. High energy is needed for the distance. This level introduces Nutrition Science.",
+        "miles": 5.0,
+        "elevationGain": 100.0,
+        "duration": 2,
+        "terrain": "FOREST",
         "weather": "WINDY",
         "adventure": "DAY_HIKE",
-        "scienceFocus": "PACK_WEIGHT_RATIO",
+        "scienceFocus": "WHOLE_FOOD_FUEL",
+        "customCalories": -1,
         "skipGearCheck": true,
         "availableItems": [
-            "BANANA", "GRANOLA_BAR", "TRAIL_MIX",
-            "WATER_BOTTLE", "SPORTS_DRINK",
-            "HAT", "SUNSCREEN", "FIRST_AID_KIT", "TRASH_BAG"
+            "WATER_BOTTLE", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
+            "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "BEEF_JERKY", "MIXED_NUTS", "PEANUT_BUTTER_SANDWICH"
         ]
     },
+
     {
-        "name": "Level 3: Coming Soon",
-        "description": "This trail is still being mapped. Check back later.",
+        "name": "Lake Blanche",
+        "description": "A steep climb into glacial geology. As the temperature drops, your clothing choices matter. This level introduces Material Science.",
         "miles": 6.9,
         "elevationGain": 2700.0,
         "duration": 5,
-        "terrain": "ROCKY",
+        "terrain": "FOREST",
         "weather": "COLD",
         "adventure": "DAY_HIKE",
-        "scienceFocus": "TEN_ESSENTIALS_MISSING",
+        "scienceFocus": "COTTON_CLOTHING_WARNING",
+        "customCalories": -1,
+        "skipGearCheck": false,
         "availableItems": [
-            "BANANA", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX",
-            "WATER_BOTTLE", "SPORTS_DRINK", "SODA",
-            "HAT", "SUNSCREEN", "FIRST_AID_KIT", "FLASHLIGHT", "TRASH_BAG", "ZIPLOC_BAG"
+            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK",
+            "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "PEANUT_BUTTER_SANDWICH",
+            "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET"
         ]
     },
     {
-        "name": "Level 4: Coming Soon",
-        "description": "An advanced mountain challenge. Details pending.",
-        "miles": 8.0,
+        "name": "Glacier National Park",
+        "description": "Navigating the rugged peaks of the Crown of the Continent. Wet conditions and heavy packs will test your endurance. This level introduces the Pandolf Weight Penalty.",
+        "miles": 10.0,
         "elevationGain": 2500.0,
-        "duration": 7,
-        "terrain": "MOUNTAIN",
-        "weather": "SNOW",
-        "adventure": "DAY_HIKE",
-        "scienceFocus": "PANDOLF_WEIGHT_PENALTY",
-        "availableItems": [
-            "BANANA", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX", "BEEF_JERKY",
-            "WATER_BOTTLE", "SPORTS_DRINK", "ENERGY_DRINK", "SODA",
-            "HAT", "SUNSCREEN", "FIRST_AID_KIT", "FLASHLIGHT", "POCKET_KNIFE",
-            "TRASH_BAG", "ZIPLOC_BAG"
-        ]
-    },
-    {
-        "name": "Level 5: Coming Soon",
-        "description": "The ultimate overnight expedition. Details pending.",
-        "miles": 15.0,
-        "elevationGain": 3500.0,
-        "duration": 24,
+        "duration": 8,
         "terrain": "MOUNTAIN",
         "weather": "RAINY",
+        "adventure": "DAY_HIKE",
+        "scienceFocus": "PANDOLF_WEIGHT_PENALTY",
+        "customCalories": -1,
+        "skipGearCheck": false,
+        "availableItems": [
+            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "ENERGY_DRINK",
+            "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "BEEF_JERKY", "PEANUT_BUTTER_SANDWICH",
+            "WOOL_SHIRT", "RAIN_JACKET", "TREKKING_POLES", "CAST_IRON_SKILLET", "FIRST_AID_KIT"
+        ]
+    },
+    {
+        "name": "Olympic National Park",
+        "description": "From temperate rainforests to alpine glaciers. A multi-day journey requiring total preparation. This level focuses on Metabolism (BMR) and Leave No Trace.",
+        "miles": 20.0,
+        "elevationGain": 4000.0,
+        "duration": 48,
+        "terrain": "MOUNTAIN",
+        "weather": "SNOW",
         "adventure": "BACKPACKING",
         "scienceFocus": "BMR_BASE_METABOLISM",
+        "customCalories": -1,
+        "skipGearCheck": false,
         "availableItems": [
-            "BANANA", "POTATO", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX", "PEANUT_BUTTER_SANDWICH",
-            "WATER_BOTTLE", "SPORTS_DRINK", "ENERGY_DRINK",
-            "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET", "FIRST_AID_KIT", "FLASHLIGHT",
-            "COMPASS", "POCKET_KNIFE", "MATCHES", "TRASH_BAG", "ZIPLOC_BAG"
+            "WATER_BOTTLE", "WATER_CAMELBAK", "WATER_FILTER",
+            "BANANA", "POTATO", "BEEF_JERKY", "MIXED_NUTS", "PEANUT_BUTTER_SANDWICH",
+            "WOOL_SHIRT", "RAIN_JACKET", "SLEEPING_BAG", "TENT", 
+            "FIRST_AID_KIT", "FLASHLIGHT", "COMPASS", "MATCHES", "BEAR_SPRAY",
+            "TRASH_BAG", "ZIPLOC_BAG"
         ]
     }
 ]
