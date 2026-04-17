@@ -1,28 +1,121 @@
 /**
  * @file player.h
  * @brief Header file for the Player class.
- *
- * Defines the Player class, which represents the user in the game.
- * The Player manages a backpack of items and provides access to
- * total calories, water, and weight based on its contents.
- *
- * The Player class acts as the main interface between the user
- * and the items they have packed.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/7/2026
  */
 
 #ifndef PLAYER_H
 #define PLAYER_H
 
-class Player
+#include <vector>
+#include <memory>
+#include <QObject>
+#include <QString>
+#include "item.h"
+
+/**
+ * @brief Enumerates biological gender for physiological calculations.
+ */
+enum class Gender {
+    MALE,
+    FEMALE
+};
+
+/**
+ * @brief Represents the player, their physical stats, and their backpack.
+ *
+ * Inherits from QObject to support Signal/Slot communication. Manages 
+ * ownership of items via unique_ptr and caches weight/volume for efficiency.
+ */
+class Player : public QObject
 {
+    Q_OBJECT
+
 public:
-    Player();
+    /**
+     * @brief Constructs a Player with default stats.
+     */
+    explicit Player(QObject *parent = nullptr);
+    
+    ~Player();
+
+    // --- Physical Profile ---
+    double getWeightLbs() const;
+    void setWeightLbs(double weight);
+
+    double getHeightInches() const;
+    void setHeightInches(double height);
+
+    int getAge() const;
+    void setAge(int age);
+
+    Gender getGender() const;
+    void setGender(Gender gender);
+
+    /**
+     * @brief Calculates the daily Basal Metabolic Rate (BMR) using Mifflin-St Jeor.
+     * @return Calories burned per day at rest.
+     */
+    double calculateDailyBMR() const;
+
+    // --- Backpack Management ---
+    
+    /**
+     * @brief Adds an item and takes ownership.
+     */
+    void addItem(std::unique_ptr<Item> item);
+    
+    /**
+     * @brief Removes an item by raw pointer comparison.
+     */
+    void removeItem(Item* item);
+    
+    /**
+     * @brief Clears all items and resets ownership.
+     */
+    void clearBackpack();
+
+    /**
+     * @brief Returns a const reference to the backpack for evaluation.
+     */
+    const std::vector<std::unique_ptr<Item>>& getBackpack() const;
+
+    // --- Accessors ---
+    
+    /**
+     * @brief Returns the O(1) cached total weight.
+     */
+    double getTotalWeight() const;
+    
+    /**
+     * @brief Returns the O(1) cached total volume.
+     */
+    double getTotalVolume() const;
+    
+    double getMaxVolumeCapacity() const;
+    void setMaxVolumeCapacity(double capacity);
+
+signals:
+    /**
+     * @brief Emitted whenever items are added or removed.
+     */
+    void backpackChanged();
+
+    /**
+     * @brief Emitted when any totals or stats change.
+     */
+    void statsChanged(double weight, double volume);
+
+private:
+    double weightLbs;
+    double heightInches;
+    int age;
+    Gender gender;
+
+    std::vector<std::unique_ptr<Item>> backpack;
+    double maxVolumeCapacity;
+
+    double cachedTotalWeight;
+    double cachedTotalVolume;
 };
 
 #endif // PLAYER_H

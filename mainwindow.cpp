@@ -1,63 +1,222 @@
 /**
  * @file mainwindow.cpp
  * @brief Implementation of the MainWindow scene switcher.
- *
- * The constructor builds the scene stack, adds the BackpackScene,
- * and wires the levelHasStarted signal to a TODO stub that will
- * eventually swap to the trip/grading scene.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison, Claude Opus 4.6 (1M context)
- * @date 4/7/2026
- * Reviewed by Lindsey Reese 4/8/2026
  */
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "backpack.h"
+#include "briefview.h"
+#include "debriefview.h"
+#include "drinkitem.h"
+#include "fooditem.h"
+#include "gearitem.h"
+#include "levelreportbuilder.h"
+#include "trekregistry.h"
 
 #include <QMenuBar>
 #include <QStackedWidget>
 #include <QStatusBar>
 
+#include "itemregistry.h"
+
+namespace {
+
+Item* createPackedItemFromSceneName(const QString& itemName)
+{
+    ItemRegistry::ensureLoaded();
+
+    // Check food
+    ItemStats stats = ItemRegistry::getFoodStats(itemName);
+    if (!stats.description.isEmpty()) {
+        return new FoodItem(itemName);
+    }
+
+    // Check drink
+    stats = ItemRegistry::getDrinkStats(itemName);
+    if (!stats.description.isEmpty()) {
+        return new DrinkItem(itemName);
+    }
+
+    // Check gear
+    stats = ItemRegistry::getGearStats(itemName);
+    if (!stats.description.isEmpty()) {
+        return new GearItem(itemName);
+    }
+
+    return nullptr;
+}
+
+} // namespace
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , currentTrekIndex(0)
 {
     ui->setupUi(this);
 
-    // Lock the window geometry and strip chrome so the full client
-    // area is available to whichever scene is active. setFixedSize
-    // also prevents resizing, which keeps the screen ↔ world
-    // coordinate math in BackpackScene stable.
+    // Lock the window geometry and strip chrome
     setFixedSize(800, 600);
     menuBar()->hide();
     statusBar()->hide();
 
-    // QStackedWidget displays exactly one child at a time.  We set
-    // it as the central widget so it fills the entire client area.
+    // Set up the scene stack
     sceneStack = new QStackedWidget(this);
     setCentralWidget(sceneStack);
 
-    // Start on the packing scene.  addWidget() parents the scene
-    // to the stack, so Qt's parent-child ownership handles cleanup.
-    backpackScene = new BackpackScene(this);
-    sceneStack->addWidget(backpackScene);
-    sceneStack->setCurrentWidget(backpackScene);
+    // Initialize all scene views
+    briefView = new BriefView(this);
+    backpackScene = new BackpackScene(QStringList(), this);
+    debriefView = new DebriefView(this);
 
-    // When the packing scene completes (player clicked Cinch & Go
-    // and the button exited the screen), the model/controller layer
-    // will swap to the next scene here.  For now it's a no-op stub.
-    //
-    // Example of how a future transition would look:
-    //   sceneStack->setCurrentWidget(tripScene);
-    connect(backpackScene, &BackpackScene::levelHasStarted, this, [this]() {
-        // TODO: switch to the trip / grading scene
+    sceneStack->addWidget(briefView);
+    sceneStack->addWidget(backpackScene);
+    sceneStack->addWidget(debriefView);
+
+    // Initialize Utah Treks from external data
+    treks = TrekRegistry::loadTreks();
+
+    // Set up Signal/Slot connections for the Player Model
+    connect(&player, &Player::backpackChanged, this, &MainWindow::onBackpackChanged);
+    connect(&player, &Player::statsChanged, this, &MainWindow::onStatsChanged);
+
+    // Connect BriefView's start button to transition to packing
+    connect(briefView, &BriefView::startPackingClicked, this, &MainWindow::showBackpackScene);
+
+    connectBackpackSceneSignals();
+
+    // Connect DebriefView navigation signals
+    connect(debriefView, &DebriefView::retryLevelClicked, this, [this]() {
+        showBriefView();
     });
+    connect(debriefView, &DebriefView::nextLevelClicked, this, [this]() {
+        advanceToNextLevel();
+        showBriefView();
+    });
+    connect(debriefView, &DebriefView::returnToMenuClicked, this, [this]() {
+        showBriefView();
+    });
+
+    // Start on the first trek
+    showBriefView();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::addPackItem(Item* item)
+{
+    if (item) {
+        player.addItem(std::unique_ptr<Item>(item));
+    }
+}
+
+void MainWindow::evaluateTrek(int trekIndex)
+{
+    if (trekIndex < 0 || trekIndex >= (int)treks.size())
+        return;
+
+    LevelResult result = treks[trekIndex].evaluateBackpack(player.getBackpack(), player);
+    debriefView->setResults(result);
+    showDebriefView();
+}
+
+void MainWindow::onBackpackChanged()
+{
+    // Refresh UI components that depend on backpack content
+}
+
+void MainWindow::onStatsChanged(double weight, double volume)
+{
+    if (backpackScene) {
+        backpackScene->updateStats(weight, volume);
+    }
+}
+
+void MainWindow::showBriefView()
+{
+    if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size()) {
+        briefView->setLevel(treks[currentTrekIndex], currentTrekIndex + 1);
+    }
+    sceneStack->setCurrentWidget(briefView);
+}
+
+void MainWindow::showBackpackScene()
+{
+    rebuildBackpackScene();
+    resetAttemptState();
+    sceneStack->setCurrentWidget(backpackScene);
+}
+
+void MainWindow::showDebriefView()
+{
+    if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size()) {
+        const auto& packedItems = player.getBackpack();
+        LevelResult result = treks[currentTrekIndex].evaluateBackpack(packedItems, player);
+        debriefView->setResults(result);
+    }
+    sceneStack->setCurrentWidget(debriefView);
+}
+
+void MainWindow::handlePackedItemAdded(const QString& itemName)
+{
+    Item* item = createPackedItemFromSceneName(itemName);
+    if (item == nullptr)
+        return;
+
+    packedItemsByName[itemName].push_back(item);
+    player.addItem(std::unique_ptr<Item>(item));
+}
+
+void MainWindow::handlePackedItemRemoved(const QString& itemName)
+{
+    auto found = packedItemsByName.find(itemName);
+    if (found == packedItemsByName.end() || found->second.empty())
+        return;
+
+    Item* item = found->second.back();
+    found->second.pop_back();
+    player.removeItem(item);
+
+    if (found->second.empty())
+        packedItemsByName.erase(found);
+}
+
+void MainWindow::connectBackpackSceneSignals()
+{
+    connect(backpackScene, &BackpackScene::levelHasStarted, this, &MainWindow::showDebriefView);
+    connect(backpackScene, &BackpackScene::itemAddedToBag, this, &MainWindow::handlePackedItemAdded);
+    connect(backpackScene, &BackpackScene::itemRemovedFromBag, this, &MainWindow::handlePackedItemRemoved);
+}
+
+void MainWindow::rebuildBackpackScene()
+{
+    const int backpackSceneIndex = sceneStack->indexOf(backpackScene);
+
+    if (backpackSceneIndex >= 0) {
+        sceneStack->removeWidget(backpackScene);
+        backpackScene->deleteLater();
+    }
+
+    QStringList items;
+    if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size())
+        items = treks[currentTrekIndex].getAvailableItems();
+    backpackScene = new BackpackScene(items, this);
+    sceneStack->insertWidget(backpackSceneIndex >= 0 ? backpackSceneIndex : 1, backpackScene);
+    connectBackpackSceneSignals();
+}
+
+void MainWindow::resetAttemptState()
+{
+    packedItemsByName.clear();
+    player.clearBackpack();
+}
+
+void MainWindow::advanceToNextLevel()
+{
+    if (currentTrekIndex < (int)treks.size() - 1) {
+        currentTrekIndex++;
+    }
 }

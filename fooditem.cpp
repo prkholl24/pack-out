@@ -1,38 +1,49 @@
 /**
  * @file fooditem.cpp
- * @brief Implementation of the FoodItem class
- *
- * Implements FoodItem, which represents food that the player
- * can pack in their backpack. Each food item pulls its values
- * from the FoodRegistry and provides stats like calories and
- * weight for use in grading and gameplay.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/7/2026
+ * @brief Implementation of the FoodItem class.
  */
 
 #include "fooditem.h"
+#include "itemregistry.h"
 
-FoodItem::FoodItem(Food foodEnum)
-{
-    // Looks up the foodEnum from the table
-    const FoodStats& foodStruct = FoodRegistry.at(foodEnum);
-
-    this->image       = QPixmap(foodStruct.imageFilePath);
-    this->sustenance  = foodStruct.sustenance;
-    this->calories    = foodStruct.calories;
-    this->weight      = foodStruct.weight;
-    this->description = &foodStruct.description;
+namespace {
+QString foodEnumToString(Food f) {
+    switch(f) {
+        case Food::BANANA: return "BANANA";
+        case Food::BEEF_JERKY: return "BEEF_JERKY";
+        case Food::GRANOLA_BAR: return "GRANOLA_BAR";
+        case Food::MIXED_NUTS: return "MIXED_NUTS";
+        case Food::PEANUT_BUTTER_SANDWICH: return "PEANUT_BUTTER_SANDWICH";
+        case Food::POTATO: return "POTATO";
+        case Food::TRAIL_MIX: return "TRAIL_MIX";
+    }
+    return "";
+}
 }
 
-std::map<QString, double> FoodItem::getStats() const {
-    std::map<QString, double> output;
+FoodItem::FoodItem(Food foodEnum)
+    : FoodItem(foodEnumToString(foodEnum))
+{
+}
 
-    output["Calories"] = this->calories;
-    output["Weight(lbs)"] = this->weight;
+FoodItem::FoodItem(const QString& name)
+{
+    ItemStats stats = ItemRegistry::getFoodStats(name);
+    nutrition = stats.nutrition;
+    weight = stats.weight;
+    volumeLiters = stats.volume;
+    producesWaste = stats.producesWaste;
+    description = stats.description;
+}
 
-    return output;
+std::map<QString, double> FoodItem::getStatMap() const
+{
+    // Return programmatic IDs, not UI labels
+    return {
+        { "calories", nutrition.calories },
+        { "carbs", nutrition.carbs },
+        { "protein", nutrition.protein },
+        { "fat", nutrition.fat },
+        { "fiber", nutrition.fiber }
+    };
 }

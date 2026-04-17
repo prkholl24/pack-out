@@ -1,63 +1,67 @@
 /**
  * @file levelreportbuilder.h
  * @brief Contains the LevelReportBuilder class used to generate reports.
- *
- * Defines LevelReportBuilder, which is responsible for formatting
- * and generating user-facing reports based on LevelResult data.
- * This class handles presentation only and does not perform any
- * grading or evaluation logic.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/8/2026
  */
 
 #ifndef LEVELREPORTBUILDER_H
 #define LEVELREPORTBUILDER_H
 
 #include <QString>
+#include <map>
+#include <QJsonObject>
 #include "levelresult.h"
 
 /**
- * @brief Builds a formatted report for a LevelResult.
- *
- * This class converts evaluation results into a readable
- * report for the player. It does not perform any grading
- * or calculations.
+ * @brief Stores the textual content for an educational lesson.
+ */
+struct LessonContent {
+    QString title;
+    QString body;
+};
+
+/**
+ * @brief Responsible for formatting evaluation results into a human-readable report.
+ * 
+ * Combines summary data, pass/fail narratives, and educational science tips.
  */
 class LevelReportBuilder
 {
 public:
     /**
      * @brief Builds the full report for a level result.
-     *
-     * Combines the summary and either a pass or fail message
-     * into a single formatted string.
-     *
-     * @param result The evaluated results of the backpack.
-     * @return A QString containing the full report.
+     * @param result - The data container from the Level orchestrator.
+     * @return A formatted report string.
      */
     static QString buildReport(const LevelResult& result);
 
+    /**
+     * @brief Fetches a specific educational lesson by its string key.
+     * @param key The key string (e.g., "COTTON_CLOTHING_WARNING").
+     * @return Formatted lesson string with title and body.
+     */
+    static QString getLessonByKey(const QString& key);
+
 private:
     /**
-     * @brief Builds the summary portion of the report.
-     *
-     * Includes overall grade, total calories, and hydration.
+     * @brief Ensures the lesson registry and feedback data are loaded from JSON.
      */
+    static void ensureContentLoaded();
+
+    /**
+     * @brief A registry mapping ScienceLesson codes to their educational content.
+     */
+    static std::map<ScienceLesson, LessonContent> lessonRegistry;
+
+    /**
+     * @brief Stores global feedback strings (intro, pass/fail narratives).
+     */
+    static QJsonObject feedbackData;
+
+    // Report component builders
     static QString buildSummaryReport(const LevelResult& result);
-
-    /**
-     * @brief Builds the pass message.
-     */
     static QString buildPassReport();
-
-    /**
-     * @brief Builds the fail message.
-     */
     static QString buildFailReport(const LevelResult& result);
+    static QString buildScienceTip(const LevelResult& result);
 };
 
 #endif // LEVELREPORTBUILDER_H

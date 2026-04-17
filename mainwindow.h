@@ -1,36 +1,15 @@
 /**
  * @file mainwindow.h
  * @brief Top-level application window and scene switcher.
- *
- * MainWindow owns a QStackedWidget that holds the game's scene
- * widgets. Currently the only scene is BackpackScene (the packing
- * phase).  As the game grows, new scenes (trip, grading, menu, etc.)
- * will be added to the stack and MainWindow will swap between them
- * in response to signals from each scene.
- *
- * ## Scene-switching pattern
- *
- * Qt's QStackedWidget displays exactly one child widget at a time.
- * Adding a widget with `addWidget()` appends it to the stack;
- * `setCurrentWidget()` makes it the visible one.  Switching scenes
- * is a single call — no manual show/hide management needed.
- *
- * MainWindow connects to each scene's completion signal (e.g.
- * BackpackScene::levelHasStarted) and calls setCurrentWidget() to
- * transition.  The scenes themselves know nothing about each other;
- * MainWindow is the only place that knows the overall flow.
- *
- * Team: Green Goombas
- * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
- * @authors Charles Adair, Armando Carrillo, Parker Hollingsed, Claude Opus 4.6 (1M context)
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/7/2026
- * Reviewed by Lindsey Reese 4/8/2026
  */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <map>
+#include <vector>
+#include "level.h"
+#include "player.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -40,14 +19,13 @@ class QStackedWidget;
 QT_END_NAMESPACE
 
 class BackpackScene;
+class BriefView;
+class DebriefView;
+class Level;
 
 /**
  * @class MainWindow
  * @brief The main application window and scene switcher.
- *
- * Manages window geometry (fixed 800 x 600, no menu/status bars),
- * hosts a QStackedWidget as the central widget, and wires scene-
- * transition signals to stack switches.
  */
 class MainWindow : public QMainWindow
 {
@@ -56,44 +34,128 @@ class MainWindow : public QMainWindow
 public:
     /**
      * @brief Constructs the main window.
-     *
-     * Locks the window size to 800 x 600, hides the menu and status
-     * bars, creates the QStackedWidget, and adds the BackpackScene
-     * as the first (and currently only) scene.
-     *
-     * @param parent  Parent widget (typically nullptr for the top-level window).
+     * @param parent  Parent widget.
      */
     MainWindow(QWidget *parent = nullptr);
 
     /**
      * @brief Destroys the main window and its UI form.
-     *
-     * Child widgets (the stack and its scenes) are destroyed
-     * automatically by Qt's parent-child ownership.
      */
     ~MainWindow();
+
+    /**
+     * @brief Adds an item to the player's current backpack.
+     * @param item - The item to add.
+     */
+    void addPackItem(Item* item);
+
+    /**
+     * @brief Evaluates the current backpack against a trek.
+     * @param trekIndex - The index of the trek to evaluate.
+     */
+    void evaluateTrek(int trekIndex);
+
+private slots:
+    /**
+     * @brief Switches to the BriefView.
+     */
+    void showBriefView();
+
+    /**
+     * @brief Switches to the BackpackScene.
+     */
+    void showBackpackScene();
+
+    /**
+     * @brief Switches to the DebriefView.
+     */
+    void showDebriefView();
+
+    /**
+     * @brief Triggered when the player's backpack items change.
+     */
+    void onBackpackChanged();
+
+    /**
+     * @brief Triggered when the player's totals change.
+     */
+    void onStatsChanged(double weight, double volume);
+
+    /**
+     * @brief Adds a newly packed item to the player's model backpack.
+     * @param itemName The scene-level item identifier emitted by BackpackScene.
+     */
+    void handlePackedItemAdded(const QString& itemName);
+
+    /**
+     * @brief Removes an unpacked item from the player's model backpack.
+     * @param itemName The scene-level item identifier emitted by BackpackScene.
+     */
+    void handlePackedItemRemoved(const QString& itemName);
 
 private:
     /** @brief Auto-generated form from mainwindow.ui. */
     Ui::MainWindow* ui;
 
     /**
-     * @brief Stack that holds every scene widget. Only one is
-     *        visible at a time.
-     *
-     * QStackedWidget is the central widget of this QMainWindow.
-     * Scenes are added with addWidget() and swapped with
-     * setCurrentWidget().
+     * @brief Stack that holds every scene widget.
      */
     QStackedWidget* sceneStack;
 
     /**
-     * @brief The packing-phase scene (owned by the stack).
-     *
-     * When BackpackScene emits levelHasStarted(), MainWindow will
-     * (eventually) swap to the next scene via
-     * sceneStack->setCurrentWidget(nextScene).
+     * @brief The packing-phase scene.
      */
     BackpackScene* backpackScene;
+
+    /**
+     * @brief The pre-level briefing view.
+     */
+    BriefView* briefView;
+
+    /**
+     * @brief The post-level results view.
+     */
+    DebriefView* debriefView;
+
+    /**
+     * @brief Mirrors bag contents by scene item name so removals can
+     *        delete the correct model object.
+     */
+    std::map<QString, std::vector<Item*>> packedItemsByName;
+
+    /**
+     * @brief The player object managing the current session's backpack.
+     */
+    Player player;
+
+    /**
+     * @brief The collection of Utah treks for the player to progress through.
+     */
+    std::vector<Level> treks;
+
+    /**
+     * @brief The index of the current trek being played.
+     */
+    int currentTrekIndex;
+
+    /**
+     * @brief Wires the current BackpackScene instance into MainWindow.
+     */
+    void connectBackpackSceneSignals();
+
+    /**
+     * @brief Recreates the packing scene so each attempt starts fresh.
+     */
+    void rebuildBackpackScene();
+
+    /**
+     * @brief Clears the player's current packed-item attempt state.
+     */
+    void resetAttemptState();
+
+    /**
+     * @brief Advances to the next available level, if any.
+     */
+    void advanceToNextLevel();
 };
 #endif // MAINWINDOW_H

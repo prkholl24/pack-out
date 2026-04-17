@@ -1,0 +1,87 @@
+[
+    {
+        "name": "Delicate Arch",
+        "description": "Delicate Arch, a 2-hour desert day hike at Arches National Park. The exposed slickrock offers no shade. Pack enough water and get moving.",
+        "miles": 3.0,
+        "elevationGain": 480.0,
+        "duration": 2,
+        "terrain": "DESERT",
+        "weather": "HOT",
+        "adventure": "DAY_HIKE",
+        "scienceFocus": "SODIUM_HYDRATION_LOAD",
+        "customCalories": 0,
+        "skipGearCheck": true,
+        "availableItems": [
+            "BANANA", "GRANOLA_BAR",
+            "WATER_BOTTLE",
+            "HAT", "SUNSCREEN", "TRASH_BAG"
+        ]
+    },
+    {
+        "name": "Grandview Point",
+        "description": "Grandview Point, a breezy desert walk above the canyon at Canyonlands. The mesa is wide open and exposed. Keep your energy up. Pack food and water.",
+        "miles": 2.0,
+        "elevationGain": 160.0,
+        "duration": 1,
+        "terrain": "DESERT",
+        "weather": "WINDY",
+        "adventure": "DAY_HIKE",
+        "scienceFocus": "PACK_WEIGHT_RATIO",
+        "skipGearCheck": true,
+        "availableItems": [
+            "BANANA", "GRANOLA_BAR", "TRAIL_MIX",
+            "WATER_BOTTLE", "SPORTS_DRINK",
+            "HAT", "SUNSCREEN", "FIRST_AID_KIT", "TRASH_BAG"
+        ]
+    },
+    {
+        "name": "Level 3: Coming Soon",
+        "description": "This trail is still being mapped. Check back later.",
+        "miles": 6.9,
+        "elevationGain": 2700.0,
+        "duration": 5,
+        "terrain": "ROCKY",
+        "weather": "COLD",
+        "adventure": "DAY_HIKE",
+        "scienceFocus": "TEN_ESSENTIALS_MISSING",
+        "availableItems": [
+            "BANANA", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX",
+            "WATER_BOTTLE", "SPORTS_DRINK", "SODA",
+            "HAT", "SUNSCREEN", "FIRST_AID_KIT", "FLASHLIGHT", "TRASH_BAG", "ZIPLOC_BAG"
+        ]
+    },
+    {
+        "name": "Level 4: Coming Soon",
+        "description": "An advanced mountain challenge. Details pending.",
+        "miles": 8.0,
+        "elevationGain": 2500.0,
+        "duration": 7,
+        "terrain": "MOUNTAIN",
+        "weather": "SNOW",
+        "adventure": "DAY_HIKE",
+        "scienceFocus": "PANDOLF_WEIGHT_PENALTY",
+        "availableItems": [
+            "BANANA", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX", "BEEF_JERKY",
+            "WATER_BOTTLE", "SPORTS_DRINK", "ENERGY_DRINK", "SODA",
+            "HAT", "SUNSCREEN", "FIRST_AID_KIT", "FLASHLIGHT", "POCKET_KNIFE",
+            "TRASH_BAG", "ZIPLOC_BAG"
+        ]
+    },
+    {
+        "name": "Level 5: Coming Soon",
+        "description": "The ultimate overnight expedition. Details pending.",
+        "miles": 15.0,
+        "elevationGain": 3500.0,
+        "duration": 24,
+        "terrain": "MOUNTAIN",
+        "weather": "RAINY",
+        "adventure": "BACKPACKING",
+        "scienceFocus": "BMR_BASE_METABOLISM",
+        "availableItems": [
+            "BANANA", "POTATO", "GRANOLA_BAR", "MIXED_NUTS", "TRAIL_MIX", "PEANUT_BUTTER_SANDWICH",
+            "WATER_BOTTLE", "SPORTS_DRINK", "ENERGY_DRINK",
+            "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET", "FIRST_AID_KIT", "FLASHLIGHT",
+            "COMPASS", "POCKET_KNIFE", "MATCHES", "TRASH_BAG", "ZIPLOC_BAG"
+        ]
+    }
+]

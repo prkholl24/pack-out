@@ -1,51 +1,56 @@
 /**
  * @file item.cpp
- * @brief Implementation of the Item class.
+ * @brief Implementation of the Item base class.
  *
- * Implements the base Item functionality, including shared behavior
- * for all items, such as weight access, tooltip generation,
- * and default stat handling.
- *
- * The Item class provides shared functionality used by all item types
- * and acts as the base for how items are represented in the backpacking system.
+ * Implements shared functionality used by all packable items,
+ * including weight access, nutrition access, tooltip generation,
+ * and default stat reporting.
  *
  * Team: Green Goombas
  * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
  * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
  *          Brady Nelson, Lindsey Reese, Kent Wilkison
- * @date 4/7/2026
+ * @date 4/9/2026
  */
 
 #include "item.h"
 
-Item::Item() : weight(0.0), description(nullptr)
+Item::Item()
 {
+    weight = 0.0;
+    volumeLiters = 0.0;
+    producesWaste = false;
+    isCotton = false;
+    description = "";
+    nutrition = NutritionProfile{};
 }
 
 double Item::getWeight() const
 {
-    return this->weight;
+    return weight;
 }
 
-QString Item::getToolTip() const
+double Item::getVolume() const
 {
-    std::map<QString, double> stats = getStats();
-    QString toolTipText;
-
-    for (auto const& [name, value] : stats) {
-        toolTipText += name + ": " + QString::number(value) + "\n";
-    }
-
-    if (description != nullptr) {
-        toolTipText += "\n" + *description;
-    }
-
-    return toolTipText;
+    return volumeLiters;
 }
 
-std::map<QString, double> Item::getStats() const
+bool Item::generatesWaste() const
 {
-    std::map<QString, double> stats;
-    stats["Weight(lbs)"] = weight;
-    return stats;
+    return producesWaste;
+}
+
+bool Item::isCottonMaterial() const
+{
+    return isCotton;
+}
+
+QString Item::getDescription() const
+{
+    return description;
+}
+
+const NutritionProfile& Item::getNutrition() const
+{
+    return nutrition;
 }
