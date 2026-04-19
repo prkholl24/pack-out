@@ -5,6 +5,7 @@
 #include <Box2D/Box2D.h>
 #include <QTimer>
 #include "physicsObjects.h"
+#include <QCoreApplication>
 
 class TrekBox2DPhysics : public QObject
 {
@@ -42,13 +43,12 @@ public:
 
 private:
 
-
-
     //Vector for each objects struct
     QVector<PhysicsObjectDef> objectsVector;
 
     //QPair the PhysicsObjectDef with its corresponding body
     QVector<QPair<PhysicsObjectDef,b2Body*>> bodyVector;
+
 
 
     /**
@@ -72,14 +72,27 @@ private:
 
     /**
      * @brief toJsonLevel converts the physics structure to a json that can be loaded later
+     *
      */
-    void toJsonLevel();
+    void toJsonLevel(QString& filepath);
+
+    /**
+     * @brief fromJsonLevel creartes a physics structure from a json file
+     * @param filepath
+     */
+    void fromJsonLevel(QString& filepath);
 
 
     //Width in pixels of the overall widget
     int widgetWidth = 1920;
     //Height in pixels of the overall widget
     int widgetHeight = 1080;
+
+    //SUBJECT TO CHANGE
+    int currentLevel = 1;
+    QString FilePath = QCoreApplication::applicationDirPath()
+                           + "/level" + QString::number(currentLevel) + ".json";
+    QString levelBackground = "LEVEL_1";
 
     /**
      * @brief Converts a point on the screen to a point in box2D based on the

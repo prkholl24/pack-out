@@ -84,9 +84,6 @@ private:
 
     QVector<VisualObjectDef> visualVector;
 
-
-
-
     /**
      * @brief player's current level
      */

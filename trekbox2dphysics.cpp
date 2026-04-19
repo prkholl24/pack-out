@@ -1,18 +1,27 @@
 #include "trekbox2dphysics.h"
 #include "trekview.h"
 #include <iostream>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
+#include <QFileDialog>
 
 TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     : QObject{parent}
     , world(b2Vec2(0.0f,0.0f))
     , timer(new QTimer(this))
 {
+    //
+    fromJsonLevel(FilePath);
+
     connect(timer, &QTimer::timeout,this, &TrekBox2DPhysics::updateWorldSlot);
 
     timer->start(10);
 
+
+
     //Creates the bodydef of other objects and adds them to vector
-    createPhysicsStructure();
+    // createPhysicsStructure();
 
     //create and adds every body from vector to the b2world
     createPhysicsObjects();
@@ -181,8 +190,7 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 
 
     }
-
-
+    toJsonLevel(FilePath);
 }
 
 void TrekBox2DPhysics::updateWorldSlot(){
@@ -278,6 +286,76 @@ void TrekBox2DPhysics::createPhysicsStructure(){
 
     objectsVector.append(p2);
 
+}
+
+void TrekBox2DPhysics::toJsonLevel(QString& filepath){
+    QJsonObject level;
+    level["level"] = currentLevel;
+    level["background"] = levelBackground;
+
+    QJsonArray objectArray;
+    for (PhysicsObjectDef objectDef : objectsVector){
+        QJsonObject object;
+        object["type"] = objectDef.type;
+        object["shapetype"] = objectDef.shapeType;
+        object["x"] = objectDef.x;
+        object["y"] = objectDef.y;
+        object["width"] = objectDef.width;
+        object["height"] = objectDef.height;
+        object["angle"] = objectDef.angle;
+        object["static"] = objectDef.isStatic;
+        object["friction"] = objectDef.friction;
+        object["restitution"] = objectDef.restitution;
+        QJsonArray color;
+        for (int colorId : objectDef.color){
+            color.append(colorId);
+        }
+        object["color"] = color;
+        objectArray.append(object);
+    }
+    level["objects"] = objectArray;
+
+
+    QFile file(filepath);
+    if (file.open(QIODevice::WriteOnly)){
+        file.write(QJsonDocument(level).toJson(QJsonDocument::Indented));
+        std::cout << "Saved to: " + FilePath.toStdString() << std::endl;
+    }
+
+
+}
+
+void TrekBox2DPhysics::fromJsonLevel(QString& filepath){
+    QFile file(filepath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+    QByteArray data = file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    QJsonObject level = doc.object();
+    currentLevel = level["level"].toInt();
+    levelBackground = level["background"].toString();
+    QJsonArray objectArray = level["objects"].toArray();
+    for (auto objectdef: std::as_const(objectArray)){
+        PhysicsObjectDef temp;
+        QJsonObject object = objectdef.toObject();
+        temp.type = object["type"].toString();
+        temp.shapeType = object["shapetype"].toString();
+        temp.x = object["x"].toDouble();
+        temp.y = object["y"].toDouble();
+        temp.width = object["width"].toDouble();
+        temp.height = object["height"].toDouble();
+        temp.angle = object["angle"].toDouble();
+        temp.isStatic = object["static"].toBool();
+        temp.friction = object["friction"].toDouble();
+        temp.restitution = object["restitution"].toDouble();
+        QJsonArray color = object["color"].toArray();
+        temp.color.clear();
+        for (auto colorID : std::as_const(color)){
+            temp.color.push_back(colorID.toInt());
+        }
+        objectsVector.push_back(temp);
+    }
 }
 
 
