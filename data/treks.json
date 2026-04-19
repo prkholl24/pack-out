@@ -1,7 +1,7 @@
 [
     {
         "name": "Delicate Arch",
-        "description": "The exposed slickrock offers no shade. This high-desert bowl radiates heat. This level focuses on Hydration Science.",
+        "description": "Welcome to PACK OUT! For your first trek, you figured you'd start small. Delicate Arch is 1 or 2 hour desert day hike at Arches National Park. The 52-foot tall, free-standing natural arch is famous as a Utah state icon and for its sunset views. This hike's exposed slickrock offers no shade. Pack enough water and get moving.",
         "miles": 3.0,
         "elevationGain": 480.0,
         "duration": 2,
@@ -9,24 +9,26 @@
         "weather": "HOT",
         "adventure": "DAY_HIKE",
         "scienceFocus": "HYDRATION_BASICS",
+        "packVolumeL": 20.0,
         "customCalories": 0,
         "skipGearCheck": true,
         "availableItems": [
-            "WATER_BOTTLE", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
-            "BEEF_JERKY", "MIXED_NUTS"
+            "BANANA", "GRANOLA_BAR",
+            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "SODA",
+            "HAT", "SUNSCREEN", "TRASH_BAG"
         ]
     },
     {
         "name": "Fish Lake Loop",
-        "description": "A breezy walk around the largest natural mountain lake in Utah. High energy is needed for the distance. This level introduces Nutrition Science.",
-        "miles": 5.0,
-        "elevationGain": 100.0,
-        "duration": 2,
+        "description": "Fish Lake is Utah's largest natural mountain lake, located at over 8,800 feet in the Fishlake National Forest. Known as the 'gem of Utah,' this 5-mile long and 1-mile wide alpine lake is famous for large lake trout and year-round fishing. It is also home to Pando, a massive clonal colony of a single male Quaking Aspen located in the Fishlake National Forest in south-central Utah. While it looks like a forest of 47,000 individual trees, it is actually one single living organism connected by a vast, shared underground root system. You had to check this place out, so you set out for a long day hike aroudn the lake's perimeter. Pack enough food and water to stay strong through the full loop.",
+        "miles": 9.0,
+        "elevationGain": 500.0,
+        "duration": 5,
         "terrain": "FOREST",
         "weather": "WINDY",
         "adventure": "DAY_HIKE",
-        "scienceFocus": "WHOLE_FOOD_FUEL",
-        "customCalories": -1,
+        "scienceFocus": "FIBER_ENERGY_STABILITY",
+        "packVolumeL": 20.0,
         "skipGearCheck": true,
         "availableItems": [
             "WATER_BOTTLE", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
@@ -36,29 +38,55 @@
 
     {
         "name": "Lake Blanche",
-        "description": "A steep climb into glacial geology. As the temperature drops, your clothing choices matter. This level introduces Material Science.",
-        "miles": 6.9,
-        "elevationGain": 2700.0,
-        "duration": 5,
-        "terrain": "FOREST",
+        "description": "You're finally feeling comfortable enough to plan your first single-night backpacking trip. Lake Blanche is a popular, scenic alpine lake backpacking destination in Utah's Wasatch Mountains, known for its steep, 6.7 to 7-mile round-trip hike, and stunning views of Sundial Peak. You will need more than food and water to make it through the night.",
+        "miles": 7.1,
+        "elevationGain": 2688.0,
+        "duration": 20,
+        "terrain": "MOUNTAIN",
         "weather": "COLD",
-        "adventure": "DAY_HIKE",
-        "scienceFocus": "COTTON_CLOTHING_WARNING",
-        "customCalories": -1,
-        "skipGearCheck": false,
+        "adventure": "CAMPING",
+        "scienceFocus": "TEN_ESSENTIALS_MISSING",
+        "packVolumeL": 30.0,
+        "customCalories": 2200,
+        "customHydration": 96.0,
         "availableItems": [
-            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK",
-            "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "PEANUT_BUTTER_SANDWICH",
-            "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET"
+            "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "MIXED_NUTS", "PEANUT_BUTTER_SANDWICH", "POTATO", "BEEF_JERKY",
+            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
+            "HAT", "SUNSCREEN", "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET",
+            "SLEEPING_BAG", "TENT", "FLASHLIGHT", "COMPASS", "MATCHES", "FIRESTARTER",
+            "FIRST_AID_KIT", "POCKET_KNIFE", "TREKKING_POLES", "WATER_FILTER", "WHISTLE",
+            "TRASH_BAG", "ZIPLOC_BAG"
         ]
     },
     {
         "name": "Glacier National Park",
-        "description": "Navigating the rugged peaks of the Crown of the Continent. Wet conditions and heavy packs will test your endurance. This level introduces the Pandolf Weight Penalty.",
-        "miles": 10.0,
-        "elevationGain": 2500.0,
-        "duration": 8,
+        "description": "Glacier National Park features over 700 miles of hiking trails, the famous, scenic Going-to-the-Sun Road, and is home to the 'Triple Divide Peak,' where water can flow to the Pacific, Atlantic, or Arctic Oceans. You're planning a 3-night traverse across some of the most rugged terrain North America. Snow lingers well into summer and the weather turns fast. Every pound in your pack will cost you.",
+        "miles": 32.0,
+        "elevationGain": 4500.0,
+        "duration": 72,
         "terrain": "MOUNTAIN",
+        "weather": "SNOW",
+        "adventure": "BACKPACKING",
+        "scienceFocus": "PANDOLF_WEIGHT_PENALTY",
+        "packVolumeL": 45.0,
+        "customCalories": 4500,
+        "customHydration": 128.0,
+        "availableItems": [
+            "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "MIXED_NUTS", "PEANUT_BUTTER_SANDWICH", "POTATO", "BEEF_JERKY",
+            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
+            "HAT", "SUNSCREEN", "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET",
+            "SLEEPING_BAG", "TENT", "FLASHLIGHT", "COMPASS", "MATCHES", "FIRESTARTER",
+            "FIRST_AID_KIT", "POCKET_KNIFE", "TREKKING_POLES", "BEAR_SPRAY", "WATER_FILTER", "WHISTLE",
+            "CAST_IRON_SKILLET", "TRASH_BAG", "ZIPLOC_BAG"
+        ]
+    },
+    {
+        "name": "Olympic National Park",
+        "description": "Olympic National Park plays host to mountains, ocean, rivers, and rainforests; providing bountiful opportunities for recreation and learning. You will take a week-long traverse through rainforest, river valleys, and alpine ridges. You will cover 50 miles over 7 days in some of the wettest terrain in the lower 48. Everything you have learned will be tested.",
+        "miles": 50.0,
+        "elevationGain": 6000.0,
+        "duration": 168,
+        "terrain": "FOREST",
         "weather": "RAINY",
         "adventure": "DAY_HIKE",
         "scienceFocus": "PANDOLF_WEIGHT_PENALTY",
@@ -80,14 +108,16 @@
         "weather": "SNOW",
         "adventure": "BACKPACKING",
         "scienceFocus": "BMR_BASE_METABOLISM",
-        "customCalories": -1,
-        "skipGearCheck": false,
+        "packVolumeL": 65.0,
+        "customCalories": 8000,
+        "customHydration": 160.0,
         "availableItems": [
-            "WATER_BOTTLE", "WATER_CAMELBAK", "WATER_FILTER",
-            "BANANA", "POTATO", "BEEF_JERKY", "MIXED_NUTS", "PEANUT_BUTTER_SANDWICH",
-            "WOOL_SHIRT", "RAIN_JACKET", "SLEEPING_BAG", "TENT", 
-            "FIRST_AID_KIT", "FLASHLIGHT", "COMPASS", "MATCHES", "BEAR_SPRAY",
-            "TRASH_BAG", "ZIPLOC_BAG"
+            "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "MIXED_NUTS", "PEANUT_BUTTER_SANDWICH", "POTATO", "BEEF_JERKY",
+            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
+            "HAT", "SUNSCREEN", "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET",
+            "SLEEPING_BAG", "TENT", "FLASHLIGHT", "COMPASS", "MATCHES", "FIRESTARTER",
+            "FIRST_AID_KIT", "POCKET_KNIFE", "TREKKING_POLES", "BEAR_SPRAY", "WATER_FILTER", "WHISTLE",
+            "CAST_IRON_SKILLET", "TRASH_BAG", "ZIPLOC_BAG"
         ]
     }
 ]

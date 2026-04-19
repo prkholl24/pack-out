@@ -368,7 +368,7 @@
             }
         },
         "SLEEPING_BAG": {
-            "weight": 3.00, "volume": 10.0, "category": "SHELTER",
+            "weight": 3.00, "volume": 5.0, "category": "SHELTER",
             "description": "Provides warmth for overnight trips.",
             "shape": {
                 "color": "#5544AA",
@@ -391,7 +391,7 @@
             }
         },
         "TENT": {
-            "weight": 5.00, "volume": 15.0, "category": "SHELTER",
+            "weight": 5.00, "volume": 8.0, "category": "SHELTER",
             "description": "A portable shelter for camping.",
             "shape": {
                 "color": "#339933",
