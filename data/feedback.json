@@ -1,6 +1,6 @@
 {
     "fail_intro": "As the trail got steeper, the reality of your planning set in. ",
-    "fail_footer": "\n\nYou were forced to call off the trip. Use the 'Trip Science' breakdown below to improve your pack for the next attempt.\n",
+    "fail_footer": "\n",
     "pass_body": "The sun sets behind the ridge as you reach your final camp. Because you packed well, your energy levels stayed high throughout the climb. You successfully completed the trek and learned how your body handles the trail!\n",
     "failure_scenarios": {
         "starving": "Without enough calories, your muscles began to fatigue halfway through the distance. ",
@@ -26,7 +26,7 @@
             "HOT": "Gear Check: A Hat and Sunscreen are critical. Avoid Cotton Shirts, which trap sweat.",
             "COLD": "Gear Check: Pack a Wool Shirt for insulation. Avoid Cotton Shirts, which lose all warmth when wet.",
             "RAINY": "Gear Check: A Rain Jacket is non-negotiable. Consider Ziploc Bags to keep your matches dry.",
-            "SNOW": "Gear Check: Wool Shirts and a Rain Jacket (for snow melt) are required. Don't forget Sunscreen—snow reflects UV rays!",
+            "SNOW": "Gear Check: Wool Shirts and a Rain Jacket (for snow melt) are required. Don't forget Sunscreen, since snow reflects UV rays!",
             "WINDY": "Gear Check: A Rain Jacket can double as a windbreaker. A Hat will help retain body heat."
         },
         "terrain": {
@@ -48,7 +48,7 @@
             "OVERNIGHT": "Gear Check: A Sleeping Bag, Tent, and Flashlight are mandatory for surviving the night."
         },
         "duration": {
-            "LONG": "This is a long haul. Be mindful of pack weight—every ounce counts!"
+            "LONG": "This is a long haul. Be mindful of pack weight, every ounce counts!"
         }
     }
 }

@@ -73,7 +73,8 @@ SOURCES += \
     gearcheck.cpp \
     trekrules.cpp \
     itemregistry.cpp \
-    survivalscrapbook.cpp
+    survivalscrapbook.cpp \
+    spritecache.cpp
 
 HEADERS += \
     backpack.h \
@@ -143,7 +144,8 @@ HEADERS += \
     gearcheck.h \
     trekrules.h \
     itemregistry.h \
-    survivalscrapbook.h
+    survivalscrapbook.h \
+    spritecache.h
 
 FORMS += \
     backpack.ui \

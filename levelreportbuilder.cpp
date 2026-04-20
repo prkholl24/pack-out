@@ -23,6 +23,7 @@ void LevelReportBuilder::ensureContentLoaded()
     static const std::map<QString, ScienceLesson> keyToEnum = {
         { "BMR_BASE_METABOLISM",      ScienceLesson::BMR_BASE_METABOLISM },
         { "PANDOLF_WEIGHT_PENALTY",   ScienceLesson::PANDOLF_WEIGHT_PENALTY },
+        { "HYDRATION_BASICS",         ScienceLesson::HYDRATION_BASICS },
         { "HYDRATION_DIURETICS",      ScienceLesson::HYDRATION_DIURETICS },
         { "COTTON_CLOTHING_WARNING",  ScienceLesson::COTTON_CLOTHING_WARNING },
         { "FIBER_ENERGY_STABILITY",   ScienceLesson::FIBER_ENERGY_STABILITY },
@@ -63,7 +64,7 @@ QString LevelReportBuilder::getLessonByKey(const QString& key)
         QJsonObject root = QJsonDocument::fromJson(lessonFile.readAll()).object();
         if (root.contains(key)) {
             QJsonObject obj = root.value(key).toObject();
-            return "\n\n--- Expedition Science: " + obj.value("title").toString() + " ---\n" + obj.value("body").toString();
+            return "\n\nExpedition Science: " + obj.value("title").toString() + "\n" + obj.value("body").toString();
         }
     }
     return QString();
@@ -85,9 +86,9 @@ QString LevelReportBuilder::buildScienceTip(const LevelResult& result)
 {
     auto it = lessonRegistry.find(result.lessonCode);
     if (it == lessonRegistry.end())
-        return "💡 **Science Tip:** Proper preparation is the key to every successful trek!";
+        return "The following has been added to your survival guide for reference:\n\nProper preparation is the key to every successful trek!";
 
-    return "💡 **Science Tip: " + it->second.title + "**\n" + it->second.body;
+    return "The following has been added to your survival guide for reference:\n\n" + it->second.title + "\n" + it->second.body;
 }
 
 QString LevelReportBuilder::buildSummaryReport(const LevelResult& result)
@@ -100,7 +101,7 @@ QString LevelReportBuilder::buildSummaryReport(const LevelResult& result)
     report += "Calories packed: " + QString::number(result.totals.calories, 'f', 0) + "\n";
     report += "Hydration packed: " + QString::number(result.totals.effectiveHydration, 'f', 1) + " oz\n\n";
 
-    report += "Trip Science (Energy Expenditure):\n";
+    report += "Energy Expenditure:\n";
     report += "- Base Metabolism: " + QString::number(result.bmrBurn, 'f', 0) + " kcal\n";
     report += "- Distance Burn: " + QString::number(result.distanceBurn, 'f', 0) + " kcal\n";
     report += "- Elevation Burn: " + QString::number(result.climbBurn, 'f', 0) + " kcal\n";
@@ -109,7 +110,7 @@ QString LevelReportBuilder::buildSummaryReport(const LevelResult& result)
     if (result.loadPenalty > threshold) {
         report += "- Pack Load Penalty: " + QString::number(result.loadPenalty, 'f', 0) + " kcal\n";
     }
-    report += "**Total Need: " + QString::number(result.requiredCalories) + " kcal**\n";
+    report += "Total Need: " + QString::number(result.requiredCalories) + " kcal\n";
     return report;
 }
 

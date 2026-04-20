@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Initialize all scene views
     briefView = new BriefView(this);
-    backpackScene = new BackpackScene(this);
+    backpackScene = new BackpackScene(QStringList(), this);
     debriefView = new DebriefView(this);
 
     sceneStack->addWidget(briefView);
@@ -221,7 +221,10 @@ void MainWindow::rebuildBackpackScene()
         backpackScene->deleteLater();
     }
 
-    backpackScene = new BackpackScene(this);
+    QStringList items;
+    if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size())
+        items = treks[currentTrekIndex].getAvailableItems();
+    backpackScene = new BackpackScene(items, this);
     sceneStack->insertWidget(backpackSceneIndex >= 0 ? backpackSceneIndex : 1, backpackScene);
     connectBackpackSceneSignals();
 }
