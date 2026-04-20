@@ -6,32 +6,43 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <set>
+#include <vector>
+#include "levelresult.h"
 
 class SurvivalScrapbook : public QWidget
 {
     Q_OBJECT
 public:
     explicit SurvivalScrapbook(QWidget *parent = nullptr);
-    void setText(const QString &text);
+
+    /**
+     * @brief Rebuilds the book's pages from the given set of unlocked lessons.
+     *
+     * Page 0 remains the title page; one page per lesson follows, loaded
+     * from lessons.json via LevelReportBuilder::getLessonByKey. Lessons
+     * that resolve to NONE or have no JSON entry are skipped.
+     */
+    void setLessons(const std::set<ScienceLesson>& lessons);
 
 public slots:
-    void toggleVisibility();  // <-- new
-
-private:
-    QPushButton *leftButton;
-    QPushButton *rightButton;
-    QLabel *textDisplay;
-
-    std::vector<QString> pages;
-    int currentPage;
-    QString titlePage = "The Survival Handbook";
-    QString page1 = "The average human consumes 1 liter of water when traversing flat terrain, 2 liters traversing varied terrain, and 3 liters traversing mountainous terrain.";
-
-signals:
+    void toggleVisibility();
 
 private slots:
     void onLeftClicked();
     void onRightClicked();
+
+private:
+    void updateArrowState();
+
+    QPushButton *leftButton;
+    QPushButton *rightButton;
+    QPushButton *closeButton;
+    QLabel *textDisplay;
+
+    std::vector<QString> pages;
+    int currentPage;
+    const QString titlePage = "The Survival Handbook";
 };
 
 #endif // SURVIVALSCRAPBOOK_H

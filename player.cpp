@@ -125,3 +125,29 @@ double Player::getTotalWeight() const { return cachedTotalWeight; }
 double Player::getTotalVolume() const { return cachedTotalVolume; }
 double Player::getMaxVolumeCapacity() const { return maxVolumeCapacity; }
 void Player::setMaxVolumeCapacity(double capacity) { if (capacity > 0) maxVolumeCapacity = capacity; }
+
+// --- Survival Guide progression ---
+
+void Player::unlockLesson(ScienceLesson lesson)
+{
+    if (lesson == ScienceLesson::NONE) return;
+    auto inserted = unlockedLessons.insert(lesson);
+    if (inserted.second) emit lessonsChanged();
+}
+
+const std::set<ScienceLesson>& Player::getUnlockedLessons() const
+{
+    return unlockedLessons;
+}
+
+bool Player::hasLesson(ScienceLesson lesson) const
+{
+    return unlockedLessons.count(lesson) > 0;
+}
+
+void Player::setUnlockedLessons(std::set<ScienceLesson> lessons)
+{
+    lessons.erase(ScienceLesson::NONE);
+    unlockedLessons = std::move(lessons);
+    emit lessonsChanged();
+}

@@ -3,7 +3,6 @@
  * @brief Implementation of the MainWindow scene switcher.
  */
 #include "mainwindow.h"
-#include "survivalscrapbook.h"
 #include "ui_mainwindow.h"
 #include "backpack.h"
 #include "briefview.h"
@@ -68,7 +67,9 @@ MainWindow::MainWindow(QWidget *parent)
     // Initialize all scene views
     briefView = new BriefView(this);
     backpackScene = new BackpackScene(QStringList(), this);
+    backpackScene->setPlayer(&player);
     debriefView = new DebriefView(this);
+    debriefView->setPlayer(&player);
 
     sceneStack->addWidget(briefView);
     sceneStack->addWidget(backpackScene);
@@ -100,26 +101,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Start on the first trek
     showBriefView();
-
-    // Survival Scrapbook
-    SurvivalScrapbook *scrapbook = new SurvivalScrapbook(this);
-
-    QPushButton *toggleBtn = new QPushButton("Survival Tips", this); // this should be hidden when not in the backpack scene
-    toggleBtn->setFixedWidth(150);
-    toggleBtn->setFlat(true);
-    toggleBtn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-
-    // Start hidden
-    scrapbook->hide();
-
-    connect(toggleBtn, &QPushButton::clicked, scrapbook, &SurvivalScrapbook::toggleVisibility);
-
-    // Left-side layout
-    QHBoxLayout *mainLayout = new QHBoxLayout(this);
-    mainLayout->addWidget(toggleBtn);
-    mainLayout->addWidget(scrapbook);
-    mainLayout->addStretch();  // pushes everything left
-    setLayout(mainLayout);
 }
 
 MainWindow::~MainWindow()
@@ -225,6 +206,7 @@ void MainWindow::rebuildBackpackScene()
     if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size())
         items = treks[currentTrekIndex].getAvailableItems();
     backpackScene = new BackpackScene(items, this);
+    backpackScene->setPlayer(&player);
     sceneStack->insertWidget(backpackSceneIndex >= 0 ? backpackSceneIndex : 1, backpackScene);
     connectBackpackSceneSignals();
 }

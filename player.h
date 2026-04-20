@@ -8,9 +8,11 @@
 
 #include <vector>
 #include <memory>
+#include <set>
 #include <QObject>
 #include <QString>
 #include "item.h"
+#include "levelresult.h"
 
 /**
  * @brief Enumerates biological gender for physiological calculations.
@@ -94,6 +96,33 @@ public:
     double getMaxVolumeCapacity() const;
     void setMaxVolumeCapacity(double capacity);
 
+    // --- Survival Guide progression ---
+
+    /**
+     * @brief Adds a lesson to the player's survival guide.
+     *
+     * No-ops on ScienceLesson::NONE or on already-unlocked lessons.
+     * Emits lessonsChanged() only when the set actually grows.
+     */
+    void unlockLesson(ScienceLesson lesson);
+
+    /**
+     * @brief Returns the set of lessons the player has unlocked.
+     *
+     * Ordered by ScienceLesson enum value. The future JSON save/load layer
+     * can serialize by calling LevelReportBuilder::keyForLesson on each.
+     */
+    const std::set<ScienceLesson>& getUnlockedLessons() const;
+
+    bool hasLesson(ScienceLesson lesson) const;
+
+    /**
+     * @brief Replaces the unlocked-lesson set (e.g. when loading a saved game).
+     *
+     * Emits lessonsChanged() once after replacement.
+     */
+    void setUnlockedLessons(std::set<ScienceLesson> lessons);
+
 signals:
     /**
      * @brief Emitted whenever items are added or removed.
@@ -104,6 +133,11 @@ signals:
      * @brief Emitted when any totals or stats change.
      */
     void statsChanged(double weight, double volume);
+
+    /**
+     * @brief Emitted when the set of unlocked lessons changes.
+     */
+    void lessonsChanged();
 
 private:
     double weightLbs;
@@ -116,6 +150,8 @@ private:
 
     double cachedTotalWeight;
     double cachedTotalVolume;
+
+    std::set<ScienceLesson> unlockedLessons;
 };
 
 #endif // PLAYER_H
