@@ -22,7 +22,6 @@
 
 #include <QColor>
 #include <QFont>
-#include <QLinearGradient>
 #include <QPen>
 #include <QPolygonF>
 #include <QRandomGenerator>
@@ -244,19 +243,8 @@ void BackpackScene::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    // Themed background
-    QLinearGradient bg(0, 0, 0, height());
-    bg.setColorAt(0.0, QColor("#F4EFE4"));
-    bg.setColorAt(1.0, themeSecondary.lighter(115));
-    painter.fillRect(rect(), bg);
-
-    // Primary-color header band (kept short to fit the survival guide in the corner (kGuideReservedRect).
-    painter.fillRect(QRect(kGuideReservedRect.width(), 0,
-                           width() - kGuideReservedRect.width(), 48),
-                     themePrimary);
-    painter.fillRect(QRect(kGuideReservedRect.width(), 48,
-                           width() - kGuideReservedRect.width(), 4),
-                     themeSecondary);
+    // Keep the packing scene background neutral and low-contrast.
+    painter.fillRect(rect(), QColor("#b0acae"));
 
     // Themed inset border around the scene.
     QPen borderPen(themePrimary.darker(115));

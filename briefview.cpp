@@ -14,7 +14,6 @@
 #include "theme.h"
 #include "tripconditions.h"
 
-#include <QLinearGradient>
 #include <QPainter>
 
 namespace {
@@ -148,10 +147,7 @@ void BriefView::paintEvent(QPaintEvent*) {
 
     p.fillRect(rect(), QColor("#F4EFE4"));
 
-    QLinearGradient grad(0, 0, 0, 180);
-    grad.setColorAt(0.0, themeAccent.lighter(112));
-    grad.setColorAt(1.0, themeAccent.darker(112));
-    p.fillRect(QRect(0, 0, width(), 180), grad);
+    p.fillRect(QRect(0, 0, width(), 180), themeAccent.lighter(190));
 
     // Thin accent line under the header.
     p.fillRect(QRect(0, 180, width(), 4), themeAccent.darker(140));

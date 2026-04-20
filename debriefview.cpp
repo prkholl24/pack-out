@@ -13,7 +13,6 @@
 #include "levelreportbuilder.h"
 #include "theme.h"
 
-#include <QLinearGradient>
 #include <QPainter>
 #include <QtGlobal>
 
@@ -108,10 +107,7 @@ void DebriefView::paintEvent(QPaintEvent*) {
 
     p.fillRect(rect(), QColor("#F4EFE4"));
 
-    QLinearGradient headerGrad(0, 0, 0, 170);
-    headerGrad.setColorAt(0.0, themeAccent.lighter(112));
-    headerGrad.setColorAt(1.0, themeAccent.darker(112));
-    p.fillRect(QRect(0, 0, width(), 170), headerGrad);
+    p.fillRect(QRect(0, 0, width(), 170), themeAccent);
     p.fillRect(QRect(0, 170, width(), 4), themeAccent.darker(140));
 
     p.fillRect(QRect(0, 990, width(), 90), themeAccent.darker(120));
