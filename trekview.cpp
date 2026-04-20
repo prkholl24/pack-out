@@ -2,6 +2,7 @@
 #include "qevent.h"
 #include "ui_trekview.h"
 #include <QPainter>
+#include <iostream>
 
 TrekView::TrekView(QWidget *parent)
     : QWidget(parent)
@@ -11,8 +12,8 @@ TrekView::TrekView(QWidget *parent)
     setMouseTracking(true);
    // setAttribute(Qt::WA_Hover, true);
 
-   // setFocusPolicy(Qt::StrongFocus);
-
+    setFocusPolicy(Qt::StrongFocus);
+    setFocus();
     //Connects the signal, sendBodyLocation from physics to slot
     //bodyDisplay in trekView
     connect(phys,&TrekBox2DPhysics::sendBodyLocation,this,&TrekView::bodyDisplay);
@@ -21,6 +22,8 @@ TrekView::TrekView(QWidget *parent)
 
     //Connects updateMousePosition in view, to setMousePosition in physics
     connect(this, &TrekView::updatePhysicsMousePosition, phys, &TrekBox2DPhysics::setTargetFromMouse);
+    //Connects: Sends key pressed to slot worldEditorSlot in TrekBox2DPhysics
+    connect(this,&TrekView::sendKeyPressedSignal, phys, &TrekBox2DPhysics::worldEditorSlot);
 
     connect(this, &TrekView::leftMouseButtonClickedSignal, phys, &TrekBox2DPhysics::leftMouseButtonClickedSlot);
     playerLevel = 1;
@@ -65,6 +68,13 @@ void TrekView::mouseMoveEvent(QMouseEvent *event) {
 
 }
 
+void TrekView::keyPressEvent(QKeyEvent* event){
+
+    int key = event->key();
+
+    emit sendKeyPressedSignal(key);
+}
+
 void TrekView::loadVisualObjectsSlot(QVector<PhysicsObjectDef>& objectsVector){
     visualVector.clear();
     for (PhysicsObjectDef physics : objectsVector){
@@ -94,11 +104,49 @@ void TrekView::paintEvent(QPaintEvent *event){
 
     // if (!visualVector.empty()) {
         for (VisualObjectDef visual : visualVector) {
+
             QColor color(visual.color[0],visual.color[1],visual.color[2]);
             painter.setBrush(color);
-            painter.drawEllipse(visual.x - (visual.width * 0.5f), visual.y - (visual.height * 0.5f), visual.width, visual.height);
+
+            painter.save();
+
+            painter.translate(visual.x, visual.y);
+            //float angleDegrees = visual.angle * 180.0f / 3.14159269f;
+            painter.rotate(-visual.angle);
+
+
+            if(visual.shapeType == "box"){
+
+
+
+                painter.drawRect(-visual.width * 0.5f,
+                                 -visual.height * 0.5f,
+                                 visual.width,
+                                 visual.height);
+
+
+             //   painter.drawRect(visual.x - (visual.width * 0.5f), visual.y - (visual.height * 0.5f), visual.width, visual.height);
+
+
+
+            }else {
+
+
+                painter.drawEllipse(-visual.width * 0.5f,
+                                    -visual.height * 0.5f,
+                                    visual.width,
+                                    visual.height);
+               // QColor color(visual.color[0],visual.color[1],visual.color[2]);
+               // painter.setBrush(color);
+               // painter.drawEllipse(visual.x - (visual.width * 0.5f), visual.y - (visual.height * 0.5f), visual.width, visual.height);
+
+            }
+
+            painter.restore();
+
+
         }
-    // }
-   // painter.drawEllipse(boxX,boxY,100,100);
+
+
 
 }

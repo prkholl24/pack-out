@@ -94,6 +94,10 @@ private:
                            + "/level" + QString::number(currentLevel) + ".json";
     QString levelBackground = "LEVEL_1";
 
+
+    bool loadFromFile = false;
+    bool saveToFile = false;
+
     /**
      * @brief Converts a point on the screen to a point in box2D based on the
      *        screen size.
@@ -120,6 +124,10 @@ signals:
 
 public slots:
 
+    /**
+     * @brief worldEditorSlot: A simple world editor to easily add objects to the world
+     */
+    void worldEditorSlot(int key);
 
     void setTargetFromMouse(const QPointF& mousePos);
 

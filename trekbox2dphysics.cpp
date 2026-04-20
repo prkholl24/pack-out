@@ -12,8 +12,10 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     , timer(new QTimer(this))
 {
     //
-    fromJsonLevel(FilePath);
 
+    if(loadFromFile){
+    fromJsonLevel(FilePath);
+    }
     connect(timer, &QTimer::timeout,this, &TrekBox2DPhysics::updateWorldSlot);
 
     timer->start(10);
@@ -24,6 +26,17 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     // createPhysicsStructure();
 
     //create and adds every body from vector to the b2world
+
+    if(!loadFromFile){
+    createPhysicsStructure();
+
+        if(saveToFile){
+        toJsonLevel(FilePath);
+
+        }
+
+    }
+
     createPhysicsObjects();
 
 
@@ -162,6 +175,8 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 
         if(phys.shapeType == "box")
         {
+
+            std::cout << "Inside of box" << std::endl;
             b2PolygonShape  shape;
             shape.SetAsBox((phys.width / pixelsPerMeter) * 0.5f, (phys.height / pixelsPerMeter) * 0.5f );
 
@@ -174,6 +189,7 @@ void TrekBox2DPhysics::createPhysicsObjects(){
             body->CreateFixture(&fixtureDef);
         }else if (phys.shapeType == "circle") {
 
+            std::cout<< "Inside of circle" << std::endl;
             b2CircleShape shape;
             shape.m_radius = (phys.width * 0.5f) / pixelsPerMeter;
             b2FixtureDef fixtureDef;
@@ -183,14 +199,10 @@ void TrekBox2DPhysics::createPhysicsObjects(){
             fixtureDef.restitution = phys.restitution;
 
             body->CreateFixture(&fixtureDef);
-
-
         }
-
-
-
     }
-    toJsonLevel(FilePath);
+
+
 }
 
 void TrekBox2DPhysics::updateWorldSlot(){
@@ -240,6 +252,7 @@ void TrekBox2DPhysics::updateWorldSlot(){
                 PhysicsObjectDef tempBody = def;
                 tempBody.x = screen.x();
                 tempBody.y = screen.y();
+                tempBody.angle = vis->GetAngle() * 180.0f / 3.14159265f;
                 liveBody.append(tempBody);
             }
             emit loadVisualObjectsSignal(liveBody);
@@ -252,39 +265,62 @@ void TrekBox2DPhysics::updateWorldSlot(){
 
 void TrekBox2DPhysics::createPhysicsStructure(){
 
+    //Width [-960,960]
+    //Height [540,-540] (bottom,top)
+
     PhysicsObjectDef p1;
     p1.type = "ABoxCuh";
-    p1.shapeType = "circle";
-    p1.x = 0;
-    p1.y = 0;
-    p1.width = 100;
-    p1.height = 100;
+    p1.shapeType = "box";
+    p1.x = -275;
+    p1.y = 220;
+    p1.width = 1370;
+    p1.height = 50;
     p1.angle = 0;
-    p1.isStatic = false;
+    p1.isStatic = true;
     p1.friction = 0.3f;
     p1.restitution = 0.9f;
 
-    p1.color = {255,0,0,0};
-
+    p1.color = {99,57,15,0};
 
     objectsVector.append(p1);
 
-    PhysicsObjectDef p2;
-    p2.type = "ABoxCuh";
-    p2.shapeType = "circle";
-    p2.x = 10;
-    p2.y = 20;
-    p2.width = 50;
-    p2.height = 50;
-    p2.angle = 0;
-    p2.isStatic = false;
-    p2.friction = 0.3f;
-    p2.restitution = 0.9f;
-
-    p2.color = {255,255,0,0};
 
 
-    objectsVector.append(p2);
+
+    // int y = 0;
+    // int x = -940;
+    // for(int i = 0; i < 4000; i++){
+
+    //     if(i%165 == 0){
+
+    //         y += 11;
+    //         x = -900;
+    //     }
+    //     PhysicsObjectDef p1;
+    //     p1.type = "ABoxCuh";
+    //     p1.shapeType = "circle";
+    //     p1.x = x;
+    //     p1.y = y;
+    //     p1.width = 10;
+    //     p1.height = 10;
+    //     p1.angle = 0;
+    //     p1.isStatic = false;
+    //     p1.friction = 0.3f;
+    //     p1.restitution = 0.9f;
+    //     p1.color = {99,57,15,0};
+    //     objectsVector.append(p1);
+
+    //     x+=11;
+    // }
+
+}
+
+
+
+void TrekBox2DPhysics::worldEditorSlot(int key){
+
+    std::cout << "Key Pressed: " << key << std::endl;
+
 
 }
 

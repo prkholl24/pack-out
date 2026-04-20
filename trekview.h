@@ -16,6 +16,7 @@
 #include <QWidget>
 #include <Box2D/Box2D.h>
 #include "physicsObjects.h"
+#include <QKeyEvent>
 
 //Fowards Declaration
 struct PhysicsObjectDef;
@@ -66,6 +67,12 @@ signals:
 
     void leftMouseButtonClickedSignal(bool clicked);
 
+    /**
+     * @brief sendKeyPressedSignal: Sends the pressed key
+     * @param keyPressed char relating to the pressed char
+     */
+    void sendKeyPressedSignal(int key);
+
 
 private:
 
@@ -111,6 +118,11 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
 
     void mouseMoveEvent(QMouseEvent *event) override;
+
+    /**
+     * @brief keyPressEvent: Used for world editing
+     */
+    void keyPressEvent(QKeyEvent *event) override;
 };
 
 #endif // TREKVIEW_H
