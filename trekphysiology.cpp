@@ -26,14 +26,15 @@ void TrekPhysiology::computeRequirements(LevelResult& result,
     
     // 4. Climb Burn: Vertical movement
     double calPerVertical = TrekRules::get("physiology", "calories_per_vertical_lb");
-    double efficiency = hasPoles ? TrekRules::get("physiology", "trekking_pole_bonus") : 1.0;
+    double efficiency = hasPoles ? 0.9 : 1.0;
     result.climbBurn = player.getWeightLbs() * req.elevationGain * calPerVertical * efficiency;
 
-    // 5. Load Penalty: Carrying the actual pack weight
+    // 5. Load Penalty: Carrying the actual pack weight (Refined Pandolf-style)
     double elevationStep = TrekRules::get("physiology", "elevation_gain_step");
     double scaler = TrekRules::get("physiology", "pack_weight_scaler");
     double intensity = req.miles + (req.elevationGain / elevationStep);
-    result.loadPenalty = result.totals.weightLbs * intensity * scaler;
+    // Applying terrain factor makes pack weight more punishing on soft ground (sand/forest)
+    result.loadPenalty = result.totals.weightLbs * intensity * scaler * terrain.energy;
 
     // Final Requirement Sum
     double totalCals = result.bmrBurn + result.distanceBurn + result.climbBurn + result.loadPenalty;

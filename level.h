@@ -53,6 +53,7 @@ public:
     double getElevationGain() const { return requirements.elevationGain; }
     double getRequiredHydration() const { return requirements.customHydration; }
     int getRequiredCalories() const { return requirements.customCalories; }
+    bool getSkipGearCheck() const { return requirements.skipGearCheck; }
     QString getScienceFocus() const { return requirements.scienceFocus; }
     QString getDescription() const { return requirements.description; }
     QStringList getAvailableItems() const { return requirements.availableItems; }

@@ -16,7 +16,7 @@ Level::Level(const TripRequirements& req) : requirements(req) {}
 LevelResult Level::evaluateBackpack(const std::vector<std::unique_ptr<Item>>& backpack, const Player& player) const
 {
     LevelResult result;
-    result.maxVolume = player.getMaxVolumeCapacity();
+    result.maxVolume = (requirements.packVolumeL > 0) ? requirements.packVolumeL : player.getMaxVolumeCapacity();
     
     // 1. Data Aggregation
     result.totals = gatherBackpackTotals(backpack);
@@ -30,13 +30,15 @@ LevelResult Level::evaluateBackpack(const std::vector<std::unique_ptr<Item>>& ba
     // 4. Scoring logic
     applyEvaluationScoring(result);
     
-    // Physical state checks
-    if (result.totals.volume > result.maxVolume) {
-        result.conditions.push_back(TripCondition::TOO_BULKY);
-    }
-    if (result.totals.wasteCount > 0 && !result.totals.hasWasteStorage) {
-        result.leftTrashBehind = true;
-        result.conditions.push_back(TripCondition::LNT_VIOLATION);
+    // Physical state checks (Volume and LNT) only matter once gear is part of the game
+    if (!requirements.skipGearCheck) {
+        if (result.totals.volume > result.maxVolume) {
+            result.conditions.push_back(TripCondition::TOO_BULKY);
+        }
+        if (result.totals.wasteCount > 0 && !result.totals.hasWasteStorage) {
+            result.leftTrashBehind = true;
+            result.conditions.push_back(TripCondition::LNT_VIOLATION);
+        }
     }
 
     applyEvaluationPenalties(result);
@@ -96,13 +98,20 @@ void Level::applyEvaluationScoring(LevelResult& result) const
     double norm = TrekRules::get("scoring", "normalization_factor");
     double perfect = TrekRules::get("scoring", "perfect_score");
 
-    double eScore = calculateEnergyScore(result.totals.calories, result.requiredCalories, result.totals.sugar);
-    double hScore = calculateHydrationScore(result.totals.effectiveHydration, result.requiredHydration);
+    // If customCalories is 0, we are in a hydration-only level.
+    // We ignore calorie scoring entirely.
+    if (requirements.customCalories == 0) {
+        double hScore = calculateHydrationScore(result.totals.effectiveHydration, result.requiredHydration);
+        result.grade = hScore * norm;
+    } else {
+        double eScore = calculateEnergyScore(result.totals.calories, result.requiredCalories, result.totals.sugar);
+        double hScore = calculateHydrationScore(result.totals.effectiveHydration, result.requiredHydration);
 
-    if (result.requiredCalories > 0 && result.requiredHydration > 0) result.grade = eScore + hScore;
-    else if (result.requiredCalories > 0) result.grade = eScore * norm;
-    else if (result.requiredHydration > 0) result.grade = hScore * norm;
-    else result.grade = perfect;
+        if (result.requiredCalories > 0 && result.requiredHydration > 0) result.grade = eScore + hScore;
+        else if (result.requiredCalories > 0) result.grade = eScore * norm;
+        else if (result.requiredHydration > 0) result.grade = hScore * norm;
+        else result.grade = perfect;
+    }
 }
 
 void Level::applyEvaluationPenalties(LevelResult& result) const
@@ -127,12 +136,17 @@ void Level::generateStatusConditions(LevelResult& result) const
 
     result.idealWeight = requirements.durationHours * idealWeightFactor;
     
-    if (result.totals.calories < result.requiredCalories && result.requiredCalories > 0) 
+    // Only flag starving if calories are required (customCalories != 0)
+    if (result.totals.calories < result.requiredCalories && result.requiredCalories > 0 && requirements.customCalories != 0) 
         result.conditions.push_back(TripCondition::STARVING);
+
     if (result.totals.effectiveHydration < result.requiredHydration && result.requiredHydration > 0) 
         result.conditions.push_back(TripCondition::DEHYDRATED);
-    if (result.totals.weightLbs > result.idealWeight && result.idealWeight > 0.0) 
+
+    // Skip heavy pack warning in early/specialized levels where gear isn't weighed yet
+    if (result.totals.weightLbs > result.idealWeight && result.idealWeight > 0.0 && requirements.customCalories != 0) 
         result.conditions.push_back(TripCondition::TOO_HEAVY);
+
     if (result.totals.caffeine > caffeineThreshold) 
         result.conditions.push_back(TripCondition::HIGH_CAFFEINE);
     if (result.totals.sugar > sugarThreshold) 
@@ -164,10 +178,10 @@ double Level::calculateHydrationScore(double effective, double required) const
 
 ScienceLesson Level::determineScienceLesson(const LevelResult& result) const
 {
-    // Level focus flags — used to suppress lessons for variables that this
-    // level doesn't teach yet. Keeps early-level feedback on topic.
-    bool waterOnly = (requirements.customCalories == 0);
-    bool gearScored = !requirements.skipGearCheck;
+    // --- Phase 1: The "True" Science Lesson ---
+    // We calculate the most scientifically relevant lesson based on the actual backpack.
+    // This phase uses YOUR original logic to find the biggest problem.
+    ScienceLesson trueLesson = ScienceLesson::PACK_WEIGHT_RATIO;
 
     bool isHighCaffeine = false;
     bool isAlcohol = false;
@@ -185,39 +199,57 @@ ScienceLesson Level::determineScienceLesson(const LevelResult& result) const
         if (c == TripCondition::DEHYDRATED) isDehydrated = true;
     }
 
-    // Level 1 (water-only): keep tips strictly water-related so the player
-    // learns hydration before any other variable is introduced.
-    if (waterOnly) {
-        if (isHighCaffeine || isAlcohol) return ScienceLesson::HYDRATION_DIURETICS;
+    // Priority hierarchy for the "True" lesson (most critical first)
+    if (result.leftTrashBehind) trueLesson = ScienceLesson::LEAVE_NO_TRACE_VIOLATION;
+    else if (result.missingEssentials) trueLesson = ScienceLesson::TEN_ESSENTIALS_MISSING;
+    else if (result.totals.hasCotton && (requirements.weather == WeatherType::RAINY || requirements.weather == WeatherType::SNOW))
+        trueLesson = ScienceLesson::COTTON_CLOTHING_WARNING;
+    
+    // HYDRATION SCIENCE: Prioritize interference (diuretics) over basic dehydration
+    else if (isHighCaffeine || isAlcohol) trueLesson = ScienceLesson::HYDRATION_DIURETICS;
+    else if (isDehydrated) trueLesson = ScienceLesson::HYDRATION_BASICS;
+    
+    else if (result.totals.sodium > 2300.0) trueLesson = ScienceLesson::SODIUM_HYDRATION_LOAD;
+    else if (result.totals.sugar > 50.0 && result.totals.fiber < 10.0) trueLesson = ScienceLesson::FIBER_ENERGY_STABILITY;
+    else {
+        double bmrRatio = TrekRules::get("health_thresholds", "starving_bmr_ratio_threshold");
+        if (isStarving && result.bmrBurn > (result.requiredCalories * bmrRatio)) trueLesson = ScienceLesson::BMR_BASE_METABOLISM;
+        else if (isStarving) trueLesson = ScienceLesson::WHOLE_FOOD_FUEL;
+        else if (isTooBulky) trueLesson = ScienceLesson::VOLUME_OVERFLOW;
+        else if (isTooHeavy) trueLesson = ScienceLesson::PANDOLF_WEIGHT_PENALTY;
+    }
+
+    // --- Phase 2: The Level Filter (Hydration Focus) ---
+    // If the level is set to "Hydration-Only" (customCalories == 0), we ensure 
+    // the lesson is hydration-focused.
+    bool hydrationOnly = (requirements.customCalories == 0);
+    bool gearScored = !requirements.skipGearCheck;
+
+    if (hydrationOnly) {
+        // If your logic found a diuretic issue, show it! 
+        // Otherwise, stick to Hydration Fundamentals.
+        if (trueLesson == ScienceLesson::HYDRATION_DIURETICS) return trueLesson;
         return ScienceLesson::HYDRATION_BASICS;
     }
 
-    // Gear-scoped lessons only apply once gear checks are enabled (Level 3+).
-    if (gearScored) {
-        if (result.leftTrashBehind) return ScienceLesson::LEAVE_NO_TRACE_VIOLATION;
-        if (result.missingEssentials) return ScienceLesson::TEN_ESSENTIALS_MISSING;
-        if (result.totals.hasCotton && (requirements.weather == WeatherType::RAINY || requirements.weather == WeatherType::SNOW))
-            return ScienceLesson::COTTON_CLOTHING_WARNING;
+    if (!gearScored) {
+        // Levels that don't score gear yet: mask gear-specific lessons.
+        if (trueLesson == ScienceLesson::LEAVE_NO_TRACE_VIOLATION || 
+            trueLesson == ScienceLesson::TEN_ESSENTIALS_MISSING ||
+            trueLesson == ScienceLesson::COTTON_CLOTHING_WARNING ||
+            trueLesson == ScienceLesson::VOLUME_OVERFLOW ||
+            trueLesson == ScienceLesson::PANDOLF_WEIGHT_PENALTY ||
+            trueLesson == ScienceLesson::PACK_WEIGHT_RATIO) {
+            
+            // If they failed because of food/water, show that.
+            if (isStarving) return ScienceLesson::WHOLE_FOOD_FUEL;
+            if (isDehydrated || isHighCaffeine || isAlcohol) return trueLesson;
+            return ScienceLesson::HYDRATION_BASICS;
+        }
     }
 
-    // Food + water lessons (Level 2+).
-    if (isHighCaffeine || isAlcohol) return ScienceLesson::HYDRATION_DIURETICS;
-    if (isDehydrated) return ScienceLesson::HYDRATION_BASICS;
-    if (result.totals.sodium > 2300.0) return ScienceLesson::SODIUM_HYDRATION_LOAD;
-    if (result.totals.sugar > 50.0 && result.totals.fiber < 10.0) return ScienceLesson::FIBER_ENERGY_STABILITY;
-
-    double bmrRatio = TrekRules::get("health_thresholds", "starving_bmr_ratio_threshold");
-    if (isStarving && result.bmrBurn > (result.requiredCalories * bmrRatio)) return ScienceLesson::BMR_BASE_METABOLISM;
-    if (isStarving) return ScienceLesson::WHOLE_FOOD_FUEL;
-
-    // Pack-weight/volume lessons are only meaningful once gear is part of
-    // the scoring — before then, weight is dominated by food/water choices.
-    if (gearScored && isTooBulky) return ScienceLesson::VOLUME_OVERFLOW;
-    if (gearScored && isTooHeavy) return ScienceLesson::PANDOLF_WEIGHT_PENALTY;
-    if (gearScored) return ScienceLesson::PACK_WEIGHT_RATIO;
-
-    // Fallback for Level 2 (food + water, no gear) when nothing went wrong.
-    return ScienceLesson::WHOLE_FOOD_FUEL;
+    // Advanced levels: show the full "True" science lesson.
+    return trueLesson;
 }
 
 double Level::gradeMyBag(const std::vector<std::unique_ptr<Item>>& backpack, const Player& player) const

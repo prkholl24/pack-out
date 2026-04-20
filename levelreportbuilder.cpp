@@ -98,19 +98,37 @@ QString LevelReportBuilder::buildSummaryReport(const LevelResult& result)
     report += "Grade: " + QString::number(result.grade, 'f', 1) + "/100\n";
     report += "Weight: " + QString::number(result.totals.weightLbs, 'f', 1) + " lbs\n";
     report += "Volume: " + QString::number(result.totals.volume, 'f', 1) + " / " + QString::number(result.maxVolume, 'f', 1) + " L\n";
-    report += "Calories packed: " + QString::number(result.totals.calories, 'f', 0) + "\n";
-    report += "Hydration packed: " + QString::number(result.totals.effectiveHydration, 'f', 1) + " oz\n\n";
-
-    report += "Energy Expenditure:\n";
-    report += "- Base Metabolism: " + QString::number(result.bmrBurn, 'f', 0) + " kcal\n";
-    report += "- Distance Burn: " + QString::number(result.distanceBurn, 'f', 0) + " kcal\n";
-    report += "- Elevation Burn: " + QString::number(result.climbBurn, 'f', 0) + " kcal\n";
     
-    double threshold = TrekRules::get("health_thresholds", "load_penalty_display_threshold");
-    if (result.loadPenalty > threshold) {
-        report += "- Pack Load Penalty: " + QString::number(result.loadPenalty, 'f', 0) + " kcal\n";
+    // Only show calories if it's not a hydration-only level
+    if (!result.hydrationOnly) {
+        report += "Calories packed: " + QString::number(result.totals.calories, 'f', 0) + "\n";
     }
-    report += "Total Need: " + QString::number(result.requiredCalories) + " kcal\n";
+
+    report += "Hydration packed: " + QString::number(result.totals.effectiveHydration, 'f', 1) + " oz\n";
+    
+    // Science totals that influence hydration/grades
+    report += "Sodium packed: " + QString::number(result.totals.sodium, 'f', 0) + " mg\n";
+    if (result.totals.caffeine > 0) {
+        report += "Caffeine packed: " + QString::number(result.totals.caffeine, 'f', 0) + " mg\n";
+    }
+    report += "\n";
+
+    // Hide energy expenditure breakdown for beginners to focus on hydration
+    if (!result.hydrationOnly) {
+        report += "Energy Expenditure:\n";
+        report += "- Base Metabolism: " + QString::number(result.bmrBurn, 'f', 0) + " kcal\n";
+        report += "- Distance Burn: " + QString::number(result.distanceBurn, 'f', 0) + " kcal\n";
+        report += "- Elevation Burn: " + QString::number(result.climbBurn, 'f', 0) + " kcal\n";
+        
+        double threshold = TrekRules::get("health_thresholds", "load_penalty_display_threshold");
+        if (result.loadPenalty > threshold) {
+            report += "- Pack Load Penalty: " + QString::number(result.loadPenalty, 'f', 0) + " kcal\n";
+        }
+        report += "Total Need: " + QString::number(result.requiredCalories) + " kcal\n";
+    } else {
+        report += "Trip Need: " + QString::number(result.requiredHydration, 'f', 1) + " oz water\n";
+    }
+
     return report;
 }
 
