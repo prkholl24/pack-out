@@ -10,7 +10,7 @@
         "bulky_pack": 0.80,
         "lnt_violation": 0.70,
         "missing_essentials": 0.90,
-        "sugar_crash_factor": 0.5
+        "sugar_crash_factor": 0.2
     },
     "health_thresholds": {
         "caffeine_warning_mg": 150.0,

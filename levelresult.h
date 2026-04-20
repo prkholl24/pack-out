@@ -95,6 +95,7 @@ struct LevelResult
     bool hasCottonWarning = false;
     bool leftTrashBehind = false;
 
+    bool hydrationOnly = false;
     ScienceLesson lessonCode = ScienceLesson::NONE;
 
     int requiredCalories = 0;
