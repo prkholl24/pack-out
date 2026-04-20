@@ -18,6 +18,8 @@
 #include <QWidget>
 #include "levelresult.h"
 
+class Player;
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class DebriefView;
@@ -56,11 +58,21 @@ public:
      * @brief Populates the view with results from a completed level.
      *
      * Displays the grade (0-100), pass/fail status, and generates
-     * a feedback report using LevelReportBuilder.
+     * a feedback report using LevelReportBuilder. Also unlocks the
+     * earned lesson on the Player (if setPlayer() has been called).
      *
      * @param result The evaluation results from the level.
      */
     void setResults(const LevelResult& result);
+
+    /**
+     * @brief Associates a Player with this view.
+     *
+     * The Player is notified of unlocked lessons as setResults() runs,
+     * so the survival guide mirrors the debrief's "added to your
+     * survival guide" narrative.
+     */
+    void setPlayer(Player* player);
 
 signals:
     /**
@@ -87,6 +99,9 @@ signals:
 private:
     /** @brief Auto-generated form from debriefview.ui. */
     Ui::DebriefView* ui;
+
+    /** @brief Non-owning pointer used to unlock lessons; may be null. */
+    Player* player = nullptr;
 };
 
 #endif // DEBRIEFVIEW_H

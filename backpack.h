@@ -58,10 +58,15 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QPushButton>
 #include <QStringList>
 #include <memory>
 #include <unordered_map>
 #include <vector>
+
+#include "survivalscrapbook.h"
+
+class Player;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -114,6 +119,14 @@ public:
      * @param volume  Total volume in liters.
      */
     void updateStats(double weight, double volume);
+
+    /**
+     * @brief Associates a Player so the scrapbook reflects unlocked lessons.
+     *
+     * Immediately refreshes the scrapbook pages from the Player's current
+     * unlocked set and subscribes to lessonsChanged() for live updates.
+     */
+    void setPlayer(Player* player);
 
 signals:
     /**
@@ -220,6 +233,12 @@ private:
     std::unique_ptr<ContactListener> contactListener;
 
     b2Body* packSensor = nullptr;
+
+    // -----------------------------------------------------------------
+    //  Survival guide overlay (Qt widgets layered over the Box2D canvas)
+    // -----------------------------------------------------------------
+    QPushButton* survivalTipsButton = nullptr;
+    SurvivalScrapbook* scrapbook = nullptr;
 
     // -----------------------------------------------------------------
     //  Scene construction helpers

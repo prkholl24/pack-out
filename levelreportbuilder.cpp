@@ -15,12 +15,11 @@
 std::map<ScienceLesson, LessonContent> LevelReportBuilder::lessonRegistry;
 QJsonObject LevelReportBuilder::feedbackData;
 
-void LevelReportBuilder::ensureContentLoaded()
-{
-    if (!lessonRegistry.empty()) return;
+namespace {
 
-    // 1. Load Lessons from JSON
-    static const std::map<QString, ScienceLesson> keyToEnum = {
+const std::map<QString, ScienceLesson>& lessonKeyMap()
+{
+    static const std::map<QString, ScienceLesson> m = {
         { "BMR_BASE_METABOLISM",      ScienceLesson::BMR_BASE_METABOLISM },
         { "PANDOLF_WEIGHT_PENALTY",   ScienceLesson::PANDOLF_WEIGHT_PENALTY },
         { "HYDRATION_BASICS",         ScienceLesson::HYDRATION_BASICS },
@@ -34,14 +33,23 @@ void LevelReportBuilder::ensureContentLoaded()
         { "VOLUME_OVERFLOW",          ScienceLesson::VOLUME_OVERFLOW },
         { "TEN_ESSENTIALS_MISSING",   ScienceLesson::TEN_ESSENTIALS_MISSING }
     };
+    return m;
+}
 
+} // namespace
+
+void LevelReportBuilder::ensureContentLoaded()
+{
+    if (!lessonRegistry.empty()) return;
+
+    // 1. Load Lessons from JSON
     QFile lessonFile(":/data/lessons.json");
     if (lessonFile.open(QIODevice::ReadOnly)) {
         QJsonObject root = QJsonDocument::fromJson(lessonFile.readAll()).object();
-        for (auto it = keyToEnum.begin(); it != keyToEnum.end(); ++it) {
-            if (root.contains(it->first)) {
-                QJsonObject obj = root.value(it->first).toObject();
-                lessonRegistry[it->second] = { obj.value("title").toString(), obj.value("body").toString() };
+        for (const auto& entry : lessonKeyMap()) {
+            if (root.contains(entry.first)) {
+                QJsonObject obj = root.value(entry.first).toObject();
+                lessonRegistry[entry.second] = { obj.value("title").toString(), obj.value("body").toString() };
             }
         }
     }
@@ -55,10 +63,6 @@ void LevelReportBuilder::ensureContentLoaded()
 
 QString LevelReportBuilder::getLessonByKey(const QString& key)
 {
-    // We don't need the enum map here, just read directly from the raw JSON object
-    // but we need to ensure the raw JSON is loaded into feedbackData or a local.
-    // Actually, ensureContentLoaded loads lessonRegistry, but that uses enums.
-    
     QFile lessonFile(":/data/lessons.json");
     if (lessonFile.open(QIODevice::ReadOnly)) {
         QJsonObject root = QJsonDocument::fromJson(lessonFile.readAll()).object();
@@ -68,6 +72,22 @@ QString LevelReportBuilder::getLessonByKey(const QString& key)
         }
     }
     return QString();
+}
+
+QString LevelReportBuilder::keyForLesson(ScienceLesson lesson)
+{
+    if (lesson == ScienceLesson::NONE) return QString();
+    for (const auto& entry : lessonKeyMap()) {
+        if (entry.second == lesson) return entry.first;
+    }
+    return QString();
+}
+
+ScienceLesson LevelReportBuilder::lessonForKey(const QString& key)
+{
+    const auto& m = lessonKeyMap();
+    auto it = m.find(key);
+    return it != m.end() ? it->second : ScienceLesson::NONE;
 }
 
 QString LevelReportBuilder::buildReport(const LevelResult& result)

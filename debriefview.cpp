@@ -11,6 +11,7 @@
 #include "debriefview.h"
 #include "ui_debriefview.h"
 #include "levelreportbuilder.h"
+#include "player.h"
 
 #include <QtGlobal>
 
@@ -54,4 +55,12 @@ void DebriefView::setResults(const LevelResult& result)
     // Generate and display the feedback report.
     QString report = LevelReportBuilder::buildReport(result);
     ui->feedbackTextEdit->setText(report);
+
+    // Fulfill the "added to your survival guide" promise in the report text.
+    if (player) player->unlockLesson(result.lessonCode);
+}
+
+void DebriefView::setPlayer(Player* p)
+{
+    player = p;
 }
