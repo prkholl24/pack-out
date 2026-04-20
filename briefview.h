@@ -15,64 +15,41 @@
 #ifndef BRIEFVIEW_H
 #define BRIEFVIEW_H
 
+#include <QColor>
+#include <QPixmap>
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class BriefView;
-}
+namespace Ui { class BriefView; }
 QT_END_NAMESPACE
 
 class Level;
+struct LevelTheme;
 
-/**
- * @class BriefView
- * @brief Pre-level briefing widget.
- *
- * Displays authored mission text and a few broad trip details
- * before the packing phase begins. Intended to be hosted inside
- * MainWindow's QStackedWidget.
- */
-class BriefView : public QWidget
-{
+class BriefView : public QWidget {
     Q_OBJECT
-
 public:
-    /**
-     * @brief Constructs the briefing view.
-     *
-     * @param parent Owner widget (typically the QStackedWidget
-     *               inside MainWindow).
-     */
-    explicit BriefView(QWidget *parent = nullptr);
+    explicit BriefView(QWidget* parent = nullptr);
+    ~BriefView() override;
 
-    /**
-     * @brief Destroys the briefing view and its UI form.
-     */
-    ~BriefView();
-
-    /**
-     * @brief Populates the view with data from a Level.
-     *
-     * Reads the authored level description plus broad trip metadata
-     * such as duration, terrain, and activity type.
-     *
-     * @param level The level to display information for.
-     * @param trekNumber The sequence number of the current trek.
-     */
     void setLevel(const Level& level, int trekNumber);
 
+    /// Applies per-level theme colors and location image.
+    void applyTheme(const LevelTheme& theme);
+
 signals:
-    /**
-     * @brief Emitted when the player clicks "Start Packing".
-     *
-     * MainWindow should connect this to transition to BackpackScene.
-     */
     void startPackingClicked();
 
+protected:
+    void paintEvent(QPaintEvent* event) override;
+
 private:
-    /** @brief Auto-generated form from briefview.ui. */
     Ui::BriefView* ui;
+    QColor themePrimary    = QColor("#3E7A4F");
+    QColor themeSecondary  = QColor("#C8D9B8");
+    QColor themeTextOnPrim = QColor("#FFFFFF");
+    QColor themeTextOnSurf = QColor("#1E1E1E");
+    QPixmap locationPixmap;
 };
 
 #endif // BRIEFVIEW_H

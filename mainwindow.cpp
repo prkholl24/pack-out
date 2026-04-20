@@ -11,6 +11,10 @@
 #include "fooditem.h"
 #include "gearitem.h"
 #include "levelreportbuilder.h"
+#include "musicmanager.h"
+#include "theme.h"
+#include "themeregistry.h"
+#include "titlescreen.h"
 #include "trekregistry.h"
 
 #include <QMenuBar>
@@ -55,8 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Lock the window geometry and strip chrome
-    setFixedSize(800, 600);
+    // Strip chrome
     menuBar()->hide();
     statusBar()->hide();
 
@@ -65,20 +68,32 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(sceneStack);
 
     // Initialize all scene views
-    briefView = new BriefView(this);
+    titleScreen   = new TitleScreen(this);
+    briefView     = new BriefView(this);
     backpackScene = new BackpackScene(QStringList(), this);
-    debriefView = new DebriefView(this);
+    debriefView   = new DebriefView(this);
 
+    sceneStack->addWidget(titleScreen);
     sceneStack->addWidget(briefView);
     sceneStack->addWidget(backpackScene);
     sceneStack->addWidget(debriefView);
 
     // Initialize Utah Treks from external data
+    ThemeRegistry::ensureLoaded();
     treks = TrekRegistry::loadTreks();
+
+    // Audio subsystem
+    music = new MusicManager(this);
+
+    // Title screen seed
+    titleScreen->applyTheme(ThemeRegistry::titleTheme());
 
     // Set up Signal/Slot connections for the Player Model
     connect(&player, &Player::backpackChanged, this, &MainWindow::onBackpackChanged);
     connect(&player, &Player::statsChanged, this, &MainWindow::onStatsChanged);
+
+    // Title screen -> Brief
+    connect(titleScreen, &TitleScreen::playClicked, this, &MainWindow::showBriefView);
 
     // Connect BriefView's start button to transition to packing
     connect(briefView, &BriefView::startPackingClicked, this, &MainWindow::showBackpackScene);
@@ -93,12 +108,11 @@ MainWindow::MainWindow(QWidget *parent)
         advanceToNextLevel();
         showBriefView();
     });
-    connect(debriefView, &DebriefView::returnToMenuClicked, this, [this]() {
-        showBriefView();
-    });
+    connect(debriefView, &DebriefView::returnToMenuClicked,
+            this, &MainWindow::showTitleScreen);
 
-    // Start on the first trek
-    showBriefView();
+    // Start on the title screen
+    showTitleScreen();
 }
 
 MainWindow::~MainWindow()
@@ -135,10 +149,21 @@ void MainWindow::onStatsChanged(double weight, double volume)
     }
 }
 
+void MainWindow::showTitleScreen()
+{
+    if (music) music->stop();
+    titleScreen->applyTheme(ThemeRegistry::titleTheme());
+    sceneStack->setCurrentWidget(titleScreen);
+}
+
 void MainWindow::showBriefView()
 {
     if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size()) {
-        briefView->setLevel(treks[currentTrekIndex], currentTrekIndex + 1);
+        const Level& level = treks[currentTrekIndex];
+        const LevelTheme theme = ThemeRegistry::themeFor(level);
+        briefView->setLevel(level, currentTrekIndex + 1);
+        briefView->applyTheme(theme);
+        if (music) music->playForTheme(theme);
     }
     sceneStack->setCurrentWidget(briefView);
 }
@@ -147,15 +172,21 @@ void MainWindow::showBackpackScene()
 {
     rebuildBackpackScene();
     resetAttemptState();
+    if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size()) {
+        const LevelTheme theme = ThemeRegistry::themeFor(treks[currentTrekIndex]);
+        backpackScene->applyTheme(theme);
+    }
     sceneStack->setCurrentWidget(backpackScene);
 }
 
 void MainWindow::showDebriefView()
 {
     if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size()) {
+        const Level& level = treks[currentTrekIndex];
         const auto& packedItems = player.getBackpack();
-        LevelResult result = treks[currentTrekIndex].evaluateBackpack(packedItems, player);
+        LevelResult result = level.evaluateBackpack(packedItems, player);
         debriefView->setResults(result);
+        debriefView->applyTheme(ThemeRegistry::themeFor(level));
     }
     sceneStack->setCurrentWidget(debriefView);
 }

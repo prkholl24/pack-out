@@ -16,11 +16,13 @@
  */
 #include "backpack.h"
 #include "spritecache.h"
+#include "theme.h"
 #include "ui_backpack.h"
 #include "itemregistry.h"
 
 #include <QColor>
 #include <QFont>
+#include <QLinearGradient>
 #include <QPen>
 #include <QPolygonF>
 #include <QRandomGenerator>
@@ -242,14 +244,33 @@ void BackpackScene::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
+    // Themed background
+    QLinearGradient bg(0, 0, 0, height());
+    bg.setColorAt(0.0, QColor("#F4EFE4"));
+    bg.setColorAt(1.0, themeSecondary.lighter(115));
+    painter.fillRect(rect(), bg);
+
+    // Primary-color header band (kept short to fit the survival guide in the corner (kGuideReservedRect).
+    painter.fillRect(QRect(kGuideReservedRect.width(), 0,
+                           width() - kGuideReservedRect.width(), 48),
+                     themePrimary);
+    painter.fillRect(QRect(kGuideReservedRect.width(), 48,
+                           width() - kGuideReservedRect.width(), 4),
+                     themeSecondary);
+
+    // Themed inset border around the scene.
+    QPen borderPen(themePrimary.darker(115));
+    borderPen.setWidth(6);
+    painter.setPen(borderPen);
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRect(rect().adjusted(3, 3, -3, -3));
+
     QPen outlinePen(Qt::black);
     outlinePen.setCosmetic(true);
 
     QFont labelFont = painter.font();
     labelFont.setBold(true);
-    labelFont.setPointSize(12);
-
-
+    labelFont.setPointSize(18);
 
     for (b2Body* body = world.GetBodyList(); body; body = body->GetNext()) {
         BodyKind kind = kindOf(body);
@@ -269,12 +290,16 @@ void BackpackScene::paintEvent(QPaintEvent *event)
                 fill = colorFor(kind);
             }
         } else if (kind == BodyKind::Tab) {
-            // Highlight active tab
+            // Highlight active tab using theme primary
             auto nameIt = bodyNames.find(body);
             if (nameIt != bodyNames.end() && nameIt->second == activeTab)
-                fill = QColor(100, 140, 180);
+                fill = themePrimary;
             else
-                fill = QColor(60, 60, 70);
+                fill = themePrimary.darker(160);
+        } else if (kind == BodyKind::CinchAndGoIdle) {
+            fill = themePrimary;
+        } else if (kind == BodyKind::CinchAndGoActivated) {
+            fill = themePrimary.darker(120);
         } else {
             fill = colorFor(kind);
         }
@@ -332,9 +357,11 @@ void BackpackScene::paintEvent(QPaintEvent *event)
         // "Go!" label on the Cinch & Go button
         QString label = labelFor(kind);
         if (!label.isEmpty()) {
-            painter.setFont(labelFont);
-            painter.setPen(Qt::white);
-            QRectF labelRect(screenPos.x() - 80.0, screenPos.y() - 42.0, 160.0, 22.0);
+            QFont goFont = labelFont;
+            goFont.setPointSize(26);
+            painter.setFont(goFont);
+            painter.setPen(themeOnPrim);
+            QRectF labelRect(screenPos.x() - 120.0, screenPos.y() - 24.0, 240.0, 48.0);
             painter.drawText(labelRect, Qt::AlignCenter, label);
         }
 
@@ -343,22 +370,44 @@ void BackpackScene::paintEvent(QPaintEvent *event)
             auto nameIt = bodyNames.find(body);
             if (nameIt != bodyNames.end()) {
                 painter.setFont(labelFont);
-                painter.setPen(Qt::white);
+                painter.setPen(themeOnPrim);
                 QString display = nameIt->second;
                 display[0] = display[0].toUpper();
-                QRectF labelRect(screenPos.x() - 50.0, screenPos.y() - 10.0, 100.0, 20.0);
+                QRectF labelRect(screenPos.x() - 110.0, screenPos.y() - 20.0, 220.0, 40.0);
                 painter.drawText(labelRect, Qt::AlignCenter, display);
             }
         }
     }
 
-    // --- Draw Backpack Totals ---
-    painter.setFont(labelFont);
-    painter.setPen(Qt::white);
-    painter.drawText(600, 30, QString("Weight: %1 lbs").arg(currentWeight, 0, 'f', 1));
-    painter.drawText(600, 55, QString("Volume: %1 L").arg(currentVolume, 0, 'f', 1));
+    // Draw Backpack Totals (top-right HUD card)
+    {
+        QFont hudFont = painter.font();
+        hudFont.setBold(true);
+        hudFont.setPointSize(20);
+        painter.setFont(hudFont);
 
-    // --- Draw Tooltip ---
+        const int hudW = 340;
+        const int hudH = 140;
+        const QRect hudRect(width() - hudW - 32,
+                            32,
+                            hudW, hudH);
+
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(QColor(themePrimary.red(),
+                                themePrimary.green(),
+                                themePrimary.blue(), 235));
+        painter.drawRoundedRect(hudRect, 18, 18);
+
+        painter.setPen(themeOnPrim);
+        painter.drawText(hudRect.adjusted(24, 16, -24, -hudH / 2),
+                         Qt::AlignLeft | Qt::AlignVCenter,
+                         QString("Weight  %1 lbs").arg(currentWeight, 0, 'f', 1));
+        painter.drawText(hudRect.adjusted(24, hudH / 2, -24, -16),
+                         Qt::AlignLeft | Qt::AlignVCenter,
+                         QString("Volume  %1 L").arg(currentVolume, 0, 'f', 1));
+    }
+
+    // Draw Tooltip ---
     if (hoveredBody && kindOf(hoveredBody) == BodyKind::Spawner) {
         auto nameIt = bodyNames.find(hoveredBody);
         if (nameIt != bodyNames.end()) {
@@ -574,15 +623,16 @@ void BackpackScene::createBackpack()
         body->SetUserData(tagFor(BodyKind::PackWall));
     };
 
-    // U-shaped pack
-    makePackWall(11.0f, 3.25f, 0.1f, 2.25f);  // left wall
-    makePackWall(13.0f, 3.25f, 0.1f, 2.25f);  // right wall
-    makePackWall(12.0f, 1.0f,  1.1f, 0.1f);   // bottom
+    // U-shaped pack — centered at X=17.5 (right side) so the spawner
+    // shelf can occupy the middle of the scene without overlap.
+    makePackWall(16.5f, 3.25f, 0.1f, 2.25f);  // left wall
+    makePackWall(18.5f, 3.25f, 0.1f, 2.25f);  // right wall
+    makePackWall(17.5f, 1.0f,  1.1f, 0.1f);   // bottom
 
     // Interior sensor
     b2BodyDef sensorDef;
     sensorDef.type = b2_staticBody;
-    sensorDef.position.Set(12.0f, 3.3f);
+    sensorDef.position.Set(17.5f, 3.3f);
     packSensor = world.CreateBody(&sensorDef);
 
     b2PolygonShape sensorBox;
@@ -604,16 +654,21 @@ void BackpackScene::createTabs()
     if (!drinkItems.isEmpty()) allTabs.push_back({"drink", "drink"});
     if (!gearItems.isEmpty())  allTabs.push_back({"gear", "gear"});
 
-    // Center the tabs based on how many we have
-    float startX = 4.5f - (allTabs.size() - 1) * 1.25f;
+    // Center the tabs horizontally over the shelf (shelf occupies
+    // roughly X=[7.0, 14.5]). Kept below world Y=8.22 so they clear
+    // the Survival Guide reservation.
+    constexpr float tabCenterX = 10.75f;
+    constexpr float tabSpacing = 2.6f;
+    constexpr float tabY       = 7.95f;
+    float startX = tabCenterX - (allTabs.size() - 1) * (tabSpacing / 2.0f);
     for (size_t i = 0; i < allTabs.size(); ++i) {
         b2BodyDef def;
         def.type = b2_staticBody;
-        def.position.Set(startX + i * 2.5f, 5.8f);
+        def.position.Set(startX + i * tabSpacing, tabY);
         b2Body* body = world.CreateBody(&def);
 
         b2PolygonShape box;
-        box.SetAsBox(0.80f, 0.22f);
+        box.SetAsBox(1.10f, 0.32f);
 
         b2FixtureDef fix;
         fix.shape = &box;
@@ -627,16 +682,17 @@ void BackpackScene::createTabs()
 
 void BackpackScene::createCinchAndGoButton()
 {
-    // Static button — turns dynamic when clicked.
+    // Static button — turns dynamic when clicked. Sits in the
+    // bottom-center of the scene, clear of the pack (X≈17.5).
     b2BodyDef def;
     def.type = b2_staticBody;
-    def.position.Set(9.5f, 1.45f);
+    def.position.Set(14.5f, 1.45f);
     def.linearDamping = 0.0f;
     def.angularDamping = 0.5f;
     cinchAndGoButton = world.CreateBody(&def);
 
     b2PolygonShape box;
-    box.SetAsBox(0.5f, 0.25f);
+    box.SetAsBox(0.85f, 0.40f);
 
     b2FixtureDef fix;
     fix.shape = &box;
@@ -678,11 +734,13 @@ void BackpackScene::showCategory(const QString& category)
 
 void BackpackScene::layoutSpawners(const QStringList& items)
 {
-    // Grid layout parameters
-    constexpr float LEFT_MARGIN = 1.0f;
+    // Grid layout parameters — shelf starts at X=7.0 so the top-left
+    // pixel region (kGuideReservedRect, 550×340) stays visually empty
+    // for the future Survival Guide overlay.
+    constexpr float LEFT_MARGIN = 7.0f;
     constexpr float SPACING_X = 1.5f;
-    constexpr float SPACING_Y = 1.2f;
-    constexpr float START_Y = 4.8f;
+    constexpr float SPACING_Y = 1.3f;
+    constexpr float START_Y = 6.8f;
     constexpr int ITEMS_PER_ROW = 6;
     constexpr float SPAWNER_HALF_W = 0.40f;
     constexpr float SPAWNER_HALF_H = 0.20f;
@@ -860,7 +918,7 @@ b2Vec2 BackpackScene::screenToWorld(const QPoint& point)
 {
     return b2Vec2(
         point.x() / PIXELS_PER_METER,
-        (WINDOW_HEIGHT_PX - point.y()) / PIXELS_PER_METER
+        (height() - point.y()) / PIXELS_PER_METER
     );
 }
 
@@ -868,6 +926,19 @@ QPointF BackpackScene::worldToScreen(const b2Vec2& point)
 {
     return QPointF(
         point.x * PIXELS_PER_METER,
-        WINDOW_HEIGHT_PX - point.y * PIXELS_PER_METER
+        height() - point.y * PIXELS_PER_METER
     );
+}
+
+// =========================================================================
+//  Theme application
+// =========================================================================
+
+void BackpackScene::applyTheme(const LevelTheme& theme)
+{
+    themePrimary   = theme.primary;
+    themeSecondary = theme.secondary;
+    themeOnPrim    = theme.textOnPrimary;
+    themeOnSurface = theme.textOnSurface;
+    update();
 }

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>styles.qss</file>
         <file>images/banana.png</file>
         <file>images/potato.png</file>
         <file>images/water_bottle.png</file>
@@ -8,6 +9,9 @@
         <file>data/feedback.json</file>
         <file>data/tuning.json</file>
         <file>data/items.json</file>
+        <file>data/themes.json</file>
+        <file>themes/title/image.png</file>
+        <file>themes/title/music.ogg</file>
         <file>sprites/BANANA.png</file>
         <file>sprites/BEAR_SPRAY.png</file>
         <file>sprites/BEEF_JERKY.png</file>
@@ -41,5 +45,6 @@
         <file>sprites/WHISTLE.png</file>
         <file>sprites/WOOL_SHIRT.png</file>
         <file>sprites/ZIPLOC_BAG.png</file>
+        <file>themes/delicate_arch/image.png</file>
     </qresource>
 </RCC>

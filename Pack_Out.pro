@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -73,7 +73,10 @@ SOURCES += \
     gearcheck.cpp \
     trekrules.cpp \
     itemregistry.cpp \
-    spritecache.cpp
+    spritecache.cpp \
+    titlescreen.cpp \
+    themeregistry.cpp \
+    musicmanager.cpp
 
 HEADERS += \
     backpack.h \
@@ -143,13 +146,18 @@ HEADERS += \
     gearcheck.h \
     trekrules.h \
     itemregistry.h \
-    spritecache.h
+    spritecache.h \
+    titlescreen.h \
+    theme.h \
+    themeregistry.h \
+    musicmanager.h
 
 FORMS += \
     backpack.ui \
     briefview.ui \
     debriefview.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    titlescreen.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
