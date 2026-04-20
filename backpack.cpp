@@ -936,9 +936,9 @@ QPointF BackpackScene::worldToScreen(const b2Vec2& point)
 
 void BackpackScene::applyTheme(const LevelTheme& theme)
 {
-    themePrimary   = theme.primary;
-    themeSecondary = theme.secondary;
-    themeOnPrim    = theme.textOnPrimary;
-    themeOnSurface = theme.textOnSurface;
+    themePrimary   = theme.accent;
+    themeSecondary = theme.accent.lighter(160);
+    themeOnPrim    = QColor("#FFFFFF");
+    themeOnSurface = QColor("#2A2A2A");
     update();
 }

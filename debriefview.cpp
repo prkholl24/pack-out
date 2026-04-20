@@ -46,58 +46,52 @@ void DebriefView::setResults(const LevelResult& result) {
 }
 
 void DebriefView::applyTheme(const LevelTheme& theme) {
-    themePrimary   = theme.primary;
-    themeSecondary = theme.secondary;
-    themeOnPrim    = theme.textOnPrimary;
-    themeOnSurface = theme.textOnSurface;
+    themeAccent = theme.accent;
 
-    const QString primaryName   = themePrimary.name();
-    const QString secondaryName = themeSecondary.name();
-    const QString onPrim        = themeOnPrim.name();
-    const QString onSurface     = themeOnSurface.name();
+    const QString ac = themeAccent.name();
 
-    ui->titleLabel->setStyleSheet(QString("color: %1; letter-spacing: 6px;").arg(onPrim));
+    ui->titleLabel->setStyleSheet(
+        QString("background: transparent; color: #FFFFFF; letter-spacing: 6px;"));
 
+    // Score card — white surface, accent border, accent text on labels.
     ui->scoreCard->setStyleSheet(QString(
-        "QWidget#scoreCard { background: %1; border: 3px solid %2; "
+        "QWidget#scoreCard { background: #FFFFFF; border: 3px solid %1; "
         "border-radius: 24px; }"
-        "QLabel { background: transparent; color: %3; }"
-        ).arg(themeSecondary.lighter(125).name(),
-              primaryName,
-              onSurface));
+        "QLabel { background: transparent; color: #2A2A2A; }"
+        ).arg(ac));
     ui->gradeTitleLabel->setStyleSheet(
-        QString("color: %1; letter-spacing: 6px;").arg(primaryName));
-    ui->gradeLabel->setStyleSheet(QString("color: %1;").arg(primaryName));
+        QString("color: %1; letter-spacing: 6px;").arg(ac));
+    ui->gradeLabel->setStyleSheet(QString("color: %1;").arg(ac));
 
     ui->gradeProgressBar->setStyleSheet(QString(
-        "QProgressBar { background: %1; border: 2px solid %2; border-radius: 18px; }"
-        "QProgressBar::chunk { background: %2; border-radius: 16px; }"
-        ).arg(themeSecondary.darker(110).name(), primaryName));
+        "QProgressBar { background: #E2D9C2; border: 2px solid %1; border-radius: 18px; }"
+        "QProgressBar::chunk { background: %1; border-radius: 16px; }"
+        ).arg(ac));
 
-    ui->feedbackTitleLabel->setStyleSheet(QString("color: %1;").arg(onPrim));
+    ui->feedbackTitleLabel->setStyleSheet(
+        QString("background: transparent; color: %1;").arg(ac));
     ui->feedbackTextEdit->setStyleSheet(QString(
         "QTextEdit { background: #FFFDF8; color: #2A2A2A; "
         "border: 3px solid %1; border-radius: 18px; padding: 28px; }"
-        ).arg(primaryName));
+        ).arg(ac));
 
     const QString buttonStyle = QString(
-        "QPushButton { background: %1; color: %2; border: none; "
+        "QPushButton { background: %1; color: #FFFFFF; border: none; "
         "border-radius: 40px; padding: 16px 40px; font-weight: 700; }"
-        "QPushButton:hover { background: %3; }"
-        "QPushButton:pressed { background: %4; }"
-        ).arg(primaryName, onPrim,
-              themePrimary.lighter(115).name(),
-              themePrimary.darker(115).name());
+        "QPushButton:hover { background: %2; }"
+        "QPushButton:pressed { background: %3; }"
+        ).arg(ac,
+              themeAccent.lighter(120).name(),
+              themeAccent.darker(120).name());
     ui->retryButton->setStyleSheet(buttonStyle);
     ui->nextLevelButton->setStyleSheet(buttonStyle);
 
-    // Menu button — softer, secondary-colored
     ui->menuButton->setStyleSheet(QString(
-        "QPushButton { background: transparent; color: %1; "
-        "border: 3px solid %1; border-radius: 40px; padding: 13px 36px; "
+        "QPushButton { background: transparent; color: #FFFFFF; "
+        "border: 3px solid #FFFFFF; border-radius: 40px; padding: 13px 36px; "
         "font-weight: 700; }"
-        "QPushButton:hover { background: %1; color: %2; }"
-        ).arg(onPrim, primaryName));
+        "QPushButton:hover { background: rgba(255,255,255,30); }"
+        ));
 
     refreshStatusColor();
     update();
@@ -112,17 +106,13 @@ void DebriefView::paintEvent(QPaintEvent*) {
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
 
-    // Body surface.
     p.fillRect(rect(), QColor("#F4EFE4"));
 
-    // Primary-color header band behind the title.
     QLinearGradient headerGrad(0, 0, 0, 170);
-    headerGrad.setColorAt(0.0, themePrimary.lighter(108));
-    headerGrad.setColorAt(1.0, themePrimary.darker(108));
+    headerGrad.setColorAt(0.0, themeAccent.lighter(112));
+    headerGrad.setColorAt(1.0, themeAccent.darker(112));
     p.fillRect(QRect(0, 0, width(), 170), headerGrad);
-    p.fillRect(QRect(0, 170, width(), 6), themeSecondary);
+    p.fillRect(QRect(0, 170, width(), 4), themeAccent.darker(140));
 
-    // Primary-color band behind the feedback title + button bar.
-    p.fillRect(QRect(0, 990, width(), 90),
-               themePrimary.darker(108));
+    p.fillRect(QRect(0, 990, width(), 90), themeAccent.darker(120));
 }

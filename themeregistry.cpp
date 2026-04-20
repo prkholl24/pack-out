@@ -29,22 +29,14 @@ QString weatherKey(WeatherType w) {
     }
 }
 
-QColor readColor(const QJsonObject& obj, const QString& key, const QColor& fallback) {
-    if (!obj.contains(key)) return fallback;
-    const QString hex = obj.value(key).toString();
-    QColor c(hex);
-    return c.isValid() ? c : fallback;
-}
-
 LevelTheme readTheme(const QJsonObject& obj) {
     LevelTheme t;
-    t.slug           = obj.value("slug").toString();
-    t.primary        = readColor(obj, "primary",       t.primary);
-    t.secondary      = readColor(obj, "secondary",     t.secondary);
-    t.textOnPrimary  = readColor(obj, "textOnPrimary", t.textOnPrimary);
-    t.textOnSurface  = readColor(obj, "textOnSurface", t.textOnSurface);
-    t.imagePath      = obj.value("image").toString();
-    t.musicPath      = obj.value("music").toString();
+    t.slug      = obj.value("slug").toString();
+    t.imagePath = obj.value("image").toString();
+    t.musicPath = obj.value("music").toString();
+    const QString hex = obj.value("primary").toString();
+    QColor c(hex);
+    if (c.isValid()) t.accent = c;
     return t;
 }
 
@@ -69,24 +61,20 @@ void ThemeRegistry::loadFromResource() {
 
     const QJsonObject root = doc.object();
 
-    // Default theme
     if (root.contains("default") && root.value("default").isObject())
         defaultTheme = readTheme(root.value("default").toObject());
 
-    // Title screen theme
     if (root.contains("title") && root.value("title").isObject())
         titleEntry = readTheme(root.value("title").toObject());
     else
         titleEntry = defaultTheme;
 
-    // Level themes
     const QJsonArray levels = root.value("levels").toArray();
     for (const QJsonValue& v : levels) {
         if (!v.isObject()) continue;
         const QJsonObject obj = v.toObject();
-        const QString location = obj.value("location").toString();
-        const QString weather  = obj.value("weather").toString();
-        const QString key = location + "|" + weather;
+        const QString key = obj.value("location").toString() + "|"
+                          + obj.value("weather").toString();
         entries.insert(key, readTheme(obj));
     }
 }
@@ -97,7 +85,6 @@ LevelTheme ThemeRegistry::themeFor(const Level& level) {
     auto it = entries.find(key);
     if (it != entries.end()) return it.value();
 
-    // Secondary fallback: try location-only match
     for (auto it2 = entries.begin(); it2 != entries.end(); ++it2) {
         if (it2.key().startsWith(level.getLocationName() + "|"))
             return it2.value();

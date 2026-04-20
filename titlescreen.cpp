@@ -22,35 +22,28 @@ TitleScreen::~TitleScreen() {
 }
 
 void TitleScreen::applyTheme(const LevelTheme& theme) {
-    bgTop    = theme.primary.lighter(115);
-    bgBottom = theme.primary.darker(135);
+    bgTop    = theme.accent.lighter(115);
+    bgBottom = theme.accent.darker(135);
 
     heroImage = QPixmap();
     if (!theme.imagePath.isEmpty())
         heroImage.load(theme.imagePath);
 
-    const QString fg  = theme.textOnPrimary.name();
-    const QString sec = theme.secondary.name();
+    const QString ac = theme.accent.name();
 
     ui->titleLabel->setStyleSheet(
-        QString("background: transparent; color: %1; letter-spacing: 4px;").arg(fg));
+        QString("background: transparent; color: #FFFFFF; letter-spacing: 4px;"));
     ui->tagLineLabel->setStyleSheet(
-        QString("background: transparent; color: %1;").arg(sec));
+        QString("background: transparent; color: rgba(255,255,255,180);"));
     ui->introTextEdit->setStyleSheet(QString(
-        "QTextEdit { background: rgba(0,0,0,110); color: %1; "
-        "border: 2px solid %2; border-radius: 16px; padding: 28px; }"
-        ).arg(fg, sec));
+        "QTextEdit { background: rgba(0,0,0,100); color: #FFFFFF; "
+        "border: 2px solid rgba(255,255,255,80); border-radius: 16px; padding: 28px; }"));
     ui->playButton->setStyleSheet(QString(
-        "QPushButton { background: %2; color: %3; border: none; "
+        "QPushButton { background: #FFFFFF; color: %1; border: none; "
         "border-radius: 44px; padding: 18px 56px; font-weight: 700; }"
-        "QPushButton:hover { background: %4; }"
-        "QPushButton:pressed { background: %5; }"
-        ).arg(
-            fg,
-            sec,
-            theme.primary.name(),
-            theme.secondary.lighter(110).name(),
-            theme.secondary.darker(110).name()));
+        "QPushButton:hover { background: rgba(255,255,255,220); }"
+        "QPushButton:pressed { background: rgba(255,255,255,180); }"
+        ).arg(ac));
 
     update();
 }

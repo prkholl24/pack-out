@@ -1,19 +1,13 @@
 {
     "default": {
         "slug": "default",
-        "primary":       "#2E4A3F",
-        "secondary":     "#C8D9B8",
-        "textOnPrimary": "#FFFFFF",
-        "textOnSurface": "#1E1E1E",
+        "primary": "#2E4A3F",
         "image": "",
         "music": ""
     },
     "title": {
         "slug": "title",
-        "primary":       "#1F3A2E",
-        "secondary":     "#E0C17A",
-        "textOnPrimary": "#F5F0E1",
-        "textOnSurface": "#1E1E1E",
+        "primary": "#1F3A2E",
         "image": ":/themes/title/image.png",
         "music": ":/themes/title/music.ogg"
     },
@@ -22,10 +16,7 @@
             "slug": "delicate_arch",
             "location": "Delicate Arch",
             "weather": "HOT",
-            "primary":       "#C65B2E",
-            "secondary":     "#F4D8A8",
-            "textOnPrimary": "#FFFFFF",
-            "textOnSurface": "#3A1F10",
+            "primary": "#C65B2E",
             "image": ":/themes/delicate_arch/image.png",
             "music": ":/themes/delicate_arch/music.ogg"
         },
@@ -33,10 +24,7 @@
             "slug": "fish_lake_loop",
             "location": "Fish Lake Loop",
             "weather": "WINDY",
-            "primary":       "#3E7A4F",
-            "secondary":     "#C8D9B8",
-            "textOnPrimary": "#FFFFFF",
-            "textOnSurface": "#1E3020",
+            "primary": "#3E7A4F",
             "image": ":/themes/fish_lake_loop/image.png",
             "music": ":/themes/fish_lake_loop/music.ogg"
         },
@@ -44,10 +32,7 @@
             "slug": "lake_blanche",
             "location": "Lake Blanche",
             "weather": "COLD",
-            "primary":       "#2B4F6F",
-            "secondary":     "#D7E2EA",
-            "textOnPrimary": "#FFFFFF",
-            "textOnSurface": "#10202E",
+            "primary": "#2B4F6F",
             "image": ":/themes/lake_blanche/image.png",
             "music": ":/themes/lake_blanche/music.ogg"
         },
@@ -55,10 +40,7 @@
             "slug": "glacier",
             "location": "Glacier National Park",
             "weather": "SNOW",
-            "primary":       "#5E7A8A",
-            "secondary":     "#E8F1F5",
-            "textOnPrimary": "#FFFFFF",
-            "textOnSurface": "#1E2E38",
+            "primary": "#5E7A8A",
             "image": ":/themes/glacier/image.png",
             "music": ":/themes/glacier/music.ogg"
         },
@@ -66,10 +48,7 @@
             "slug": "olympic_rain",
             "location": "Olympic National Park",
             "weather": "RAINY",
-            "primary":       "#2E5744",
-            "secondary":     "#A8B8A0",
-            "textOnPrimary": "#FFFFFF",
-            "textOnSurface": "#15281F",
+            "primary": "#2E5744",
             "image": ":/themes/olympic_rain/image.png",
             "music": ":/themes/olympic_rain/music.ogg"
         },
@@ -77,10 +56,7 @@
             "slug": "olympic_snow",
             "location": "Olympic National Park",
             "weather": "SNOW",
-            "primary":       "#3B4A5E",
-            "secondary":     "#CCD6E0",
-            "textOnPrimary": "#FFFFFF",
-            "textOnSurface": "#1A222E",
+            "primary": "#3B4A5E",
             "image": ":/themes/olympic_snow/image.png",
             "music": ":/themes/olympic_snow/music.ogg"
         }

@@ -81,63 +81,52 @@ void BriefView::setLevel(const Level& level, int trekNumber) {
 }
 
 void BriefView::applyTheme(const LevelTheme& theme) {
-    themePrimary    = theme.primary;
-    themeSecondary  = theme.secondary;
-    themeTextOnPrim = theme.textOnPrimary;
-    themeTextOnSurf = theme.textOnSurface;
+    themeAccent = theme.accent;
 
     locationPixmap = QPixmap();
     if (!theme.imagePath.isEmpty())
         locationPixmap.load(theme.imagePath);
 
-    const QString primaryName  = themePrimary.name();
-    const QString secondaryName = themeSecondary.name();
-    const QString onPrim       = themeTextOnPrim.name();
+    const QString ac  = themeAccent.name();
 
-    // Badge and title live in the header strip (primary-colored band).
+    // Header strip — level identity picks up the active theme color.
     ui->trekBadgeLabel->setStyleSheet(
-        QString("background: transparent; color: %1; letter-spacing: 4px;").arg(themeSecondary.lighter(125).name()));
+        QString("background: transparent; color: %1; letter-spacing: 4px;").arg(ac));
     ui->titleLabel->setStyleSheet(
-        QString("background: transparent; color: %1;").arg(onPrim));
+        QString("background: transparent; color: %1;").arg(ac));
 
-    // Metadata card — surface-colored panel with primary accent.
+    // Metadata card — white surface, accent border and category labels.
     ui->metadataCard->setStyleSheet(QString(
-        "QWidget#metadataCard { background: %1; border: 2px solid %2; "
+        "QWidget#metadataCard { background: #FFFFFF; border: 2px solid %1; "
         "border-radius: 18px; }"
-        "QLabel { background: transparent; color: %3; }"
-        ).arg(themeSecondary.lighter(130).name(),
-              primaryName,
-              themeTextOnSurf.name()));
+        "QLabel { background: transparent; color: #2A2A2A; }"
+        ).arg(ac));
 
-    // Titles on metadata card — softer, primary-colored
-    const QString titleColor = themePrimary.darker(110).name();
     for (auto* lbl : { ui->adventureTitleLabel, ui->terrainTitleLabel,
                        ui->weatherTitleLabel, ui->milesTitleLabel,
                        ui->elevationTitleLabel, ui->durationTitleLabel }) {
-        lbl->setStyleSheet(QString("color: %1; letter-spacing: 2px;").arg(titleColor));
+        lbl->setStyleSheet(QString("color: %1; letter-spacing: 2px;").arg(ac));
     }
 
     // Right column — mission brief
-    ui->briefingTitleLabel->setStyleSheet(QString("color: %1;").arg(primaryName));
+    ui->briefingTitleLabel->setStyleSheet(QString("color: %1;").arg(ac));
     ui->briefingTextEdit->setStyleSheet(QString(
         "QTextEdit { background: #FFFDF8; color: #2A2A2A; "
         "border: 3px solid %1; border-radius: 16px; padding: 28px; }"
-        ).arg(primaryName));
+        ).arg(ac));
 
-    // Start packing button — themed
     ui->startPackingButton->setStyleSheet(QString(
-        "QPushButton { background: %1; color: %2; border: none; "
+        "QPushButton { background: %1; color: #FFFFFF; border: none; "
         "border-radius: 44px; padding: 18px 52px; font-weight: 700; }"
-        "QPushButton:hover { background: %3; }"
-        "QPushButton:pressed { background: %4; }"
-        ).arg(primaryName, onPrim,
-              themePrimary.lighter(115).name(),
-              themePrimary.darker(115).name()));
+        "QPushButton:hover { background: %2; }"
+        "QPushButton:pressed { background: %3; }"
+        ).arg(ac,
+              themeAccent.lighter(120).name(),
+              themeAccent.darker(120).name()));
 
-    // Image slot placeholder styling
     ui->locationImageLabel->setStyleSheet(QString(
         "background: %1; border: 3px solid %2; border-radius: 18px;"
-        ).arg(themePrimary.darker(140).name(), primaryName));
+        ).arg(themeAccent.darker(150).name(), ac));
 
     if (!locationPixmap.isNull()) {
         ui->locationImageLabel->setPixmap(
@@ -146,8 +135,8 @@ void BriefView::applyTheme(const LevelTheme& theme) {
                                   Qt::SmoothTransformation));
     } else {
         ui->locationImageLabel->setText(
-            QString("<span style='color:%1; font-size:20pt; letter-spacing:3px;'>"
-                    "&#91; LOCATION PHOTO &#93;</span>").arg(themeSecondary.name()));
+            QString("<span style='color:#FFFFFF; font-size:20pt; letter-spacing:3px;'>"
+                    "&#91; LOCATION PHOTO &#93;</span>"));
     }
 
     update();
@@ -157,15 +146,13 @@ void BriefView::paintEvent(QPaintEvent*) {
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
 
-    // Body background — warm paper surface.
     p.fillRect(rect(), QColor("#F4EFE4"));
 
-    // Top header strip, primary color gradient band.
     QLinearGradient grad(0, 0, 0, 180);
-    grad.setColorAt(0.0, themePrimary.lighter(108));
-    grad.setColorAt(1.0, themePrimary.darker(108));
+    grad.setColorAt(0.0, themeAccent.lighter(112));
+    grad.setColorAt(1.0, themeAccent.darker(112));
     p.fillRect(QRect(0, 0, width(), 180), grad);
 
-    // Secondary-color accent stripe under the header.
-    p.fillRect(QRect(0, 180, width(), 6), themeSecondary);
+    // Thin accent line under the header.
+    p.fillRect(QRect(0, 180, width(), 4), themeAccent.darker(140));
 }

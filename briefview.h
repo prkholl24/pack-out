@@ -45,10 +45,7 @@ protected:
 
 private:
     Ui::BriefView* ui;
-    QColor themePrimary    = QColor("#3E7A4F");
-    QColor themeSecondary  = QColor("#C8D9B8");
-    QColor themeTextOnPrim = QColor("#FFFFFF");
-    QColor themeTextOnSurf = QColor("#1E1E1E");
+    QColor themeAccent = QColor("#3E7A4F");
     QPixmap locationPixmap;
 };
 
