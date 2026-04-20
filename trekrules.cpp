@@ -42,11 +42,61 @@ double TrekRules::get(const QString& category, const QString& key)
 QString TrekRules::getTip(const QString& category, const QString& key)
 {
     ensureLoaded();
-    QJsonObject catObj = feedbackRoot.value("tips").toObject().value(category).toObject();
+    QJsonObject tipsObj = feedbackRoot.value("tips").toObject();
+    QJsonObject catObj = tipsObj.value(category).toObject();
     if (catObj.contains(key)) {
         return catObj.value(key).toString();
     }
     return QString();
+}
+
+QStringList TrekRules::getEnvironmentalTips(WeatherType weather, TerrainType terrain,
+                                            AdventureType adventure, int durationHours,
+                                            bool skipGearCheck, int customCalories)
+{
+    QStringList tips;
+    
+    // 1. Hydration (Always include)
+    QString weatherKey = weatherToString(weather);
+    QString weatherTip = getTip("weather", weatherKey);
+    if (!weatherTip.isEmpty()) tips << weatherTip;
+
+    // 2. Nutrition & Energy (Only if not a water-only level)
+    if (customCalories != 0) {
+        QString foodTip;
+        if (durationHours > 8) {
+            foodTip = getTip("nutrition", "LONG");
+        } else {
+            foodTip = getTip("nutrition", "GENERAL");
+        }
+        if (!foodTip.isEmpty()) tips << foodTip;
+    }
+
+    // 3. Environmental & Gear (Advanced tips for non-beginner levels)
+    if (!skipGearCheck) {
+        QString itemWeatherTip = getTip("item_weather", weatherKey);
+        if (!itemWeatherTip.isEmpty()) tips << itemWeatherTip;
+
+        QString terrainKey = terrainToString(terrain);
+        QString terrainTip = getTip("terrain", terrainKey);
+        QString itemTerrainTip = getTip("item_terrain", terrainKey);
+        if (!terrainTip.isEmpty()) tips << terrainTip;
+        if (!itemTerrainTip.isEmpty()) tips << itemTerrainTip;
+
+        if (adventure == AdventureType::BACKPACKING || adventure == AdventureType::CAMPING) {
+            QString advTip = getTip("adventure", "OVERNIGHT");
+            QString itemAdvTip = getTip("item_adventure", "OVERNIGHT");
+            if (!advTip.isEmpty()) tips << advTip;
+            if (!itemAdvTip.isEmpty()) tips << itemAdvTip;
+        }
+
+        if (durationHours > 8) {
+            QString durTip = getTip("duration", "LONG");
+            if (!durTip.isEmpty()) tips << durTip;
+        }
+    }
+
+    return tips;
 }
 
 RuleModifier TrekRules::getTerrainModifier(TerrainType terrain)

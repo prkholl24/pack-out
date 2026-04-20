@@ -186,6 +186,12 @@ BackpackScene::BackpackScene(const QStringList& availableItems, QWidget *parent)
         else if (cat == "gear")  gearItems.append(name);
     }
 
+    // Pick the first non-empty category as the default tab
+    if (!foodItems.isEmpty())       activeTab = "food";
+    else if (!drinkItems.isEmpty()) activeTab = "drink";
+    else if (!gearItems.isEmpty())  activeTab = "gear";
+    else                            activeTab = "none";
+
     // --- Box2D listener registration ---
     destructionListener = std::make_unique<DestructionListener>();
     destructionListener->owner = this;
@@ -592,17 +598,18 @@ void BackpackScene::createBackpack()
 
 void BackpackScene::createTabs()
 {
-    struct TabDef { float x; QString name; };
-    TabDef tabs[] = {
-        {2.0f, "food"},
-        {4.5f, "drink"},
-        {7.0f, "gear"},
-    };
+    struct TabDef { QString cat; QString name; };
+    std::vector<TabDef> allTabs;
+    if (!foodItems.isEmpty())  allTabs.push_back({"food", "food"});
+    if (!drinkItems.isEmpty()) allTabs.push_back({"drink", "drink"});
+    if (!gearItems.isEmpty())  allTabs.push_back({"gear", "gear"});
 
-    for (const auto& tab : tabs) {
+    // Center the tabs based on how many we have
+    float startX = 4.5f - (allTabs.size() - 1) * 1.25f;
+    for (size_t i = 0; i < allTabs.size(); ++i) {
         b2BodyDef def;
         def.type = b2_staticBody;
-        def.position.Set(tab.x, 5.8f);
+        def.position.Set(startX + i * 2.5f, 5.8f);
         b2Body* body = world.CreateBody(&def);
 
         b2PolygonShape box;
@@ -614,7 +621,7 @@ void BackpackScene::createTabs()
         body->CreateFixture(&fix);
 
         body->SetUserData(tagFor(BodyKind::Tab));
-        bodyNames[body] = tab.name;
+        bodyNames[body] = allTabs[i].name;
     }
 }
 

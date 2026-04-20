@@ -49,6 +49,10 @@
         },
         "duration": {
             "LONG": "This is a long haul. Be mindful of pack weight, every ounce counts!"
+        },
+        "nutrition": {
+            "GENERAL": "Pack calorie-dense foods like nuts and jerky to maintain your energy levels.",
+            "LONG": "On long treks, focus on slow-release energy like complex carbs and fats to avoid crashing."
         }
     }
 }
