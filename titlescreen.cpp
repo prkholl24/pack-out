@@ -40,7 +40,7 @@ void TitleScreen::applyTheme(const LevelTheme& theme) {
         "border: 2px solid rgba(255,255,255,80); border-radius: 16px; padding: 28px; }"));
     ui->playButton->setStyleSheet(QString(
         "QPushButton { background: #FFFFFF; color: %1; border: none; "
-        "border-radius: 44px; padding: 18px 56px; font-weight: 700; }"
+        "border-radius: 34px; padding: 10px 30px; font-weight: 700; }"
         "QPushButton:hover { background: rgba(255,255,255,220); }"
         "QPushButton:pressed { background: rgba(255,255,255,180); }"
         ).arg(ac));
