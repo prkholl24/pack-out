@@ -20,10 +20,16 @@ TrekView::TrekView(QWidget *parent)
 
     connect(phys, &TrekBox2DPhysics::loadVisualObjectsSignal, this, &TrekView::loadVisualObjectsSlot);
 
+    //Connects getColor to openColorSelectorSlot in the view
+    connect(phys, &TrekBox2DPhysics::getColorSignal, this, &TrekView::openColorSelectorSlot);
+
     //Connects updateMousePosition in view, to setMousePosition in physics
     connect(this, &TrekView::updatePhysicsMousePosition, phys, &TrekBox2DPhysics::setTargetFromMouse);
     //Connects: Sends key pressed to slot worldEditorSlot in TrekBox2DPhysics
     connect(this,&TrekView::sendKeyPressedSignal, phys, &TrekBox2DPhysics::worldEditorSlot);
+
+    //Connects sendSelectedColorSignal to setColorSlot in TrekBox2DPhysics
+    connect(this, &TrekView::sendSelectedColorSignal, phys, &TrekBox2DPhysics::setColorSlot);
 
     connect(this, &TrekView::leftMouseButtonClickedSignal, phys, &TrekBox2DPhysics::leftMouseButtonClickedSlot);
     playerLevel = 1;
@@ -53,8 +59,6 @@ void TrekView::mousePressEvent(QMouseEvent *event){
 
     if(event ->buttons()== Qt::LeftButton){
         emit updatePhysicsMousePosition(event->position());
-    }else {
-        emit leftMouseButtonClickedSignal(false);
     }
 
 }
@@ -62,10 +66,13 @@ void TrekView::mousePressEvent(QMouseEvent *event){
 void TrekView::mouseMoveEvent(QMouseEvent *event) {
     if(event ->buttons()== Qt::LeftButton){
         emit updatePhysicsMousePosition(event->position());
-    } else {
-        leftMouseButtonClickedSignal(false);
     }
 
+}
+
+void TrekView::mouseReleaseEvent(QMouseEvent *event){
+
+    emit leftMouseButtonClickedSignal(false);
 }
 
 void TrekView::keyPressEvent(QKeyEvent* event){
@@ -73,6 +80,15 @@ void TrekView::keyPressEvent(QKeyEvent* event){
     int key = event->key();
 
     emit sendKeyPressedSignal(key);
+}
+
+void TrekView::openColorSelectorSlot(){
+    QColor color = QColorDialog::getColor(Qt::white, this, "Pick Color",QColorDialog::ShowAlphaChannel);
+
+
+    QVector<int> colorVector = {color.red(),color.green(),color.blue(),color.alpha()};
+
+    emit sendSelectedColorSignal(colorVector);
 }
 
 void TrekView::loadVisualObjectsSlot(QVector<PhysicsObjectDef>& objectsVector){

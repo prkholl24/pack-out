@@ -22,10 +22,7 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
 
 
 
-    //Creates the bodydef of other objects and adds them to vector
-    // createPhysicsStructure();
 
-    //create and adds every body from vector to the b2world
 
     if(!loadFromFile){
     createPhysicsStructure();
@@ -89,13 +86,13 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     //But it has no size, no collision, no physics properties
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(height / 2, width / 2);
+    bodyDef.position.Set(startLocationX, startLocationY);
     body = world.CreateBody(&bodyDef);
     PhysicsObjectDef temp;
     temp.x = bodyDef.position.x;
     temp.y = bodyDef.position.y;
-    temp.width = 200;
-    temp.height = 200;
+    temp.width = 50;
+    temp.height = 50;
     bodyVector.append(qMakePair(temp,body));
 
     // Define another box shape for our dynamic body.
@@ -141,10 +138,7 @@ QPointF TrekBox2DPhysics::worldToScreen(const b2Vec2& p) const{
 
 void TrekBox2DPhysics::setTargetFromMouse(const QPointF& mousePos){
 
-    std::cout << "Got mousePos X:  " <<mousePos.x() << " Y: " << mousePos.y() << std::endl;
     targetPoint = screenToWorld(mousePos);
-
-    std::cout << "World Transformation X:  "<< targetPoint.x << " Y: " << targetPoint.y << std::endl;
 
     hasTarget = true;
 }
@@ -176,7 +170,6 @@ void TrekBox2DPhysics::createPhysicsObjects(){
         if(phys.shapeType == "box")
         {
 
-            std::cout << "Inside of box" << std::endl;
             b2PolygonShape  shape;
             shape.SetAsBox((phys.width / pixelsPerMeter) * 0.5f, (phys.height / pixelsPerMeter) * 0.5f );
 
@@ -189,7 +182,7 @@ void TrekBox2DPhysics::createPhysicsObjects(){
             body->CreateFixture(&fixtureDef);
         }else if (phys.shapeType == "circle") {
 
-            std::cout<< "Inside of circle" << std::endl;
+
             b2CircleShape shape;
             shape.m_radius = (phys.width * 0.5f) / pixelsPerMeter;
             b2FixtureDef fixtureDef;
@@ -207,7 +200,6 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 
 void TrekBox2DPhysics::updateWorldSlot(){
 
-    //std::cout << "UpdateWorldSlot" << std::endl;
     float timeStep = 1.0f / 60.0f;
     int velocityIterations = 6;
     int positionIterations = 2;
@@ -265,31 +257,33 @@ void TrekBox2DPhysics::updateWorldSlot(){
 
 void TrekBox2DPhysics::createPhysicsStructure(){
 
+    if(!worldEdit){
+
     //Width [-960,960]
     //Height [540,-540] (bottom,top)
 
-    PhysicsObjectDef p1;
-    p1.type = "ABoxCuh";
-    p1.shapeType = "box";
-    p1.x = -275;
-    p1.y = 220;
-    p1.width = 1370;
-    p1.height = 50;
-    p1.angle = 0;
-    p1.isStatic = true;
-    p1.friction = 0.3f;
-    p1.restitution = 0.9f;
+    // PhysicsObjectDef p1;
+    // p1.type = "ABoxCuh";
+    // p1.shapeType = "box";
+    // p1.x = -275;
+    // p1.y = 220;
+    // p1.width = 1370;
+    // p1.height = 50;
+    // p1.angle = 0;
+    // p1.isStatic = true;
+    // p1.friction = 0.3f;
+    // p1.restitution = 0.9f;
 
-    p1.color = {99,57,15,0};
+    // p1.color = {99,57,15,0};
 
-    objectsVector.append(p1);
+    // objectsVector.append(p1);
 
 
 
 
     // int y = 0;
     // int x = -940;
-    // for(int i = 0; i < 4000; i++){
+    // for(int i = 0; i < 5000; i++){
 
     //     if(i%165 == 0){
 
@@ -313,13 +307,357 @@ void TrekBox2DPhysics::createPhysicsStructure(){
     //     x+=11;
     // }
 
+    }
 }
 
 
 
 void TrekBox2DPhysics::worldEditorSlot(int key){
 
-    std::cout << "Key Pressed: " << key << std::endl;
+
+
+    if(!worldEdit){
+        return;
+    }
+
+    switch(key)
+    {
+            //Insert new rectangle
+        case Qt::Key_R:
+        {
+            std::cout << "New Rectangle" << std::endl;
+
+            //Removes last object
+            if(objectAdded){
+                objectsVector.removeLast();
+
+
+            }
+            removeAllPhysicsObjects();
+
+            PhysicsObjectDef p1;
+
+            p1.type = "ABoxCuh";
+            p1.shapeType = "box";
+            p1.x = 0;
+            p1.y = 0;
+            p1.width = 50;
+            p1.height = 50;
+            p1.angle = 0;
+            p1.isStatic = true;
+            p1.friction = 0.3f;
+            p1.restitution = 0.9f;
+
+            p1.color = currentColor;
+
+            objectsVector.append(p1);
+
+            objectAdded = true;
+            createPhysicsObjects();
+
+            break;
+        }
+        //Insert new circle
+        case Qt::Key_C:
+        {
+            std::cout << "New Circle" << std::endl;
+
+            //Removes last object
+            if(objectAdded){
+                objectsVector.removeLast();
+            }
+            removeAllPhysicsObjects();
+
+            PhysicsObjectDef p1;
+
+            p1.type = "ABoxCuh";
+            p1.shapeType = "circle";
+            p1.x = 0;
+            p1.y = 0;
+            p1.width = 50;
+            p1.height = 50;
+            p1.angle = 0;
+            p1.isStatic = true;
+            p1.friction = 0.3f;
+            p1.restitution = 0.9f;
+
+            p1.color = currentColor;
+
+            objectsVector.append(p1);
+
+            objectAdded = true;
+            createPhysicsObjects();
+
+            break;
+        }
+        //Object Movement
+        case Qt::Key_W:
+        {
+            if(objectAdded){
+                removeAllPhysicsObjects();
+                if(objectsVector.last().y <540)
+                {
+                    objectsVector.last().y += movementModifier;
+                }
+
+                createPhysicsObjects();
+            }
+            break;
+
+        }
+        case Qt::Key_S:
+        {
+            if(objectAdded){
+                removeAllPhysicsObjects();
+
+
+                if(objectsVector.last().y > -540)
+                {
+                    objectsVector.last().y -= movementModifier;
+                }
+
+                createPhysicsObjects();
+            }
+            break;
+
+        }
+        case Qt::Key_A:
+        {
+            if(objectAdded){
+                removeAllPhysicsObjects();
+
+
+                if(objectsVector.last().x > -960)
+                {
+                    objectsVector.last().x -= movementModifier;
+                }
+
+                createPhysicsObjects();
+            }
+            break;
+
+        }
+        case Qt::Key_D:
+        {
+            if(objectAdded){
+                removeAllPhysicsObjects();
+
+
+                if(objectsVector.last().x < 960)
+                {
+                    objectsVector.last().x += movementModifier;
+                }
+
+                createPhysicsObjects();
+            }
+            break;
+
+        }
+        //Object Resizing
+        case Qt::Key_Up:
+        {
+            if(objectAdded){
+
+
+
+                removeAllPhysicsObjects();
+
+
+
+                if(objectsVector.last().shapeType == "circle"){
+                    objectsVector.last().height += movementModifier;
+                    objectsVector.last().width += movementModifier;
+
+                }else{
+                    objectsVector.last().height += movementModifier;
+
+                }
+
+
+
+                createPhysicsObjects();
+            }
+            break;
+
+        }
+        case Qt::Key_Down:
+        {
+            if(objectAdded && (objectsVector.last().height > (movementModifier+1))){
+                removeAllPhysicsObjects();
+
+
+                if(objectsVector.last().shapeType == "circle"){
+                    objectsVector.last().height -= movementModifier;
+                    objectsVector.last().width -= movementModifier;
+
+                }else{
+                    objectsVector.last().height -= movementModifier;
+                }
+
+                createPhysicsObjects();
+            }
+            break;
+
+        }
+        case Qt::Key_Right:
+        {
+            if(objectAdded){
+                removeAllPhysicsObjects();
+
+
+                if(objectsVector.last().shapeType == "circle"){
+                    objectsVector.last().height += movementModifier;
+                    objectsVector.last().width += movementModifier;
+
+                }else{
+                    objectsVector.last().width += movementModifier;
+                }
+
+                createPhysicsObjects();
+            }
+            break;
+
+        }
+        case Qt::Key_Left:
+        {
+            if(objectAdded && (objectsVector.last().width > (movementModifier+1))){
+                removeAllPhysicsObjects();
+
+
+                if(objectsVector.last().shapeType == "circle"){
+                    objectsVector.last().height -= movementModifier;
+                    objectsVector.last().width -= movementModifier;
+
+                }else{
+                    objectsVector.last().width -= movementModifier;
+                }
+
+                createPhysicsObjects();
+            }
+            break;
+
+        }
+        //Saves current object
+        case Qt::Key_N:
+        {
+            objectAdded = false;
+
+            break;
+        }
+        //Adjusts angle
+        case Qt::Key_Q:
+        {
+
+            if(objectAdded && (objectsVector.last().shapeType == "box")){
+                removeAllPhysicsObjects();
+
+
+                objectsVector.last().angle += movementModifier/2;
+
+                createPhysicsObjects();
+            }
+
+            break;
+        }
+        case Qt::Key_E:
+        {
+
+            if(objectAdded && (objectsVector.last().shapeType == "box")){
+                removeAllPhysicsObjects();
+
+
+                objectsVector.last().angle -= movementModifier/2;
+
+                createPhysicsObjects();
+            }
+
+            break;
+        }
+        case Qt::Key_Z:
+        {
+
+
+            if(objectAdded){
+                removeAllPhysicsObjects();
+
+                if(objectsVector.last().isStatic){
+                    std::cout << "Object is dynamic" << std::endl;
+                    objectsVector.last().isStatic = false;
+                }else{
+                    std::cout << "Object is static" << std::endl;
+                    objectsVector.last().isStatic = true;
+                }
+                createPhysicsObjects();
+            }
+
+
+
+            break;
+        }
+
+        case Qt::Key_K:
+        {
+            if(objectAdded){
+
+
+                emit getColorSignal();
+            }
+
+            break;
+        }
+        case Qt::Key_Return:
+        {
+
+            if(objectsVector.size() > 0){
+
+                std::cout << "File Saved" << std::endl;
+                toJsonLevel(FilePath);
+
+            }
+
+        }
+
+    }
+
+}
+
+void TrekBox2DPhysics::setColorSlot(QVector<int> color){
+    std::cout << "got color" << std::endl;
+
+    currentColor = color;
+
+    objectsVector.last().color = currentColor;
+
+    removeLastPhysicsObject();
+
+    createPhysicsObjects();
+
+
+}
+
+
+
+void TrekBox2DPhysics::removeLastPhysicsObject(){
+    if(bodyVector.isEmpty()){
+        return;
+    }
+
+    b2Body* obj = bodyVector.last().second;
+
+    if(obj){
+        world.DestroyBody(obj);
+    }
+
+    bodyVector.removeLast();
+
+
+}
+
+void TrekBox2DPhysics::removeAllPhysicsObjects(){
+    while(bodyVector.size() > 1){
+        std::cout << "removed another"<<std::endl;
+        removeLastPhysicsObject();
+    }
 
 
 }

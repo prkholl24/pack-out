@@ -17,6 +17,7 @@
 #include <Box2D/Box2D.h>
 #include "physicsObjects.h"
 #include <QKeyEvent>
+#include <QColorDialog>
 
 //Fowards Declaration
 struct PhysicsObjectDef;
@@ -58,6 +59,11 @@ public slots:
      */
     void loadVisualObjectsSlot(QVector<PhysicsObjectDef>& objectsVector);
 
+    /**
+     * @brief openColorSelectorSlot: Opens a color selector to select a color
+     *        for the world editor.
+     */
+    void openColorSelectorSlot();
 signals:
 
 
@@ -72,6 +78,12 @@ signals:
      * @param keyPressed char relating to the pressed char
      */
     void sendKeyPressedSignal(int key);
+
+    /**
+     * @brief sendSelectedColorSignal: Emits a color
+     * @param color: Color as a QVector to be sent
+     */
+    void sendSelectedColorSignal(QVector<int> color);
 
 
 private:
@@ -118,6 +130,8 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
 
     void mouseMoveEvent(QMouseEvent *event) override;
+
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
     /**
      * @brief keyPressEvent: Used for world editing

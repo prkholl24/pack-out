@@ -7,6 +7,7 @@
 #include "physicsObjects.h"
 #include <QCoreApplication>
 
+
 class TrekBox2DPhysics : public QObject
 {
     Q_OBJECT
@@ -27,10 +28,10 @@ public:
 
     //Gain on the force applied based on the distance
     //From player to mouse
-    float forceGain = 200.0f;
+    float forceGain = 4.0f;
 
     //Maximum force that can be applied to hiker
-    float maxForce = 1000.0f;
+    float maxForce = 10.0f;
     /**
      * @brief body
      */
@@ -42,6 +43,41 @@ public:
     QTimer* timer;
 
 private:
+    //True if you want to load from a file at FilePath.
+    bool loadFromFile = false;
+    //True if you want to save createPhysicsStructure to file
+    //Mainly used for initial level design.
+    bool saveToFile = false;
+    //True enables the world editor to create levels.
+    bool worldEdit = true;
+
+    //X and Y starting location of the player object
+    int startLocationX = -48;
+    int startLocationY = 19;
+
+    //World Editor Variables/Helper methods-----------
+    bool objectAdded = false;
+
+    //Value objects are moved/resized by
+    int movementModifier = 10;
+
+    //Current object color.
+    QVector<int> currentColor = {255,0,0,0};
+
+    /**
+     * @brief removeLastPhysicsObject: Helper method removes the last
+     *        added object to the box2D World.
+     */
+    void removeLastPhysicsObject();
+
+    /**
+     * @brief removeAllPhysicsObjects: Helper method removes all objects
+     *        from the box2D world so new ones can be made.
+     */
+    void removeAllPhysicsObjects();
+
+    //------------------------------------------------
+
 
     //Vector for each objects struct
     QVector<PhysicsObjectDef> objectsVector;
@@ -95,8 +131,6 @@ private:
     QString levelBackground = "LEVEL_1";
 
 
-    bool loadFromFile = false;
-    bool saveToFile = false;
 
     /**
      * @brief Converts a point on the screen to a point in box2D based on the
@@ -119,6 +153,11 @@ signals:
 
     void sendBodyLocation(float x, float y);
 
+    /**
+     * @brief getColor: Prompts view to get a color from user
+     */
+    void getColorSignal();
+
     //sends live b2world body information
     void loadVisualObjectsSignal(QVector<PhysicsObjectDef>& objectsVector);
 
@@ -128,6 +167,8 @@ public slots:
      * @brief worldEditorSlot: A simple world editor to easily add objects to the world
      */
     void worldEditorSlot(int key);
+
+    void setColorSlot(QVector<int> color);
 
     void setTargetFromMouse(const QPointF& mousePos);
 
