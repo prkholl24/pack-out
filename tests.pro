@@ -1,4 +1,4 @@
-QT += core
+QT += core gui
 CONFIG += c++17 console
 CONFIG -= app_bundle
 
@@ -13,6 +13,8 @@ SOURCES += \
     fooditem.cpp \
     drinkitem.cpp \
     gearitem.cpp \
+    itemregistry.cpp \
+    trekregistry.cpp \
     trekphysiology.cpp \
     gearcheck.cpp \
     trekrules.cpp
@@ -24,6 +26,8 @@ HEADERS += \
     fooditem.h \
     drinkitem.h \
     gearitem.h \
+    itemregistry.h \
+    trekregistry.h \
     levelresult.h \
     tripconditions.h \
     nutritionprofile.h \

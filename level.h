@@ -76,6 +76,7 @@ private:
     // --- Internal Logic Helpers ---
     double calculateEnergyScore(double calories, double required, double sugar) const;
     double calculateHydrationScore(double effective, double required) const;
+    double calculateOverpackDeduction(double actual, double required) const;
     void applyDiureticPenalties(BackpackTotals& totals) const;
 
     TripRequirements requirements;

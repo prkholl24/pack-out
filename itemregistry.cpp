@@ -37,6 +37,12 @@ ItemStats ItemRegistry::getGearStats(const QString& name) {
     stats.volume = obj.value("volume").toDouble();
     stats.description = obj.value("description").toString();
     stats.category = obj.value("category").toString();
+    stats.terrain = obj.value("terrain").toString("ALL");
+    stats.adventure = obj.value("adventure").toString("ALL");
+    QJsonArray weatherKeywords = obj.value("weather_keywords").toArray();
+    for (const QJsonValue& value : weatherKeywords) {
+        stats.weatherKeywords << value.toString();
+    }
     stats.isCotton = obj.value("is_cotton").toBool(false);
     stats.isWasteStorage = obj.value("is_waste_storage").toBool(false);
     stats.isPole = obj.value("is_pole").toBool(false);

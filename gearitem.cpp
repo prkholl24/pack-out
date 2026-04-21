@@ -45,6 +45,25 @@ GearCategory stringToCategory(const QString& s) {
     if (s == "SAFETY") return GearCategory::SAFETY;
     return GearCategory::OTHER;
 }
+
+TerrainType stringToTerrainType(const QString& s) {
+    if (s == "DESERT") return TerrainType::DESERT;
+    if (s == "FOREST") return TerrainType::FOREST;
+    if (s == "MOUNTAIN") return TerrainType::MOUNTAIN;
+    if (s == "ROCKY") return TerrainType::ROCKY;
+    return TerrainType::ALL;
+}
+
+AdventureType stringToAdventureType(const QString& s) {
+    if (s == "BACKPACKING") return AdventureType::BACKPACKING;
+    if (s == "CAMPING") return AdventureType::CAMPING;
+    if (s == "DAY_HIKE") return AdventureType::DAY_HIKE;
+    return AdventureType::ALL;
+}
+
+bool isOvernightAdventure(AdventureType type) {
+    return type == AdventureType::BACKPACKING || type == AdventureType::CAMPING;
+}
 }
 
 GearItem::GearItem(GearType gearEnum)
@@ -55,6 +74,7 @@ GearItem::GearItem(GearType gearEnum)
 GearItem::GearItem(const QString& name)
 {
     ItemStats stats = ItemRegistry::getGearStats(name);
+    itemName = name;
     weight = stats.weight;
     volumeLiters = stats.volume;
     description = stats.description;
@@ -62,12 +82,9 @@ GearItem::GearItem(const QString& name)
     wasteStorage = stats.isWasteStorage;
     isCotton = stats.isCotton;
     isPole = stats.isPole;
-
-    // These were not in the JSON but are present in GearStats struct in some versions.
-    // Based on the original gearitem.h, they were used for meeting requirements.
-    // I'll default them to ALL for now unless I add them to JSON.
-    adventureType = AdventureType::ALL;
-    terrainType = TerrainType::ALL;
+    terrainType = stringToTerrainType(stats.terrain);
+    adventureType = stringToAdventureType(stats.adventure);
+    weatherKeywords = stats.weatherKeywords;
 }
 
 std::map<QString, double> GearItem::getStatMap() const
@@ -88,4 +105,45 @@ TerrainType GearItem::getTerrainType() const
 AdventureType GearItem::getAdventureType() const
 {
     return adventureType;
+}
+
+QString GearItem::getItemName() const
+{
+    return itemName;
+}
+
+bool GearItem::matchesTerrain(TerrainType requiredTerrain) const
+{
+    if (requiredTerrain == TerrainType::ALL) {
+        return true;
+    }
+    return terrainType == requiredTerrain;
+}
+
+bool GearItem::matchesAdventure(AdventureType requiredAdventure) const
+{
+    if (requiredAdventure == AdventureType::ALL) {
+        return true;
+    }
+    if (adventureType == requiredAdventure) {
+        return true;
+    }
+    return isOvernightAdventure(requiredAdventure) && isOvernightAdventure(adventureType);
+}
+
+bool GearItem::matchesWeatherKeywords(const QStringList& keywords) const
+{
+    QString descriptionText = description.toLower();
+    for (const QString& keyword : weatherKeywords) {
+        if (keywords.contains(keyword, Qt::CaseInsensitive)) {
+            return true;
+        }
+    }
+
+    for (const QString& keyword : keywords) {
+        if (descriptionText.contains(keyword.toLower())) {
+            return true;
+        }
+    }
+    return false;
 }

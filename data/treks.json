@@ -38,17 +38,20 @@
 
     {
         "name": "Lake Blanche",
-        "description": "You're finally feeling comfortable enough to plan your first single-night backpacking trip. Lake Blanche is a popular, scenic alpine lake backpacking destination in Utah's Wasatch Mountains, known for its steep, 6.7 to 7-mile round-trip hike, and stunning views of Sundial Peak. You will need more than food and water to make it through the night.",
+        "description": "You're finally feeling comfortable enough to plan your first single-night backpacking trip. Lake Blanche is a popular, scenic alpine lake backpacking destination in Utah's Wasatch Mountains, known for its steep, 6.7 to 7-mile round-trip hike and stunning views of Sundial Peak. You will need more than food and water to make it through the night, and you should remember a trash bag to pack out wrappers and waste.",
         "miles": 7.1,
         "elevationGain": 2688.0,
         "duration": 20,
         "terrain": "MOUNTAIN",
         "weather": "COLD",
-        "adventure": "CAMPING",
+        "adventure": "BACKPACKING",
         "scienceFocus": "TEN_ESSENTIALS_MISSING",
-        "packVolumeL": 30.0,
-        "customCalories": 2200,
+        "packVolumeL": 35.0,
+        "customCalories": 2000,
         "customHydration": 96.0,
+        "requiredGearItems": [
+            "TENT", "SLEEPING_BAG", "FLASHLIGHT", "WOOL_SHIRT", "TRASH_BAG"
+        ],
         "availableItems": [
             "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "MIXED_NUTS", "PEANUT_BUTTER_SANDWICH", "POTATO", "BEEF_JERKY",
             "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
@@ -60,7 +63,7 @@
     },
     {
         "name": "Glacier National Park",
-        "description": "Glacier National Park features over 700 miles of hiking trails, the famous, scenic Going-to-the-Sun Road, and is home to the 'Triple Divide Peak,' where water can flow to the Pacific, Atlantic, or Arctic Oceans. You're planning a 3-night traverse across some of the most rugged terrain North America. Snow lingers well into summer and the weather turns fast. Every pound in your pack will cost you.",
+        "description": "Glacier National Park features over 700 miles of hiking trails, the famous, scenic Going-to-the-Sun Road, and is home to the Triple Divide Peak, where water can flow toward the Pacific, Atlantic, or Arctic Oceans. You're planning a 3-night backpacking traverse across rugged alpine terrain. Snow lingers well into summer and the weather turns fast, so thermal layers, trekking poles, and a trash bag all matter.",
         "miles": 32.0,
         "elevationGain": 4500.0,
         "duration": 72,
@@ -68,9 +71,12 @@
         "weather": "SNOW",
         "adventure": "BACKPACKING",
         "scienceFocus": "PANDOLF_WEIGHT_PENALTY",
-        "packVolumeL": 45.0,
-        "customCalories": 4500,
+        "packVolumeL": 50.0,
+        "customCalories": 3200,
         "customHydration": 128.0,
+        "requiredGearItems": [
+            "TENT", "SLEEPING_BAG", "FLASHLIGHT", "WOOL_SHIRT", "TREKKING_POLES", "TRASH_BAG"
+        ],
         "availableItems": [
             "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "MIXED_NUTS", "PEANUT_BUTTER_SANDWICH", "POTATO", "BEEF_JERKY",
             "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
@@ -82,35 +88,21 @@
     },
     {
         "name": "Olympic National Park",
-        "description": "Olympic National Park plays host to mountains, ocean, rivers, and rainforests; providing bountiful opportunities for recreation and learning. You will take a week-long traverse through rainforest, river valleys, and alpine ridges. You will cover 50 miles over 7 days in some of the wettest terrain in the lower 48. Everything you have learned will be tested.",
+        "description": "Olympic National Park plays host to mountains, coastline, rivers, and rainforests. You will take a week-long backpacking traverse through rainforest, river valleys, and alpine ridges, covering 50 miles in some of the wettest terrain in the lower 48. Pack a waterproof shell, enough calorie-dense food, and a trash bag so you can finish the trek without leaving a trace.",
         "miles": 50.0,
         "elevationGain": 6000.0,
         "duration": 168,
         "terrain": "FOREST",
         "weather": "RAINY",
-        "adventure": "DAY_HIKE",
-        "scienceFocus": "PANDOLF_WEIGHT_PENALTY",
-        "customCalories": -1,
-        "skipGearCheck": false,
-        "availableItems": [
-            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "ENERGY_DRINK",
-            "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "BEEF_JERKY", "PEANUT_BUTTER_SANDWICH",
-            "WOOL_SHIRT", "RAIN_JACKET", "TREKKING_POLES", "CAST_IRON_SKILLET", "FIRST_AID_KIT"
-        ]
-    },
-    {
-        "name": "Olympic National Park",
-        "description": "From temperate rainforests to alpine glaciers. A multi-day journey requiring total preparation. This level focuses on Metabolism (BMR) and Leave No Trace.",
-        "miles": 20.0,
-        "elevationGain": 4000.0,
-        "duration": 48,
-        "terrain": "MOUNTAIN",
-        "weather": "SNOW",
         "adventure": "BACKPACKING",
         "scienceFocus": "BMR_BASE_METABOLISM",
-        "packVolumeL": 65.0,
-        "customCalories": 8000,
-        "customHydration": 160.0,
+        "packVolumeL": 50.0,
+        "customCalories": 3500,
+        "customHydration": 120.0,
+        "skipGearCheck": false,
+        "requiredGearItems": [
+            "TENT", "SLEEPING_BAG", "FLASHLIGHT", "RAIN_JACKET", "BEAR_SPRAY", "TRASH_BAG"
+        ],
         "availableItems": [
             "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "MIXED_NUTS", "PEANUT_BUTTER_SANDWICH", "POTATO", "BEEF_JERKY",
             "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",

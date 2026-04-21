@@ -10,7 +10,7 @@
  * Team: Green Goombas
  * github url: https://github.com/UofU-CS3505/cs3505-assignment9-GreenGoombas.git
  * @authors Charles Adair, Armando Carrillo, Parker Hollingsed,
- *          Brady Nelson, Lindsey Reese, Kent Wilkison
+ *          Brady Nelson, Lindsey Reese, Kent Wilkison, OpenAI GPT-5.4
  * @date 4/9/2026
  */
 
@@ -18,6 +18,7 @@
 #define GEARITEM_H
 
 #include <map>
+#include <QStringList>
 #include "item.h"
 #include "tripconditions.h"
 
@@ -146,10 +147,34 @@ public:
      */
     AdventureType getAdventureType() const;
 
+    /**
+     * @brief Gets the registry identifier for this gear item.
+     */
+    QString getItemName() const;
+
+    /**
+     * @brief True when this item is explicitly tagged for the required terrain.
+     */
+    bool matchesTerrain(TerrainType requiredTerrain) const;
+
+    /**
+     * @brief True when this item is explicitly tagged for the required trip type.
+     *
+     * Backpacking and camping are treated as equivalent "overnight" contexts.
+     */
+    bool matchesAdventure(AdventureType requiredAdventure) const;
+
+    /**
+     * @brief True when this item has an explicit or descriptive weather keyword match.
+     */
+    bool matchesWeatherKeywords(const QStringList& keywords) const;
+
 private:
+    QString itemName;
     GearCategory category;
     TerrainType terrainType;
     AdventureType adventureType;
+    QStringList weatherKeywords;
     bool wasteStorage;
     bool isPole;
 };

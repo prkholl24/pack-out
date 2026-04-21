@@ -33,6 +33,12 @@ public:
 
 private:
     /**
+     * @brief Checks for exact required gear item names.
+     */
+    static bool hasRequiredGearItems(const std::vector<std::unique_ptr<Item>>& backpack,
+                                     const QStringList& requiredItems);
+
+    /**
      * @brief Checks if gear matching the terrain/adventure is present.
      */
     static bool hasTerrainGear(const std::vector<std::unique_ptr<Item>>& backpack, const TripRequirements& req);

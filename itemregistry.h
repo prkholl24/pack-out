@@ -57,6 +57,9 @@ struct ItemStats {
     double hydrationMultiplier = 1.0;
     // Gear specific
     QString category;
+    QString terrain;
+    QString adventure;
+    QStringList weatherKeywords;
     bool isCotton = false;
     bool isWasteStorage = false;
     bool isPole = false;
