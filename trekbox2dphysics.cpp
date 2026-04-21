@@ -20,10 +20,6 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
 
     timer->start(10);
 
-
-
-
-
     if(!loadFromFile){
     createPhysicsStructure();
 
@@ -79,14 +75,14 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     right->CreateFixture(&shape, 0.0f);
 
 
-
-
-
     // Define the dynamic body. We set its position and call the body factory.
     //But it has no size, no collision, no physics properties
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(startLocationX, startLocationY);
+
+    bodyDef.position.Set(playerStartingPoint.x(), playerStartingPoint.y());
+    std::cout << playerStartingPoint.x() << std::endl;
+    std::cout << playerStartingPoint.y() << std::endl;
     body = world.CreateBody(&bodyDef);
     PhysicsObjectDef temp;
     temp.x = bodyDef.position.x;
@@ -194,10 +190,15 @@ void TrekBox2DPhysics::createPhysicsObjects(){
             body->CreateFixture(&fixtureDef);
         }
     }
-
-
 }
+bool TrekBox2DPhysics::checkEndArea(int x, int y){
 
+    if ((x > endArea[0] && x < endArea[2]) && (y < endArea[1] && y > endArea[3])) {
+        std::cout << "END AREA BRUH" << std::endl;
+        return true;
+    }
+    return false;
+}
 void TrekBox2DPhysics::updateWorldSlot(){
 
     float timeStep = 1.0f / 60.0f;
@@ -235,6 +236,13 @@ void TrekBox2DPhysics::updateWorldSlot(){
             // emit loadVisualObjectsSignal(objectsVector);
             // emit sendBodyLocation(screen.x(), screen.y());
             // emit loadVisualObjectsSignal(objectsVector);
+
+            //END GAME LOGIC
+            b2Vec2 position = bodyVector[0].second->GetPosition();
+            if (checkEndArea(position.x * pixelsPerMeter,position.y * pixelsPerMeter)){
+                //EMIT ENDGAMESIGNAL
+            }
+
             QVector<PhysicsObjectDef> liveBody;
             for (auto& [def,vis] : bodyVector){
                 b2Vec2 position = vis->GetPosition();
@@ -247,6 +255,8 @@ void TrekBox2DPhysics::updateWorldSlot(){
                 tempBody.angle = vis->GetAngle() * 180.0f / 3.14159265f;
                 liveBody.append(tempBody);
             }
+
+
             emit loadVisualObjectsSignal(liveBody);
 
         }
@@ -262,21 +272,21 @@ void TrekBox2DPhysics::createPhysicsStructure(){
     //Width [-960,960]
     //Height [540,-540] (bottom,top)
 
-    // PhysicsObjectDef p1;
-    // p1.type = "ABoxCuh";
-    // p1.shapeType = "box";
-    // p1.x = -275;
-    // p1.y = 220;
-    // p1.width = 1370;
-    // p1.height = 50;
-    // p1.angle = 0;
-    // p1.isStatic = true;
-    // p1.friction = 0.3f;
-    // p1.restitution = 0.9f;
+    PhysicsObjectDef p1;
+    p1.type = "ABoxCuh";
+    p1.shapeType = "box";
+    p1.x = -275;
+    p1.y = 220;
+    p1.width = 1370;
+    p1.height = 50;
+    p1.angle = 0;
+    p1.isStatic = true;
+    p1.friction = 0.3f;
+    p1.restitution = 0.9f;
 
-    // p1.color = {99,57,15,0};
+    p1.color = {99,57,15,0};
 
-    // objectsVector.append(p1);
+    objectsVector.append(p1);
 
 
 
@@ -628,7 +638,7 @@ void TrekBox2DPhysics::setColorSlot(QVector<int> color){
 
     objectsVector.last().color = currentColor;
 
-    removeLastPhysicsObject();
+    removeAllPhysicsObjects();
 
     createPhysicsObjects();
 
@@ -666,6 +676,19 @@ void TrekBox2DPhysics::toJsonLevel(QString& filepath){
     QJsonObject level;
     level["level"] = currentLevel;
     level["background"] = levelBackground;
+
+    //Serializes the players starting (x,y) coordinates
+    QJsonObject playerStart;
+    playerStart["x"] = playerStartingPoint.x();
+    playerStart["y"] = playerStartingPoint.y();
+    level["playerstart"] = playerStart;
+
+    QJsonArray endLocation;
+    endLocation.append(endArea[0]);
+    endLocation.append(endArea[1]);
+    endLocation.append(endArea[2]);
+    endLocation.append(endArea[3]);
+    level["endarea"] = endLocation;
 
     QJsonArray objectArray;
     for (PhysicsObjectDef objectDef : objectsVector){
@@ -709,6 +732,18 @@ void TrekBox2DPhysics::fromJsonLevel(QString& filepath){
     QJsonObject level = doc.object();
     currentLevel = level["level"].toInt();
     levelBackground = level["background"].toString();
+    //Deserializes the player's starting (x,y) coordinates
+    QJsonObject playerStart = level["playerstart"].toObject();
+    playerStartingPoint.setX(playerStart["x"].toInt());
+    playerStartingPoint.setY(playerStart["y"].toInt());
+
+    endArea.clear();
+    QJsonArray endLocation = level["endarea"].toArray();
+    endArea.append(endLocation[0].toInt());
+    endArea.append(endLocation[1].toInt());
+    endArea.append(endLocation[2].toInt());
+    endArea.append(endLocation[3].toInt());
+
     QJsonArray objectArray = level["objects"].toArray();
     for (auto objectdef: std::as_const(objectArray)){
         PhysicsObjectDef temp;

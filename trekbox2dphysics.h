@@ -5,6 +5,7 @@
 #include <Box2D/Box2D.h>
 #include <QTimer>
 #include "physicsObjects.h"
+#include <QPointF>
 #include <QCoreApplication>
 
 
@@ -44,16 +45,21 @@ public:
 
 private:
     //True if you want to load from a file at FilePath.
-    bool loadFromFile = false;
+    bool loadFromFile = true;
     //True if you want to save createPhysicsStructure to file
     //Mainly used for initial level design.
     bool saveToFile = false;
     //True enables the world editor to create levels.
-    bool worldEdit = true;
+    bool worldEdit = false;
 
     //X and Y starting location of the player object
-    int startLocationX = -48;
-    int startLocationY = 19;
+    //Stores the player's starting b2word (x,y) coordinates METERS BRUHH
+    QPoint playerStartingPoint = QPoint(-48,19);
+
+    //Sets the end area
+    // QPair<QPoint,QPoint> endArea = qMakePair(QPoint(0,0),QPoint(50,50));
+    // top left(x,y) bottom right(x,y)
+    QVector<int> endArea = {800,540,960,-540};
 
     //World Editor Variables/Helper methods-----------
     bool objectAdded = false;
@@ -146,6 +152,12 @@ private:
      * @return
      */
     QPointF worldToScreen(const b2Vec2& p) const;
+
+    /**
+     * @brief checkEndArea check the end area for player coordinates
+     * @return
+     */
+    bool checkEndArea(int x, int y);
 
 
 
