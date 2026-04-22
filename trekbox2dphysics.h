@@ -45,7 +45,7 @@ public:
 
 private:
     //True if you want to load from a file at FilePath.
-    bool loadFromFile = false;
+    bool loadFromFile = true;
     //True if you want to save createPhysicsStructure to file
     //Mainly used for initial level design.
     bool saveToFile = false;
@@ -54,7 +54,7 @@ private:
 
     //X and Y starting location of the player object
     //Stores the player's starting b2word (x,y) coordinates METERS BRUHH
-    QPoint playerStartingPoint = QPoint(-48,19);
+    QPoint playerStartingPoint = QPoint(-46,-25);
 
     //Sets the end area
     // top left(x,y) bottom right(x,y) of end box
@@ -68,6 +68,8 @@ private:
 
     //Current object color.
     QVector<int> currentColor = {255,0,0,0};
+
+    void clearWorldBodies();
 
     /**
      * @brief removeLastPhysicsObject: Helper method removes the last
@@ -130,10 +132,10 @@ private:
     int widgetHeight = 1080;
 
     //Maximum levels that have been made
-    int maxLevel = 5;
+    int maxLevel = 6;
 
     //Curent level the game is on
-    int currentLevel = 2;
+    int currentLevel = 3;
 
     QString FilePath = QCoreApplication::applicationDirPath()
                            + "/level" + QString::number(currentLevel) + ".json";
@@ -175,7 +177,10 @@ signals:
 
     //sends live b2world body information
     void loadVisualObjectsSignal(QVector<PhysicsObjectDef>& objectsVector);
+    //Emits the current player level
+    void sendCurrentLevelSignal(int level);
 
+    void moveToNextFrame();
 public slots:
 
     /**

@@ -46,5 +46,6 @@
         <file>images/FishLakeLoop.png</file>
         <file>images/GlacierNP.png</file>
         <file>images/LakeBlanche.png</file>
+        <file>images/OlympicNP.png</file>
     </qresource>
 </RCC>

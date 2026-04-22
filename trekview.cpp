@@ -19,6 +19,8 @@ TrekView::TrekView(QWidget *parent)
     connect(phys,&TrekBox2DPhysics::sendBodyLocation,this,&TrekView::bodyDisplay);
 
     connect(phys, &TrekBox2DPhysics::loadVisualObjectsSignal, this, &TrekView::loadVisualObjectsSlot);
+    //Connects   send level from physics to current level in view. Updates current level
+    connect(phys, &TrekBox2DPhysics::sendCurrentLevelSignal, this, &TrekView::currentLevel);
 
     //Connects getColor to openColorSelectorSlot in the view
     connect(phys, &TrekBox2DPhysics::getColorSignal, this, &TrekView::openColorSelectorSlot);
@@ -38,6 +40,7 @@ TrekView::TrekView(QWidget *parent)
     imageFilePaths.append("://images/FishLakeLoop.png");
     imageFilePaths.append("://images/LakeBlanche.png");
     imageFilePaths.append("://images/GlacierNP.png");
+    imageFilePaths.append("://images/OlympicNP.png");
 
     backgroundPixmap.load(imageFilePaths[0]);
 
@@ -50,9 +53,12 @@ TrekView::~TrekView()
 
 void TrekView::currentLevel(int level){
     playerLevel = level;
+    //std::cout << "Updated Level to: " << level << std::endl;
 
     if(imageFilePaths.length() >= playerLevel){
         backgroundPixmap.load(imageFilePaths[playerLevel - 1]);
+        //std::cout << "Updated Level to: " << level << std::endl;
+
     }
 }
 
@@ -130,7 +136,7 @@ void TrekView::paintEvent(QPaintEvent *event){
 
             QColor color(visual.color[0],visual.color[1],visual.color[2]);
             painter.setBrush(color);
-            painter.setPen(Qt::NoPen);
+            //painter.setPen(Qt::NoPen);
 
             painter.save();
 

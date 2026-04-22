@@ -30,7 +30,6 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
 
     }
 
-    //createPhysicsObjects();
 
 
     // Blueprint for a body. No actual body yet
@@ -80,6 +79,7 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
 
+
     bodyDef.position.Set(playerStartingPoint.x(), playerStartingPoint.y());
     std::cout << playerStartingPoint.x() << std::endl;
     std::cout << playerStartingPoint.y() << std::endl;
@@ -114,10 +114,14 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     body->CreateFixture(&fixtureDef);
 
     createPhysicsObjects();
+
+    //nextLevelSlot(currentLevel);
 }
 
 TrekBox2DPhysics::~TrekBox2DPhysics(){
 }
+
+
 
 void TrekBox2DPhysics::nextLevelSlot(int levelNo){
     if(levelNo >= maxLevel){
@@ -129,13 +133,71 @@ void TrekBox2DPhysics::nextLevelSlot(int levelNo){
     currentLevel = levelNo;
     }
 
+    objectsVector.clear();
+    bodyVector.clear();
+    clearWorldBodies();
+
     FilePath = QCoreApplication::applicationDirPath() + "/level" + QString::number(currentLevel) + ".json";
 
-    removeAllPhysicsObjects();
 
-    //More stuff must be done too :(
 
     fromJsonLevel(FilePath);
+
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_dynamicBody;
+
+
+    bodyDef.position.Set(playerStartingPoint.x(), playerStartingPoint.y());
+    std::cout << playerStartingPoint.x() << std::endl;
+    std::cout << playerStartingPoint.y() << std::endl;
+    body = world.CreateBody(&bodyDef);
+    PhysicsObjectDef temp;
+    temp.x = bodyDef.position.x;
+    temp.y = bodyDef.position.y;
+    temp.width = 50;
+    temp.height = 50;
+    bodyVector.append(qMakePair(temp,body));
+
+    // Define another box shape for our dynamic body.
+    b2CircleShape circle;
+    circle.m_radius = (temp.width * 0.5) / 20;
+    // dynamicCircle.SetAsBox(1.0f, 1.0f);
+
+
+    // Define the dynamic body geometry, size.
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &circle;
+
+    // Set the box density to be non-zero, so it will be dynamic.
+    fixtureDef.density = 1.0f;
+
+    // Override the default friction.
+    fixtureDef.friction = 0.3f;
+
+    //Bounce
+    fixtureDef.restitution = 0.9f;
+
+    // Add the shape to the body.
+    body->CreateFixture(&fixtureDef);
+
+
+
+    emit sendCurrentLevelSignal(currentLevel);
+
+    createPhysicsObjects();
+}
+
+void TrekBox2DPhysics::clearWorldBodies(){
+    b2Body* body = world.GetBodyList();
+
+    while(body != nullptr){
+        b2Body* next = body->GetNext();   // save next before destroying current
+        world.DestroyBody(body);
+        body = next;
+    }
+
+
+
 }
 
 b2Vec2 TrekBox2DPhysics::screenToWorld(const QPointF& p) const {
@@ -214,7 +276,7 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 }
 bool TrekBox2DPhysics::checkEndArea(int x, int y){
 
-   // std::cout << "Player Pos X: " << x << " Y: " << y << std::endl;
+    std::cout << "Player Pos X: " << x << " Y: " << y << std::endl;
 
     if ((x > endArea[0] && x < endArea[2]) && (y < endArea[1] && y > endArea[3])) {
         std::cout << "END AREA BRUH" << std::endl;
@@ -230,6 +292,11 @@ void TrekBox2DPhysics::updateWorldSlot(){
 
     if(body)
     {
+        //--------------------------------------DELETE LATER!!!!!!!!!!!!!!!
+        //DELETE LATER!!!!!!!!!!!!!----------------------------------------
+        emit sendCurrentLevelSignal(currentLevel);
+
+
         b2Vec2 currentPos = body->GetWorldCenter();
         b2Vec2 toTarget = targetPoint - currentPos;
 
@@ -255,7 +322,8 @@ void TrekBox2DPhysics::updateWorldSlot(){
         b2Vec2 position = body->GetPosition();
 
             if (checkEndArea(position.x * pixelsPerMeter,position.y * pixelsPerMeter)){
-                //EMIT ENDGAMESIGNAL
+                //emit moveToNextFrame();
+               // nextLevelSlot(0);
             }
 
             QVector<PhysicsObjectDef> liveBody;
