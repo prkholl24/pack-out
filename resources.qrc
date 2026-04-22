@@ -53,4 +53,11 @@
         <file>images/OlympicNP.png</file>
         <file>themes/delicate_arch/image.png</file>
     </qresource>
+    <qresource prefix="/trekViewLevels">
+        <file>level1.json</file>
+        <file>level2.json</file>
+        <file>level3.json</file>
+        <file>level4.json</file>
+        <file>level5.json</file>
+    </qresource>
 </RCC>

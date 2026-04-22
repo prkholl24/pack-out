@@ -50,7 +50,7 @@ private:
     //Mainly used for initial level design.
     bool saveToFile = false;
     //True enables the world editor to create levels.
-    bool worldEdit = false;
+    bool worldEdit = true;
 
     //X and Y starting location of the player object
     //Stores the player's starting b2word (x,y) coordinates METERS BRUHH
@@ -139,8 +139,10 @@ private:
     //Curent level the game is on
     int currentLevel = 1;
 
-    QString FilePath = QCoreApplication::applicationDirPath()
-                           + "/level" + QString::number(currentLevel) + ".json";
+     // QString FilePath = QCoreApplication::applicationDirPath()
+     //                        + "/level" + QString::number(currentLevel) + ".json";
+
+    QString FilePath = "://trekViewLevels/level" + QString::number(currentLevel) + ".json";
     QString levelBackground = "LEVEL_1";
 
 

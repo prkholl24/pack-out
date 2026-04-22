@@ -60,7 +60,9 @@ void TrekBox2DPhysics::nextLevelSlot(int levelNo, bool timerState){
     clearWorldBodies();
 
 
-    FilePath = QCoreApplication::applicationDirPath() + "/level" + QString::number(currentLevel) + ".json";
+    // FilePath = QCoreApplication::applicationDirPath() + "/level" + QString::number(currentLevel) + ".json";
+
+    FilePath = "://trekViewLevels/level" + QString::number(currentLevel) + ".json";
 
     fromJsonLevel(FilePath);
 
