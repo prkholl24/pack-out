@@ -113,7 +113,11 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     // Add the shape to the body.
     body->CreateFixture(&fixtureDef);
 
+
+
+
     createPhysicsObjects();
+
 
     //nextLevelSlot(currentLevel);
 }
@@ -139,13 +143,10 @@ void TrekBox2DPhysics::nextLevelSlot(int levelNo){
 
     FilePath = QCoreApplication::applicationDirPath() + "/level" + QString::number(currentLevel) + ".json";
 
-
-
     fromJsonLevel(FilePath);
 
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
-
 
     bodyDef.position.Set(playerStartingPoint.x(), playerStartingPoint.y());
     std::cout << playerStartingPoint.x() << std::endl;
@@ -276,7 +277,7 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 }
 bool TrekBox2DPhysics::checkEndArea(int x, int y){
 
-    std::cout << "Player Pos X: " << x << " Y: " << y << std::endl;
+    //std::cout << "Player Pos X: " << x << " Y: " << y << std::endl;
 
     if ((x > endArea[0] && x < endArea[2]) && (y < endArea[1] && y > endArea[3])) {
         std::cout << "END AREA BRUH" << std::endl;
@@ -292,10 +293,6 @@ void TrekBox2DPhysics::updateWorldSlot(){
 
     if(body)
     {
-        //--------------------------------------DELETE LATER!!!!!!!!!!!!!!!
-        //DELETE LATER!!!!!!!!!!!!!----------------------------------------
-        emit sendCurrentLevelSignal(currentLevel);
-
 
         b2Vec2 currentPos = body->GetWorldCenter();
         b2Vec2 toTarget = targetPoint - currentPos;
@@ -322,7 +319,7 @@ void TrekBox2DPhysics::updateWorldSlot(){
         b2Vec2 position = body->GetPosition();
 
             if (checkEndArea(position.x * pixelsPerMeter,position.y * pixelsPerMeter)){
-                //emit moveToNextFrame();
+                emit moveToNextFrame();
                // nextLevelSlot(0);
             }
 
@@ -686,6 +683,12 @@ void TrekBox2DPhysics::worldEditorSlot(int key){
             }
 
             break;
+        }
+        //Update level background, for debugging purposes
+        case Qt::Key_U:
+        {
+            emit sendCurrentLevelSignal(currentLevel);
+
         }
 
     }
