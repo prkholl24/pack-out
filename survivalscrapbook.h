@@ -27,6 +27,14 @@ public:
      */
     void setLessons(const std::set<ScienceLesson>& lessons);
 
+    /**
+     * @brief Replaces the title (first) page with the current trek's brief.
+     *
+     * Mirrors the mission text shown on BriefView so the player has a
+     * quick reference while packing.
+     */
+    void setBriefDescription(const QString& description);
+
 signals:
     void visibilityChanged(bool visible);
 
@@ -52,7 +60,7 @@ private:
 
     std::vector<QString> pages;
     int currentPage;
-    const QString titlePage = "The Survival Handbook";
+    QString titlePage = "The Survival Handbook";
 };
 
 #endif // SURVIVALSCRAPBOOK_H

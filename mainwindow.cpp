@@ -175,8 +175,9 @@ void MainWindow::showBackpackScene()
     rebuildBackpackScene();
     resetAttemptState();
     if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size()) {
-        const LevelTheme theme = ThemeRegistry::themeFor(treks[currentTrekIndex]);
-        backpackScene->applyTheme(theme);
+        const Level& level = treks[currentTrekIndex];
+        backpackScene->applyTheme(ThemeRegistry::themeFor(level));
+        backpackScene->setLevelBrief(level.getDescription());
     }
     sceneStack->setCurrentWidget(backpackScene);
 }

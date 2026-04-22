@@ -300,6 +300,12 @@ void BackpackScene::setPlayer(Player* player)
     });
 }
 
+void BackpackScene::setLevelBrief(const QString& description)
+{
+    if (!scrapbook) return;
+    scrapbook->setBriefDescription(description);
+}
+
 BackpackScene::~BackpackScene()
 {
     world.SetContactListener(nullptr);

@@ -148,6 +148,14 @@ public:
      */
     void setPlayer(Player* player);
 
+    /**
+     * @brief Feeds the current trek's mission brief into the survival guide.
+     *
+     * The guide's cover page mirrors the BriefView description so the
+     * player can re-read the mission while packing.
+     */
+    void setLevelBrief(const QString& description);
+
 signals:
     /**
      * @brief Emitted once the Cinch & Go button exits the screen.

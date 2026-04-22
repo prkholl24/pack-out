@@ -72,7 +72,8 @@ SurvivalScrapbook::SurvivalScrapbook(QWidget* parent) : QWidget(parent)
         }
         #SurvivalScrapbook QLabel {
             color: #2b2112;
-            font-size: 14px;
+            font-size: 16px;
+            line-height: 1.4;
             background: transparent;
         }
         #SurvivalScrapbook QLabel#pageCountLabel {
@@ -112,6 +113,19 @@ SurvivalScrapbook::SurvivalScrapbook(QWidget* parent) : QWidget(parent)
 
     resize(400, 340);
     updateArrowState();
+}
+
+void SurvivalScrapbook::setBriefDescription(const QString& description)
+{
+    titlePage = QStringLiteral("<b>THE SURVIVAL HANDBOOK</b><br><br>%1")
+                    .arg(description.toHtmlEscaped().replace("\n", "<br>"));
+
+    if (!pages.empty()) {
+        pages[0] = titlePage;
+        if (currentPage == 0) {
+            textDisplay->setText(titlePage);
+        }
+    }
 }
 
 void SurvivalScrapbook::setLessons(const std::set<ScienceLesson>& lessons)
