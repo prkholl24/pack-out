@@ -1,0 +1,74 @@
+/* ==========================================================================
+   Pack-Out — global stylesheet
+   Loaded in main.cpp via QApplication::setStyleSheet.
+   Per-level themes are layered on top via view-level setStyleSheet().
+   ========================================================================== */
+
+* {
+    font-family: "Quicksand", "Nunito", "Segoe UI", sans-serif;
+}
+
+QWidget {
+    background: #F4EFE4;
+    color: #2A2A2A;
+    font-size: 18pt;
+}
+
+/* ---------- Buttons ------------------------------------------------------- */
+QPushButton {
+    background: #3E7A4F;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 36px;
+    padding: 12px 36px;
+    font-size: 22pt;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+QPushButton:hover   { background: #4F9764; }
+QPushButton:pressed { background: #2F5D3C; }
+QPushButton:disabled {
+    background: #B8C1B8;
+    color: #F4EFE4;
+}
+
+/* ---------- Read-only text panels ----------------------------------------- */
+QTextEdit {
+    background: #FFFDF8;
+    color: #2A2A2A;
+    border: 2px solid #C8BFA7;
+    border-radius: 14px;
+    padding: 20px;
+    font-size: 22pt;
+    selection-background-color: #3E7A4F;
+    selection-color: #FFFFFF;
+}
+
+/* ---------- Form labels / metadata --------------------------------------- */
+QLabel {
+    background: transparent;
+    color: #2A2A2A;
+}
+
+/* ---------- Progress bar -------------------------------------------------- */
+QProgressBar {
+    background: #E2D9C2;
+    border: none;
+    border-radius: 14px;
+    min-height: 28px;
+    max-height: 28px;
+}
+QProgressBar::chunk {
+    background: #3E7A4F;
+    border-radius: 14px;
+}
+
+/* ---------- Tooltips ------------------------------------------------------ */
+QToolTip {
+    background: #1E1E1E;
+    color: #F4EFE4;
+    border: 1px solid #3E7A4F;
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 14pt;
+}

@@ -24,6 +24,8 @@ class BriefView;
 class DebriefView;
 class TrekView;
 class Level;
+class MusicManager;
+class TitleScreen;
 
 /**
  * @class MainWindow
@@ -58,6 +60,11 @@ public:
     void evaluateTrek(int trekIndex);
 
 private slots:
+    /**
+     * @brief Switches to the TitleScreen.
+     */
+    void showTitleScreen();
+
     /**
      * @brief Switches to the BriefView.
      */
@@ -129,6 +136,16 @@ private:
      * @brief The post-level results view.
      */
     DebriefView* debriefView;
+
+    /**
+     * @brief The title / main-menu screen shown at launch.
+     */
+    TitleScreen* titleScreen;
+
+    /**
+     * @brief Per-level background music controller.
+     */
+    MusicManager* music;
 
     /**
      * @brief Mirrors bag contents by scene item name so removals can
