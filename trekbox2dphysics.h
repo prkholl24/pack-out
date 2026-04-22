@@ -45,7 +45,7 @@ public:
 
 private:
     //True if you want to load from a file at FilePath.
-    bool loadFromFile = true;
+    bool loadFromFile = false;
     //True if you want to save createPhysicsStructure to file
     //Mainly used for initial level design.
     bool saveToFile = false;
@@ -135,7 +135,7 @@ private:
     int maxLevel = 6;
 
     //Curent level the game is on
-    int currentLevel = 3;
+    int currentLevel = 1;
 
     QString FilePath = QCoreApplication::applicationDirPath()
                            + "/level" + QString::number(currentLevel) + ".json";

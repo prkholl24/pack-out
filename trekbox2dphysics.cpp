@@ -119,7 +119,7 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     createPhysicsObjects();
 
 
-    //nextLevelSlot(currentLevel);
+    nextLevelSlot(currentLevel);
 }
 
 TrekBox2DPhysics::~TrekBox2DPhysics(){
@@ -320,7 +320,8 @@ void TrekBox2DPhysics::updateWorldSlot(){
 
             if (checkEndArea(position.x * pixelsPerMeter,position.y * pixelsPerMeter)){
                 emit moveToNextFrame();
-               // nextLevelSlot(0);
+
+                nextLevelSlot(0);
             }
 
             QVector<PhysicsObjectDef> liveBody;
@@ -512,9 +513,6 @@ void TrekBox2DPhysics::worldEditorSlot(int key){
                     objectsVector.last().height += movementModifier;
 
                 }
-
-
-
                 createPhysicsObjects();
             }
             break;

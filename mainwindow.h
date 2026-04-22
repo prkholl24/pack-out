@@ -75,6 +75,7 @@ private slots:
      */
     void showTrekView();
 
+    void onTrekViewEnd();
 
     /**
      * @brief Switches to the BackpackScene.
@@ -107,6 +108,12 @@ private slots:
      * @param itemName The scene-level item identifier emitted by BackpackScene.
      */
     void handlePackedItemRemoved(const QString& itemName);
+
+
+
+signals:
+
+    void nextTrekViewLevel(int level);
 
 private:
     /** @brief Auto-generated form from mainwindow.ui. */

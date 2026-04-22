@@ -102,11 +102,21 @@ MainWindow::MainWindow(QWidget *parent)
     connect(&player, &Player::backpackChanged, this, &MainWindow::onBackpackChanged);
     connect(&player, &Player::statsChanged, this, &MainWindow::onStatsChanged);
 
+
+
     // Title screen -> Brief
     connect(titleScreen, &TitleScreen::playClicked, this, &MainWindow::showBriefView);
 
     // Connect BriefView's start button to transition to packing
     connect(briefView, &BriefView::startPackingClicked, this, &MainWindow::showBackpackScene);
+
+    connect(this, &MainWindow::nextTrekViewLevel, trekViewScene, &TrekView::nextLevelSlot);
+
+    connect(trekViewScene, &TrekView::nextSceneSignal, this, &MainWindow::onTrekViewEnd);
+
+
+
+   // connect(MainWindow)
 
     connectBackpackSceneSignals();
 
@@ -180,8 +190,14 @@ void MainWindow::showBriefView()
 
 void MainWindow::showTrekView(){
 
+    //emit nextTrekViewLevel(0);
     sceneStack->setCurrentWidget(trekViewScene);
 
+}
+
+void MainWindow::onTrekViewEnd(){
+
+   showDebriefView();
 }
 
 void MainWindow::showBackpackScene()
@@ -234,7 +250,7 @@ void MainWindow::handlePackedItemRemoved(const QString& itemName)
 
 void MainWindow::connectBackpackSceneSignals()
 {
-    connect(backpackScene, &BackpackScene::levelHasStarted, this, &MainWindow::showDebriefView);
+    connect(backpackScene, &BackpackScene::levelHasStarted, this, &MainWindow::showTrekView);
     connect(backpackScene, &BackpackScene::itemAddedToBag, this, &MainWindow::handlePackedItemAdded);
     connect(backpackScene, &BackpackScene::itemRemovedFromBag, this, &MainWindow::handlePackedItemRemoved);
 }

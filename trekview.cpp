@@ -25,6 +25,8 @@ TrekView::TrekView(QWidget *parent)
     //Connects getColor to openColorSelectorSlot in the view
     connect(phys, &TrekBox2DPhysics::getColorSignal, this, &TrekView::openColorSelectorSlot);
 
+    connect(phys, &TrekBox2DPhysics::moveToNextFrame, this, &TrekView::nextSceneSlot);
+
     //Connects updateMousePosition in view, to setMousePosition in physics
     connect(this, &TrekView::updatePhysicsMousePosition, phys, &TrekBox2DPhysics::setTargetFromMouse);
     //Connects: Sends key pressed to slot worldEditorSlot in TrekBox2DPhysics
@@ -32,6 +34,10 @@ TrekView::TrekView(QWidget *parent)
 
     //Connects sendSelectedColorSignal to setColorSlot in TrekBox2DPhysics
     connect(this, &TrekView::sendSelectedColorSignal, phys, &TrekBox2DPhysics::setColorSlot);
+
+    connect(this, &TrekView::nextLevelSignal, phys, &TrekBox2DPhysics::nextLevelSlot);
+
+
 
     connect(this, &TrekView::leftMouseButtonClickedSignal, phys, &TrekBox2DPhysics::leftMouseButtonClickedSlot);
     playerLevel = 1;
@@ -60,6 +66,14 @@ void TrekView::currentLevel(int level){
         //std::cout << "Updated Level to: " << level << std::endl;
 
     }
+}
+
+void TrekView::nextLevelSlot(int level){
+    emit nextLevelSignal(level);
+}
+
+void TrekView::nextSceneSlot(){
+    emit nextSceneSignal();
 }
 
 void TrekView::bodyDisplay(float x, float y){

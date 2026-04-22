@@ -64,8 +64,15 @@ public slots:
      *        for the world editor.
      */
     void openColorSelectorSlot();
+
+    void nextSceneSlot();
+
+    void nextLevelSlot(int level);
 signals:
 
+    void nextSceneSignal();
+
+    void nextLevelSignal(int level);
 
     //Signal which is heard by setTargetFromMouse slot
     //in the physics engine.
