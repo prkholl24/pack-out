@@ -67,12 +67,12 @@ public slots:
 
     void nextSceneSlot();
 
-    void nextLevelSlot(int level);
+    void nextLevelSlot(int level, bool timerState);
 signals:
 
     void nextSceneSignal();
 
-    void nextLevelSignal(int level);
+    void nextLevelSignal(int level, bool timerState);
 
     //Signal which is heard by setTargetFromMouse slot
     //in the physics engine.

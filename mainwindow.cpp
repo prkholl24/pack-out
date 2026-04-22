@@ -24,6 +24,9 @@
 
 #include "itemregistry.h"
 
+
+#include <iostream>
+
 namespace {
 
 Item* createPackedItemFromSceneName(const QString& itemName)
@@ -110,8 +113,10 @@ MainWindow::MainWindow(QWidget *parent)
     // Connect BriefView's start button to transition to packing
     connect(briefView, &BriefView::startPackingClicked, this, &MainWindow::showBackpackScene);
 
+    //Connect nextTrekViewLevel to the trek view slot, nextLevelSlot. Increments the trek view level
     connect(this, &MainWindow::nextTrekViewLevel, trekViewScene, &TrekView::nextLevelSlot);
 
+    //connects nextSceneSignal to the onTrekViewEnd slot. Moves to the next scene/view
     connect(trekViewScene, &TrekView::nextSceneSignal, this, &MainWindow::onTrekViewEnd);
 
 
@@ -133,6 +138,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Start on the title screen
     showTitleScreen();
+
+    //showTrekView();
 }
 
 MainWindow::~MainWindow()
@@ -190,7 +197,9 @@ void MainWindow::showBriefView()
 
 void MainWindow::showTrekView(){
 
-    //emit nextTrekViewLevel(0);
+    emit nextTrekViewLevel(currentTrekIndex+1, true);
+    //emit nextTrekViewLevel(3, true);
+
     sceneStack->setCurrentWidget(trekViewScene);
 
 }

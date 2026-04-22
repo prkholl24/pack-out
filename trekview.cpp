@@ -25,6 +25,7 @@ TrekView::TrekView(QWidget *parent)
     //Connects getColor to openColorSelectorSlot in the view
     connect(phys, &TrekBox2DPhysics::getColorSignal, this, &TrekView::openColorSelectorSlot);
 
+    //Connects moveToNextFrame in physics to nextSceneSlot in view
     connect(phys, &TrekBox2DPhysics::moveToNextFrame, this, &TrekView::nextSceneSlot);
 
     //Connects updateMousePosition in view, to setMousePosition in physics
@@ -35,6 +36,7 @@ TrekView::TrekView(QWidget *parent)
     //Connects sendSelectedColorSignal to setColorSlot in TrekBox2DPhysics
     connect(this, &TrekView::sendSelectedColorSignal, phys, &TrekBox2DPhysics::setColorSlot);
 
+    //Connects nextLevelSignal in view to nextLevelSlot in physics
     connect(this, &TrekView::nextLevelSignal, phys, &TrekBox2DPhysics::nextLevelSlot);
 
 
@@ -68,8 +70,8 @@ void TrekView::currentLevel(int level){
     }
 }
 
-void TrekView::nextLevelSlot(int level){
-    emit nextLevelSignal(level);
+void TrekView::nextLevelSlot(int level, bool timerState){
+    emit nextLevelSignal(level, timerState);
 }
 
 void TrekView::nextSceneSlot(){
@@ -142,7 +144,6 @@ void TrekView::paintEvent(QPaintEvent *event){
     //Paints the current background
     painter.drawPixmap(rect(), backgroundPixmap);
     painter.setBrush(Qt::blue);
-    // painter.drawEllipse(boxX - 50, boxY - 50, 90, 90);
     painter.setBrush(Qt::red);
 
     // if (!visualVector.empty()) {
@@ -150,7 +151,7 @@ void TrekView::paintEvent(QPaintEvent *event){
 
             QColor color(visual.color[0],visual.color[1],visual.color[2]);
             painter.setBrush(color);
-            //painter.setPen(Qt::NoPen);
+            painter.setPen(Qt::NoPen);
 
             painter.save();
 

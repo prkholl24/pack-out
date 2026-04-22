@@ -113,7 +113,7 @@ private slots:
 
 signals:
 
-    void nextTrekViewLevel(int level);
+    void nextTrekViewLevel(int level, bool timerState);
 
 private:
     /** @brief Auto-generated form from mainwindow.ui. */

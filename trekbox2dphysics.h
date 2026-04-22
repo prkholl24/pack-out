@@ -50,7 +50,7 @@ private:
     //Mainly used for initial level design.
     bool saveToFile = false;
     //True enables the world editor to create levels.
-    bool worldEdit = true;
+    bool worldEdit = false;
 
     //X and Y starting location of the player object
     //Stores the player's starting b2word (x,y) coordinates METERS BRUHH
@@ -70,6 +70,8 @@ private:
     QVector<int> currentColor = {255,0,0,0};
 
     void clearWorldBodies();
+
+    void createEssentialWorldBodies();
 
     /**
      * @brief removeLastPhysicsObject: Helper method removes the last
@@ -215,7 +217,7 @@ public slots:
      *        or goes to next level if levelNo is 0.
      * @param levelNo: What level to set to.
      */
-    void nextLevelSlot(int levelNo);
+    void nextLevelSlot(int levelNo, bool timerState);
 };
 
 #endif // TREKBOX2DPHYSICS_H

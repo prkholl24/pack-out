@@ -16,6 +16,7 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     if(loadFromFile){
     fromJsonLevel(FilePath);
     }
+
     connect(timer, &QTimer::timeout,this, &TrekBox2DPhysics::updateWorldSlot);
 
     timer->start(10);
@@ -30,7 +31,49 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
 
     }
 
+    //nextLevelSlot(currentLevel, false);
+}
 
+TrekBox2DPhysics::~TrekBox2DPhysics(){
+}
+
+
+
+void TrekBox2DPhysics::nextLevelSlot(int levelNo, bool timerState){
+    if(levelNo >= maxLevel){
+        return;
+    }
+    if(levelNo <= 0){
+        currentLevel++;
+    }else{
+    currentLevel = levelNo;
+    }
+
+    if(timerState){
+        timer->start();
+    }else{
+        timer->stop();
+    }
+
+    objectsVector.clear();
+    bodyVector.clear();
+    clearWorldBodies();
+
+
+    FilePath = QCoreApplication::applicationDirPath() + "/level" + QString::number(currentLevel) + ".json";
+
+    fromJsonLevel(FilePath);
+
+    createEssentialWorldBodies();
+
+    hasTarget = false;
+
+    emit sendCurrentLevelSignal(currentLevel);
+
+    createPhysicsObjects();
+}
+
+void TrekBox2DPhysics::createEssentialWorldBodies(){
 
     // Blueprint for a body. No actual body yet
     b2BodyDef groundBodyDef;
@@ -74,77 +117,6 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     right->CreateFixture(&shape, 0.0f);
 
 
-    // Define the dynamic body. We set its position and call the body factory.
-    //But it has no size, no collision, no physics properties
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_dynamicBody;
-
-
-    bodyDef.position.Set(playerStartingPoint.x(), playerStartingPoint.y());
-    std::cout << playerStartingPoint.x() << std::endl;
-    std::cout << playerStartingPoint.y() << std::endl;
-    body = world.CreateBody(&bodyDef);
-    PhysicsObjectDef temp;
-    temp.x = bodyDef.position.x;
-    temp.y = bodyDef.position.y;
-    temp.width = 50;
-    temp.height = 50;
-    bodyVector.append(qMakePair(temp,body));
-
-    // Define another box shape for our dynamic body.
-    b2CircleShape circle;
-    circle.m_radius = (temp.width * 0.5) / 20;
-    // dynamicCircle.SetAsBox(1.0f, 1.0f);
-
-
-    // Define the dynamic body geometry, size.
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &circle;
-
-    // Set the box density to be non-zero, so it will be dynamic.
-    fixtureDef.density = 1.0f;
-
-    // Override the default friction.
-    fixtureDef.friction = 0.3f;
-
-    //Bounce
-    fixtureDef.restitution = 0.9f;
-
-    // Add the shape to the body.
-    body->CreateFixture(&fixtureDef);
-
-
-
-
-    createPhysicsObjects();
-
-
-    nextLevelSlot(currentLevel);
-}
-
-TrekBox2DPhysics::~TrekBox2DPhysics(){
-}
-
-
-
-void TrekBox2DPhysics::nextLevelSlot(int levelNo){
-    if(levelNo >= maxLevel){
-        return;
-    }
-    if(levelNo <= 0){
-        currentLevel++;
-    }else{
-    currentLevel = levelNo;
-    }
-
-    objectsVector.clear();
-    bodyVector.clear();
-    clearWorldBodies();
-
-    FilePath = QCoreApplication::applicationDirPath() + "/level" + QString::number(currentLevel) + ".json";
-
-    fromJsonLevel(FilePath);
-
     b2BodyDef bodyDef;
     bodyDef.type = b2_dynamicBody;
 
@@ -180,13 +152,8 @@ void TrekBox2DPhysics::nextLevelSlot(int levelNo){
 
     // Add the shape to the body.
     body->CreateFixture(&fixtureDef);
-
-
-
-    emit sendCurrentLevelSignal(currentLevel);
-
-    createPhysicsObjects();
 }
+
 
 void TrekBox2DPhysics::clearWorldBodies(){
     b2Body* body = world.GetBodyList();
@@ -318,11 +285,10 @@ void TrekBox2DPhysics::updateWorldSlot(){
             //END GAME LOGIC
         b2Vec2 position = body->GetPosition();
 
-            if (checkEndArea(position.x * pixelsPerMeter,position.y * pixelsPerMeter)){
-                emit moveToNextFrame();
-
-                nextLevelSlot(0);
-            }
+        if (checkEndArea(position.x * pixelsPerMeter,position.y * pixelsPerMeter)){
+            emit moveToNextFrame();
+            timer->stop();
+        }
 
             QVector<PhysicsObjectDef> liveBody;
             for (auto& [def,vis] : bodyVector){
@@ -687,6 +653,13 @@ void TrekBox2DPhysics::worldEditorSlot(int key){
         {
             emit sendCurrentLevelSignal(currentLevel);
 
+        }
+        case Qt::Key_Y:
+        {
+
+            emit moveToNextFrame();
+            timer->stop();
+            break;
         }
 
     }
