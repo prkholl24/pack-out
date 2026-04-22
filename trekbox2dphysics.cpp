@@ -11,7 +11,7 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     , world(b2Vec2(0.0f,0.0f))
     , timer(new QTimer(this))
 {
-    //
+
 
     if(loadFromFile){
     fromJsonLevel(FilePath);
@@ -30,7 +30,7 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
 
     }
 
-    createPhysicsObjects();
+    //createPhysicsObjects();
 
 
     // Blueprint for a body. No actual body yet
@@ -112,9 +112,30 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
 
     // Add the shape to the body.
     body->CreateFixture(&fixtureDef);
+
+    createPhysicsObjects();
 }
 
 TrekBox2DPhysics::~TrekBox2DPhysics(){
+}
+
+void TrekBox2DPhysics::nextLevelSlot(int levelNo){
+    if(levelNo >= maxLevel){
+        return;
+    }
+    if(levelNo <= 0){
+        currentLevel++;
+    }else{
+    currentLevel = levelNo;
+    }
+
+    FilePath = QCoreApplication::applicationDirPath() + "/level" + QString::number(currentLevel) + ".json";
+
+    removeAllPhysicsObjects();
+
+    //More stuff must be done too :(
+
+    fromJsonLevel(FilePath);
 }
 
 b2Vec2 TrekBox2DPhysics::screenToWorld(const QPointF& p) const {
@@ -139,7 +160,7 @@ void TrekBox2DPhysics::setTargetFromMouse(const QPointF& mousePos){
     hasTarget = true;
 }
 
-void TrekBox2DPhysics::leftMouseButtonClickedSlot(bool clicked){
+void TrekBox2DPhysics::leftMouseButtonClickedSlot(){
     hasTarget = false;
 }
 
@@ -193,6 +214,8 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 }
 bool TrekBox2DPhysics::checkEndArea(int x, int y){
 
+   // std::cout << "Player Pos X: " << x << " Y: " << y << std::endl;
+
     if ((x > endArea[0] && x < endArea[2]) && (y < endArea[1] && y > endArea[3])) {
         std::cout << "END AREA BRUH" << std::endl;
         return true;
@@ -227,18 +250,10 @@ void TrekBox2DPhysics::updateWorldSlot(){
         world.Step(timeStep, velocityIterations, positionIterations);
 
 
-        if (body)
-        {
-
-
-            // (phys.width * 0.5f) / pixelsPerMeter
-
-            // emit loadVisualObjectsSignal(objectsVector);
-            // emit sendBodyLocation(screen.x(), screen.y());
-            // emit loadVisualObjectsSignal(objectsVector);
 
             //END GAME LOGIC
-            b2Vec2 position = bodyVector[0].second->GetPosition();
+        b2Vec2 position = body->GetPosition();
+
             if (checkEndArea(position.x * pixelsPerMeter,position.y * pixelsPerMeter)){
                 //EMIT ENDGAMESIGNAL
             }
@@ -255,11 +270,8 @@ void TrekBox2DPhysics::updateWorldSlot(){
                 tempBody.angle = vis->GetAngle() * 180.0f / 3.14159265f;
                 liveBody.append(tempBody);
             }
-
-
             emit loadVisualObjectsSignal(liveBody);
 
-        }
     }
 }
 
@@ -268,55 +280,8 @@ void TrekBox2DPhysics::updateWorldSlot(){
 void TrekBox2DPhysics::createPhysicsStructure(){
 
     if(!worldEdit){
-
-    //Width [-960,960]
-    //Height [540,-540] (bottom,top)
-
-    PhysicsObjectDef p1;
-    p1.type = "ABoxCuh";
-    p1.shapeType = "box";
-    p1.x = -275;
-    p1.y = 220;
-    p1.width = 1370;
-    p1.height = 50;
-    p1.angle = 0;
-    p1.isStatic = true;
-    p1.friction = 0.3f;
-    p1.restitution = 0.9f;
-
-    p1.color = {99,57,15,0};
-
-    objectsVector.append(p1);
-
-
-
-
-    // int y = 0;
-    // int x = -940;
-    // for(int i = 0; i < 5000; i++){
-
-    //     if(i%165 == 0){
-
-    //         y += 11;
-    //         x = -900;
-    //     }
-    //     PhysicsObjectDef p1;
-    //     p1.type = "ABoxCuh";
-    //     p1.shapeType = "circle";
-    //     p1.x = x;
-    //     p1.y = y;
-    //     p1.width = 10;
-    //     p1.height = 10;
-    //     p1.angle = 0;
-    //     p1.isStatic = false;
-    //     p1.friction = 0.3f;
-    //     p1.restitution = 0.9f;
-    //     p1.color = {99,57,15,0};
-    //     objectsVector.append(p1);
-
-    //     x+=11;
-    // }
-
+        //This is where objects can be added manually instead
+        //of using the level editor.
     }
 }
 
@@ -492,7 +457,7 @@ void TrekBox2DPhysics::worldEditorSlot(int key){
         }
         case Qt::Key_Down:
         {
-            if(objectAdded && (objectsVector.last().height > (movementModifier+1))){
+            if(objectAdded && ((objectsVector.last().height - movementModifier) >= 1)){
                 removeAllPhysicsObjects();
 
 
@@ -530,11 +495,13 @@ void TrekBox2DPhysics::worldEditorSlot(int key){
         }
         case Qt::Key_Left:
         {
-            if(objectAdded && (objectsVector.last().width > (movementModifier+1))){
+            if(objectAdded && ((objectsVector.last().width - movementModifier) >= 1)){
                 removeAllPhysicsObjects();
 
 
                 if(objectsVector.last().shapeType == "circle"){
+
+
                     objectsVector.last().height -= movementModifier;
                     objectsVector.last().width -= movementModifier;
 
@@ -551,6 +518,7 @@ void TrekBox2DPhysics::worldEditorSlot(int key){
         case Qt::Key_N:
         {
             objectAdded = false;
+            movementModifier = 8;
 
             break;
         }
@@ -562,7 +530,7 @@ void TrekBox2DPhysics::worldEditorSlot(int key){
                 removeAllPhysicsObjects();
 
 
-                objectsVector.last().angle += movementModifier/2;
+                objectsVector.last().angle += movementModifier;
 
                 createPhysicsObjects();
             }
@@ -576,7 +544,7 @@ void TrekBox2DPhysics::worldEditorSlot(int key){
                 removeAllPhysicsObjects();
 
 
-                objectsVector.last().angle -= movementModifier/2;
+                objectsVector.last().angle -= movementModifier;
 
                 createPhysicsObjects();
             }
@@ -618,13 +586,38 @@ void TrekBox2DPhysics::worldEditorSlot(int key){
         case Qt::Key_Return:
         {
 
-            if(objectsVector.size() > 0){
+            if(objectsVector.size() >= 0){
 
                 std::cout << "File Saved" << std::endl;
                 toJsonLevel(FilePath);
 
             }
 
+            break;
+        }
+        case Qt::Key_P:
+        {
+            movementModifier++;
+            std::cout << "Movement Modifier = " << movementModifier << std::endl;
+            break;
+        }
+        case Qt::Key_L:
+        {
+            if(movementModifier > 1){
+                movementModifier--;
+            }
+            std::cout << "Movement Modifier = " << movementModifier << std::endl;
+            break;
+        }
+        case Qt::Key_Backspace:
+        {
+            if(objectsVector.length() > 1){
+            objectsVector.removeLast();
+            removeAllPhysicsObjects();
+            createPhysicsObjects();
+            }
+
+            break;
         }
 
     }
@@ -665,7 +658,6 @@ void TrekBox2DPhysics::removeLastPhysicsObject(){
 
 void TrekBox2DPhysics::removeAllPhysicsObjects(){
     while(bodyVector.size() > 1){
-        std::cout << "removed another"<<std::endl;
         removeLastPhysicsObject();
     }
 

@@ -8,7 +8,6 @@
         <file>data/treks.json</file>
         <file>data/feedback.json</file>
         <file>data/tuning.json</file>
-        <file>BryceArchesBackground.jpg</file>
         <file>data/items.json</file>
         <file>sprites/BANANA.png</file>
         <file>sprites/BEAR_SPRAY.png</file>
@@ -43,5 +42,9 @@
         <file>sprites/WHISTLE.png</file>
         <file>sprites/WOOL_SHIRT.png</file>
         <file>sprites/ZIPLOC_BAG.png</file>
+        <file>BryceArchesBackground.jpg</file>
+        <file>images/FishLakeLoop.png</file>
+        <file>images/GlacierNP.png</file>
+        <file>images/LakeBlanche.png</file>
     </qresource>
 </RCC>

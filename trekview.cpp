@@ -35,6 +35,9 @@ TrekView::TrekView(QWidget *parent)
     playerLevel = 1;
 
     imageFilePaths.append("://BryceArchesBackground.jpg");
+    imageFilePaths.append("://images/FishLakeLoop.png");
+    imageFilePaths.append("://images/LakeBlanche.png");
+    imageFilePaths.append("://images/GlacierNP.png");
 
     backgroundPixmap.load(imageFilePaths[0]);
 
@@ -47,6 +50,10 @@ TrekView::~TrekView()
 
 void TrekView::currentLevel(int level){
     playerLevel = level;
+
+    if(imageFilePaths.length() >= playerLevel){
+        backgroundPixmap.load(imageFilePaths[playerLevel - 1]);
+    }
 }
 
 void TrekView::bodyDisplay(float x, float y){
@@ -72,7 +79,7 @@ void TrekView::mouseMoveEvent(QMouseEvent *event) {
 
 void TrekView::mouseReleaseEvent(QMouseEvent *event){
 
-    emit leftMouseButtonClickedSignal(false);
+    emit leftMouseButtonClickedSignal();
 }
 
 void TrekView::keyPressEvent(QKeyEvent* event){
@@ -123,6 +130,7 @@ void TrekView::paintEvent(QPaintEvent *event){
 
             QColor color(visual.color[0],visual.color[1],visual.color[2]);
             painter.setBrush(color);
+            painter.setPen(Qt::NoPen);
 
             painter.save();
 
@@ -130,31 +138,16 @@ void TrekView::paintEvent(QPaintEvent *event){
             //float angleDegrees = visual.angle * 180.0f / 3.14159269f;
             painter.rotate(-visual.angle);
 
-
             if(visual.shapeType == "box"){
-
-
-
                 painter.drawRect(-visual.width * 0.5f,
                                  -visual.height * 0.5f,
                                  visual.width,
                                  visual.height);
-
-
-             //   painter.drawRect(visual.x - (visual.width * 0.5f), visual.y - (visual.height * 0.5f), visual.width, visual.height);
-
-
-
             }else {
-
-
                 painter.drawEllipse(-visual.width * 0.5f,
                                     -visual.height * 0.5f,
                                     visual.width,
                                     visual.height);
-               // QColor color(visual.color[0],visual.color[1],visual.color[2]);
-               // painter.setBrush(color);
-               // painter.drawEllipse(visual.x - (visual.width * 0.5f), visual.y - (visual.height * 0.5f), visual.width, visual.height);
 
             }
 

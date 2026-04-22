@@ -45,27 +45,26 @@ public:
 
 private:
     //True if you want to load from a file at FilePath.
-    bool loadFromFile = true;
+    bool loadFromFile = false;
     //True if you want to save createPhysicsStructure to file
     //Mainly used for initial level design.
     bool saveToFile = false;
     //True enables the world editor to create levels.
-    bool worldEdit = false;
+    bool worldEdit = true;
 
     //X and Y starting location of the player object
     //Stores the player's starting b2word (x,y) coordinates METERS BRUHH
     QPoint playerStartingPoint = QPoint(-48,19);
 
     //Sets the end area
-    // QPair<QPoint,QPoint> endArea = qMakePair(QPoint(0,0),QPoint(50,50));
-    // top left(x,y) bottom right(x,y)
-    QVector<int> endArea = {800,540,960,-540};
+    // top left(x,y) bottom right(x,y) of end box
+    QVector<int> endArea = {890,-100,960,-540};
 
     //World Editor Variables/Helper methods-----------
     bool objectAdded = false;
 
     //Value objects are moved/resized by
-    int movementModifier = 10;
+    int movementModifier = 5;
 
     //Current object color.
     QVector<int> currentColor = {255,0,0,0};
@@ -130,8 +129,12 @@ private:
     //Height in pixels of the overall widget
     int widgetHeight = 1080;
 
-    //SUBJECT TO CHANGE
-    int currentLevel = 1;
+    //Maximum levels that have been made
+    int maxLevel = 5;
+
+    //Curent level the game is on
+    int currentLevel = 2;
+
     QString FilePath = QCoreApplication::applicationDirPath()
                            + "/level" + QString::number(currentLevel) + ".json";
     QString levelBackground = "LEVEL_1";
@@ -180,13 +183,34 @@ public slots:
      */
     void worldEditorSlot(int key);
 
+    /**
+     * @brief setColorSlot: Sets the object color to the color sent
+     * @param color: Color expressed as a vector
+     */
     void setColorSlot(QVector<int> color);
 
+    /**
+     * @brief setTargetFromMouse: Sets the target point for the player based on the mouse position
+     * @param mousePos: Mouse position in screen coordinates
+     */
     void setTargetFromMouse(const QPointF& mousePos);
 
+    /**
+     * @brief updateWorldSlot:: Updates the box2D world and passed visual values to view to be drawn
+     */
     void updateWorldSlot();
 
-    void leftMouseButtonClickedSlot(bool clicked);
+    /**
+     * @brief leftMouseButtonClickedSlot: Called when the LMB is released
+     */
+    void leftMouseButtonClickedSlot();
+
+    /**
+     * @brief nextLevelSlot: Advances to the level passed as an int
+     *        or goes to next level if levelNo is 0.
+     * @param levelNo: What level to set to.
+     */
+    void nextLevelSlot(int levelNo);
 };
 
 #endif // TREKBOX2DPHYSICS_H

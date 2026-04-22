@@ -71,7 +71,7 @@ signals:
     //in the physics engine.
     void updatePhysicsMousePosition(QPointF position);
 
-    void leftMouseButtonClickedSignal(bool clicked);
+    void leftMouseButtonClickedSignal();
 
     /**
      * @brief sendKeyPressedSignal: Sends the pressed key
