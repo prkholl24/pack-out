@@ -2,6 +2,8 @@
 #define SURVIVALSCRAPBOOK_H
 
 #include <QString>
+#include <QHideEvent>
+#include <QShowEvent>
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>
@@ -25,12 +27,19 @@ public:
      */
     void setLessons(const std::set<ScienceLesson>& lessons);
 
+signals:
+    void visibilityChanged(bool visible);
+
 public slots:
     void toggleVisibility();
 
 private slots:
     void onLeftClicked();
     void onRightClicked();
+
+protected:
+    void showEvent(QShowEvent* event) override;
+    void hideEvent(QHideEvent* event) override;
 
 private:
     void updateArrowState();
@@ -39,6 +48,7 @@ private:
     QPushButton *rightButton;
     QPushButton *closeButton;
     QLabel *textDisplay;
+    QLabel *pageCountLabel;
 
     std::vector<QString> pages;
     int currentPage;

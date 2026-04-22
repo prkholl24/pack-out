@@ -271,6 +271,7 @@ private:
     // -----------------------------------------------------------------
     //  Scene construction helpers
     // -----------------------------------------------------------------
+    void refreshSurvivalGuideButtonStyle();
     void createBackpack();
     void createTabs();
     void createCinchAndGoButton();

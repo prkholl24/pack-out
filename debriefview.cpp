@@ -40,11 +40,12 @@ void DebriefView::setResults(const LevelResult& result) {
 
     lastPassed = result.passed;
     ui->statusLabel->setText(result.passed ? "PASSED" : "FAILED");
+    ui->nextLevelButton->setVisible(result.passed);
     refreshStatusColor();
 
-    // Generate and display the feedback report.
+    // Generate and display the feedback report (HTML with bolded headers).
     QString report = LevelReportBuilder::buildReport(result);
-    ui->feedbackTextEdit->setText(report);
+    ui->feedbackTextEdit->setHtml(report);
 
     // Fulfill the "added to your survival guide" promise in the report text.
     if (player) player->unlockLesson(result.lessonCode);

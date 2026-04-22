@@ -219,20 +219,52 @@ BackpackScene::BackpackScene(const QStringList& availableItems, QWidget *parent)
     showCategory("food");
 
     // --- Survival guide overlay ---
-    survivalTipsButton = new QPushButton("Survival Tips", this);
-    survivalTipsButton->setFixedSize(120, 30);
-    survivalTipsButton->move(10, 10);
-    survivalTipsButton->raise();
+    // Keep both the guide toggle and the scrapbook inside the reserved
+    // top-left slot so the panel opens where planned and the toggle
+    // remains reachable while the guide is open.
+    constexpr int guideInsetPx = 16;
+    constexpr int guideGapPx = 8;
+    constexpr int guideButtonWidthPx = 200;
+    constexpr int guideButtonHeightPx = 32;
+    const int guidePanelX = kGuideReservedRect.left() + guideInsetPx;
+    const int guidePanelY =
+        kGuideReservedRect.top() + guideInsetPx + guideButtonHeightPx + guideGapPx;
+    const int guidePanelWidth = kGuideReservedRect.width() - (guideInsetPx * 2);
+    const int guidePanelHeight =
+        kGuideReservedRect.height() - (guideInsetPx * 2) - guideButtonHeightPx - guideGapPx;
 
+    survivalTipsButton = new QPushButton("Show Survival Guide", this);
+    survivalTipsButton->setCheckable(true);
+    survivalTipsButton->setFixedSize(guideButtonWidthPx, guideButtonHeightPx);
+    survivalTipsButton->move(kGuideReservedRect.left() + guideInsetPx,
+                             kGuideReservedRect.top() + guideInsetPx);
+    survivalTipsButton->setCursor(Qt::PointingHandCursor);
+    refreshSurvivalGuideButtonStyle();
     scrapbook = new SurvivalScrapbook(this);
-    scrapbook->move((WINDOW_WIDTH_PX - scrapbook->width()) / 2,
-                    (WINDOW_HEIGHT_PX - scrapbook->height()) / 2);
+    scrapbook->setGeometry(guidePanelX, guidePanelY, guidePanelWidth, guidePanelHeight);
     scrapbook->hide();
 
-    connect(survivalTipsButton, &QPushButton::clicked, this, [this]() {
-        scrapbook->show();
-        scrapbook->raise();
+    connect(survivalTipsButton, &QPushButton::toggled, this, [this](bool isOpen) {
+        survivalTipsButton->setText(isOpen ? "Hide Survival Guide" : "Show Survival Guide");
+        scrapbook->setVisible(isOpen);
+        if (isOpen) {
+            scrapbook->raise();
+        }
+        survivalTipsButton->raise();
     });
+    connect(scrapbook, &SurvivalScrapbook::visibilityChanged, this, [this](bool isVisible) {
+        if (survivalTipsButton->isChecked() != isVisible) {
+            survivalTipsButton->setChecked(isVisible);
+            return;
+        }
+
+        survivalTipsButton->setText(isVisible ? "Hide Survival Guide" : "Show Survival Guide");
+        if (isVisible) {
+            scrapbook->raise();
+        }
+        survivalTipsButton->raise();
+    });
+    survivalTipsButton->raise();
 
     // Enable mouse tracking for hover tooltips
     setMouseTracking(true);
@@ -240,6 +272,23 @@ BackpackScene::BackpackScene(const QStringList& availableItems, QWidget *parent)
     // --- Game loop ---
     connect(timer, &QTimer::timeout, this, &BackpackScene::updatePhysics);
     timer->start(1000 / REFRESH_RATE);
+}
+
+void BackpackScene::refreshSurvivalGuideButtonStyle()
+{
+    if (!survivalTipsButton) return;
+
+    survivalTipsButton->setStyleSheet(QString(
+        "QPushButton { background: %1; color: %2; border: none; "
+        "border-radius: 16px; padding: 6px 18px; font-size: 12px; "
+        "font-weight: 700; letter-spacing: 0.5px; }"
+        "QPushButton:hover { background: %3; }"
+        "QPushButton:checked { background: %4; color: %2; }"
+        "QPushButton:pressed { background: %4; }"
+        ).arg(themePrimary.name(),
+              themeOnPrim.name(),
+              themePrimary.lighter(120).name(),
+              themePrimary.darker(120).name()));
 }
 
 void BackpackScene::setPlayer(Player* player)
@@ -954,5 +1003,6 @@ void BackpackScene::applyTheme(const LevelTheme& theme)
     themeSecondary = theme.accent.lighter(160);
     themeOnPrim    = QColor("#FFFFFF");
     themeOnSurface = QColor("#2A2A2A");
+    refreshSurvivalGuideButtonStyle();
     update();
 }
