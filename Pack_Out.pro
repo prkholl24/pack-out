@@ -73,6 +73,7 @@ SOURCES += \
     gearcheck.cpp \
     trekrules.cpp \
     itemregistry.cpp \
+    survivalscrapbook.cpp \
     spritecache.cpp \
     titlescreen.cpp \
     themeregistry.cpp \
@@ -150,7 +151,8 @@ HEADERS += \
     titlescreen.h \
     theme.h \
     themeregistry.h \
-    musicmanager.h
+    musicmanager.h \
+    survivalscrapbook.h
 
 FORMS += \
     backpack.ui \

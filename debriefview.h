@@ -19,6 +19,8 @@
 #include <QWidget>
 #include "levelresult.h"
 
+class Player;
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class DebriefView; }
 QT_END_NAMESPACE
@@ -34,6 +36,15 @@ public:
     void setResults(const LevelResult& result);
     void applyTheme(const LevelTheme& theme);
 
+    /**
+     * @brief Associates a Player with this view.
+     *
+     * The Player is notified of unlocked lessons as setResults() runs,
+     * so the survival guide mirrors the debrief's "added to your
+     * survival guide" narrative.
+     */
+    void setPlayer(Player* player);
+
 signals:
     void retryLevelClicked();
     void nextLevelClicked();
@@ -48,6 +59,9 @@ private:
     Ui::DebriefView* ui;
     QColor themeAccent = QColor("#3E7A4F");
     bool lastPassed = false;
+
+    /** @brief Non-owning pointer used to unlock lessons; may be null. */
+    Player* player = nullptr;
 };
 
 #endif // DEBRIEFVIEW_H

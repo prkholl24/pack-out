@@ -19,6 +19,7 @@
 #include "theme.h"
 #include "ui_backpack.h"
 #include "itemregistry.h"
+#include "player.h"
 
 #include <QColor>
 #include <QFont>
@@ -217,12 +218,37 @@ BackpackScene::BackpackScene(const QStringList& availableItems, QWidget *parent)
     createTabs();
     showCategory("food");
 
+    // --- Survival guide overlay ---
+    survivalTipsButton = new QPushButton("Survival Tips", this);
+    survivalTipsButton->setFixedSize(120, 30);
+    survivalTipsButton->move(10, 10);
+    survivalTipsButton->raise();
+
+    scrapbook = new SurvivalScrapbook(this);
+    scrapbook->move((WINDOW_WIDTH_PX - scrapbook->width()) / 2,
+                    (WINDOW_HEIGHT_PX - scrapbook->height()) / 2);
+    scrapbook->hide();
+
+    connect(survivalTipsButton, &QPushButton::clicked, this, [this]() {
+        scrapbook->show();
+        scrapbook->raise();
+    });
+
     // Enable mouse tracking for hover tooltips
     setMouseTracking(true);
 
     // --- Game loop ---
     connect(timer, &QTimer::timeout, this, &BackpackScene::updatePhysics);
     timer->start(1000 / REFRESH_RATE);
+}
+
+void BackpackScene::setPlayer(Player* player)
+{
+    if (!player || !scrapbook) return;
+    scrapbook->setLessons(player->getUnlockedLessons());
+    connect(player, &Player::lessonsChanged, this, [this, player]() {
+        scrapbook->setLessons(player->getUnlockedLessons());
+    });
 }
 
 BackpackScene::~BackpackScene()

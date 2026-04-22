@@ -12,6 +12,7 @@
 #include "ui_debriefview.h"
 #include "levelreportbuilder.h"
 #include "theme.h"
+#include "player.h"
 
 #include <QPainter>
 #include <QtGlobal>
@@ -41,7 +42,17 @@ void DebriefView::setResults(const LevelResult& result) {
     ui->statusLabel->setText(result.passed ? "PASSED" : "FAILED");
     refreshStatusColor();
 
-    ui->feedbackTextEdit->setText(LevelReportBuilder::buildReport(result));
+    // Generate and display the feedback report.
+    QString report = LevelReportBuilder::buildReport(result);
+    ui->feedbackTextEdit->setText(report);
+
+    // Fulfill the "added to your survival guide" promise in the report text.
+    if (player) player->unlockLesson(result.lessonCode);
+}
+
+void DebriefView::setPlayer(Player* p)
+{
+    player = p;
 }
 
 void DebriefView::applyTheme(const LevelTheme& theme) {
