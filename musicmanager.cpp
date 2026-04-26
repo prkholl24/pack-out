@@ -6,6 +6,7 @@
 #include "theme.h"
 
 #include <QAudioOutput>
+#include <QDebug>
 #include <QFile>
 #include <QMediaPlayer>
 #include <QUrl>
@@ -23,24 +24,32 @@ MusicManager::MusicManager(QObject* parent)
 MusicManager::~MusicManager() = default;
 
 void MusicManager::playForTheme(const LevelTheme& theme) {
+    qDebug() << "[Music] playForTheme called, path:" << theme.musicPath;
+
     if (theme.musicPath.isEmpty()) {
+        qDebug() << "[Music] Empty path, stopping";
         stop();
         return;
     }
 
     // Already playing this track — leave it alone (avoids a hitch on retries).
-    if (theme.musicPath == currentPath && player->playbackState() == QMediaPlayer::PlayingState)
+    if (theme.musicPath == currentPath && player->playbackState() == QMediaPlayer::PlayingState) {
+        qDebug() << "[Music] Already playing, skipping";
         return;
+    }
 
     // If the resource is missing, fail silently.
     if (theme.musicPath.startsWith(":/") && !QFile::exists(theme.musicPath)) {
+        qDebug() << "[Music] Resource missing:" << theme.musicPath;
         stop();
         return;
     }
 
     currentPath = theme.musicPath;
     player->stop();
-    player->setSource(QUrl("qrc" + theme.musicPath));
+    QUrl url("qrc" + theme.musicPath);
+    qDebug() << "[Music] Playing:" << url;
+    player->setSource(url);
     player->play();
 }
 

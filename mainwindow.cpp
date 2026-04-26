@@ -202,8 +202,9 @@ void MainWindow::onStatsChanged(double weight, double volume)
 
 void MainWindow::showTitleScreen()
 {
-    if (music) music->stop();
-    titleScreen->applyTheme(ThemeRegistry::titleTheme());
+    const LevelTheme theme = ThemeRegistry::titleTheme();
+    titleScreen->applyTheme(theme);
+    if (music) music->playForTheme(theme);
     sceneStack->setCurrentWidget(titleScreen);
 }
 

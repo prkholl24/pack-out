@@ -345,9 +345,9 @@
                 ]
             }
         },
-        "POCKET_KNIFE": {
+        "MULTI_TOOL": {
             "weight": 0.30, "volume": 0.1, "category": "KNIFE_TOOL",
-            "description": "A versatile tool for various tasks.",
+            "description": "Knife, pliers, screwdriver in one. Required for 10 Essentials (Tool category).",
             "shape": {
                 "color": "#AA3333",
                 "density": 3.0,

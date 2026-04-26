@@ -119,7 +119,7 @@ QString LevelReportBuilder::buildSummaryReport(const LevelResult& result)
 {
     QString report;
     report += "<b>Backpack Report</b><br>";
-    report += "Grade: " + QString::number(result.grade, 'f', 1) + "/100<br>";
+    report += "Grade: " + QString::number(result.grade, 'f', 1) + "<br>";
     report += "Weight: " + QString::number(result.totals.weightLbs, 'f', 1) + " lbs<br>";
     report += "Volume: " + QString::number(result.totals.volume, 'f', 1) + " / " + QString::number(result.maxVolume, 'f', 1) + " L<br>";
 

@@ -493,6 +493,10 @@ void BackpackScene::paintEvent(QPaintEvent *event)
             QString tip = itemName.toLower().replace("_", " ");
             tip[0] = tip[0].toUpper();
             tip += QString("\nWeight: %1 lbs  Vol: %2 L").arg(stats.weight, 0, 'f', 2).arg(stats.volume, 0, 'f', 1);
+            if (cat == "food" && stats.nutrition.calories > 0)
+                tip += QString("\nCalories: %1").arg(static_cast<int>(stats.nutrition.calories));
+            if (cat == "drink" && stats.nutrition.hydrationOz > 0)
+                tip += QString("\nHydration: %1 oz").arg(static_cast<int>(stats.nutrition.hydrationOz));
             if (!stats.description.isEmpty())
                 tip += "\n" + stats.description;
 
