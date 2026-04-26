@@ -255,6 +255,7 @@ void MainWindow::showDebriefView()
         debriefView->setResults(result);
         debriefView->applyTheme(ThemeRegistry::themeFor(level));
     }
+    if (music) music->playForTheme(ThemeRegistry::titleTheme());
     sceneStack->setCurrentWidget(debriefView);
 }
 
