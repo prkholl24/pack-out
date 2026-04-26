@@ -51,14 +51,6 @@
             "primary": "#2E5744",
             "image": ":/themes/olympic_rain/image.png",
             "music": ":/themes/olympic_rain/music.ogg"
-        },
-        {
-            "slug": "olympic_snow",
-            "location": "Olympic National Park",
-            "weather": "SNOW",
-            "primary": "#3B4A5E",
-            "image": ":/themes/olympic_snow/image.png",
-            "music": ":/themes/olympic_snow/music.ogg"
         }
     ]
 }

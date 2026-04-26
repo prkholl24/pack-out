@@ -52,6 +52,10 @@
         <file>images/LakeBlanche.png</file>
         <file>images/OlympicNP.png</file>
         <file>themes/delicate_arch/image.png</file>
+        <file>themes/fish_lake_loop/image.png</file>
+        <file>themes/lake_blanche/image.png</file>
+        <file>themes/glacier/image.png</file>
+        <file>themes/olympic_rain/image.png</file>
     </qresource>
     <qresource prefix="/trekViewLevels">
         <file>level1.json</file>

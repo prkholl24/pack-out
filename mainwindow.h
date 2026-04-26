@@ -17,6 +17,7 @@ namespace Ui {
 class MainWindow;
 }
 class QStackedWidget;
+class QPushButton;
 QT_END_NAMESPACE
 
 class BackpackScene;
@@ -46,6 +47,9 @@ public:
      * @brief Destroys the main window and its UI form.
      */
     ~MainWindow();
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 
     /**
      * @brief Adds an item to the player's current backpack.
@@ -194,5 +198,14 @@ private:
      * @brief Advances to the next available level, if any.
      */
     void advanceToNextLevel();
+
+    /**
+     * @brief Debug skip button for testing scene flow.
+     */
+    void debugSkipToNextScene();
+
+#ifdef QT_DEBUG
+    QPushButton* debugSkipBtn;
+#endif
 };
 #endif // MAINWINDOW_H

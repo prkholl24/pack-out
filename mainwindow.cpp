@@ -19,6 +19,8 @@
 #include "trekview.h"
 
 #include <QMenuBar>
+#include <QPushButton>
+#include <QResizeEvent>
 #include <QStackedWidget>
 #include <QStatusBar>
 
@@ -140,11 +142,33 @@ MainWindow::MainWindow(QWidget *parent)
     showTitleScreen();
 
     //showTrekView();
+
+#ifdef QT_DEBUG
+    debugSkipBtn = new QPushButton("»", this);
+    debugSkipBtn->setFixedSize(32, 32);
+    debugSkipBtn->setStyleSheet(
+        "QPushButton { background: rgba(0,0,0,0.3); color: #888; border: none; "
+        "border-radius: 4px; font-size: 16px; } "
+        "QPushButton:hover { background: rgba(0,0,0,0.5); color: #fff; }");
+    debugSkipBtn->raise();
+    connect(debugSkipBtn, &QPushButton::clicked, this, &MainWindow::debugSkipToNextScene);
+#endif
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+    QMainWindow::resizeEvent(event);
+#ifdef QT_DEBUG
+    if (debugSkipBtn) {
+        debugSkipBtn->move(width() - debugSkipBtn->width() - 8,
+                           height() - debugSkipBtn->height() - 8);
+    }
+#endif
 }
 
 void MainWindow::addPackItem(Item* item)
@@ -293,4 +317,23 @@ void MainWindow::advanceToNextLevel()
     if (currentTrekIndex < (int)treks.size() - 1) {
         currentTrekIndex++;
     }
+}
+
+void MainWindow::debugSkipToNextScene()
+{
+#ifdef QT_DEBUG
+    QWidget* current = sceneStack->currentWidget();
+    if (current == titleScreen) {
+        showBriefView();
+    } else if (current == briefView) {
+        showBackpackScene();
+    } else if (current == backpackScene) {
+        showTrekView();
+    } else if (current == trekViewScene) {
+        showDebriefView();
+    } else if (current == debriefView) {
+        advanceToNextLevel();
+        showBriefView();
+    }
+#endif
 }
