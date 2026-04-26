@@ -324,8 +324,8 @@ void BackpackScene::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    // Keep the packing scene background neutral and low-contrast.
-    painter.fillRect(rect(), QColor("#b0acae"));
+    // Cream background matching level briefs.
+    painter.fillRect(rect(), QColor("#F4EFE4"));
 
     // Themed inset border around the scene.
     QPen borderPen(themePrimary.darker(115));

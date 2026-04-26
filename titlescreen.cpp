@@ -32,7 +32,7 @@ void TitleScreen::applyTheme(const LevelTheme& theme) {
     const QString ac = theme.accent.name();
 
     ui->titleLabel->setStyleSheet(
-        QString("background: transparent; color: #FFFFFF; letter-spacing: 4px;"));
+        QString("background: transparent; color: #FFFFFF; letter-spacing: 4px; font-size: 160pt; font-weight: bold;"));
     ui->tagLineLabel->setStyleSheet(
         QString("background: transparent; color: rgba(255,255,255,180);"));
     ui->introTextEdit->setStyleSheet(QString(
