@@ -132,8 +132,13 @@ MainWindow::MainWindow(QWidget *parent)
         showBriefView();
     });
     connect(debriefView, &DebriefView::nextLevelClicked, this, [this]() {
-        advanceToNextLevel();
-        showBriefView();
+        if (currentTrekIndex >= (int)treks.size() - 1) {
+            currentTrekIndex = 0;
+            showTitleScreen();
+        } else {
+            advanceToNextLevel();
+            showBriefView();
+        }
     });
     connect(debriefView, &DebriefView::returnToMenuClicked,
             this, &MainWindow::showTitleScreen);
@@ -334,8 +339,13 @@ void MainWindow::debugSkipToNextScene()
     } else if (current == trekViewScene) {
         showDebriefView();
     } else if (current == debriefView) {
-        advanceToNextLevel();
-        showBriefView();
+        if (currentTrekIndex >= (int)treks.size() - 1) {
+            currentTrekIndex = 0;
+            showTitleScreen();
+        } else {
+            advanceToNextLevel();
+            showBriefView();
+        }
     }
 #endif
 }
