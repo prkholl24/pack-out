@@ -10,6 +10,12 @@
 #include "trekrules.h"
 #include <algorithm>
 
+namespace {
+constexpr double OVERPACK_GRACE_RATIO = 1.10;
+constexpr double OVERPACK_MAX_RATIO = 1.50;
+constexpr double OVERPACK_MAX_DEDUCTION = 25.0;
+}
+
 Level::Level() : requirements(TripRequirements{}) {}
 Level::Level(const TripRequirements& req) : requirements(req) {}
 
@@ -97,12 +103,14 @@ void Level::applyEvaluationScoring(LevelResult& result) const
 {
     double norm = TrekRules::get("scoring", "normalization_factor");
     double perfect = TrekRules::get("scoring", "perfect_score");
+    double calorieOverpack = calculateOverpackDeduction(result.totals.calories, result.requiredCalories);
+    double hydrationOverpack = calculateOverpackDeduction(result.totals.effectiveHydration, result.requiredHydration);
 
     // If customCalories is 0, we are in a hydration-only level.
     // We ignore calorie scoring entirely.
     if (requirements.customCalories == 0) {
         double hScore = calculateHydrationScore(result.totals.effectiveHydration, result.requiredHydration);
-        result.grade = hScore * norm;
+        result.grade = (hScore * norm) - hydrationOverpack;
     } else {
         double eScore = calculateEnergyScore(result.totals.calories, result.requiredCalories, result.totals.sugar);
         double hScore = calculateHydrationScore(result.totals.effectiveHydration, result.requiredHydration);
@@ -111,6 +119,9 @@ void Level::applyEvaluationScoring(LevelResult& result) const
         else if (result.requiredCalories > 0) result.grade = eScore * norm;
         else if (result.requiredHydration > 0) result.grade = hScore * norm;
         else result.grade = perfect;
+
+        result.grade -= calorieOverpack;
+        result.grade -= hydrationOverpack;
     }
 }
 
@@ -124,7 +135,9 @@ void Level::applyEvaluationPenalties(LevelResult& result) const
 
     if (result.leftTrashBehind) result.grade *= TrekRules::get("penalties", "lnt_violation");
     if (result.missingEssentials) result.grade *= TrekRules::get("penalties", "missing_essentials");
-    
+
+    double perfect = TrekRules::get("scoring", "perfect_score");
+    result.grade = std::clamp(result.grade, 0.0, perfect);
     result.passed = result.grade >= requirements.passingScore;
 }
 
@@ -163,7 +176,7 @@ double Level::calculateEnergyScore(double calories, double required, double suga
     double threshold = TrekRules::get("health_thresholds", "sugar_penalty_threshold");
     double factor = TrekRules::get("penalties", "sugar_crash_factor");
 
-    double score = (calories / required) * weight;
+    double score = std::min((calories / required) * weight, weight);
     if (sugar > threshold) score -= (sugar - threshold) * factor;
     return score;
 }
@@ -174,6 +187,19 @@ double Level::calculateHydrationScore(double effective, double required) const
     double weight = TrekRules::get("scoring", "hydration_score_weight");
     double score = (effective / required) * weight;
     return std::min(score, weight);
+}
+
+double Level::calculateOverpackDeduction(double actual, double required) const
+{
+    if (required <= 0.0) return 0.0;
+
+    double ratio = actual / required;
+    if (ratio <= OVERPACK_GRACE_RATIO) {
+        return 0.0;
+    }
+
+    double scaled = (ratio - OVERPACK_GRACE_RATIO) / (OVERPACK_MAX_RATIO - OVERPACK_GRACE_RATIO);
+    return std::clamp(scaled, 0.0, 1.0) * OVERPACK_MAX_DEDUCTION;
 }
 
 ScienceLesson Level::determineScienceLesson(const LevelResult& result) const
@@ -207,9 +233,8 @@ ScienceLesson Level::determineScienceLesson(const LevelResult& result) const
     
     // HYDRATION SCIENCE: Prioritize interference (diuretics) over basic dehydration
     else if (isHighCaffeine || isAlcohol) trueLesson = ScienceLesson::HYDRATION_DIURETICS;
+    else if (result.totals.sodium > 2300.0 && isDehydrated) trueLesson = ScienceLesson::SODIUM_HYDRATION_LOAD;
     else if (isDehydrated) trueLesson = ScienceLesson::HYDRATION_BASICS;
-    
-    else if (result.totals.sodium > 2300.0) trueLesson = ScienceLesson::SODIUM_HYDRATION_LOAD;
     else if (result.totals.sugar > 50.0 && result.totals.fiber < 10.0) trueLesson = ScienceLesson::FIBER_ENERGY_STABILITY;
     else {
         double bmrRatio = TrekRules::get("health_thresholds", "starving_bmr_ratio_threshold");
