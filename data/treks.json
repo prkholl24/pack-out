@@ -14,7 +14,7 @@
         "skipGearCheck": true,
         "availableItems": [
             "BANANA", "GRANOLA_BAR",
-            "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "SODA",
+            "WATER_BOTTLE", "SPORTS_DRINK", "SODA",
             "HAT", "SUNSCREEN", "TRASH_BAG"
         ]
     },
@@ -32,7 +32,7 @@
         "skipGearCheck": true,
         "availableItems": [
             "WATER_BOTTLE", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
-            "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "BEEF_JERKY", "MIXED_NUTS", "PEANUT_BUTTER_SANDWICH"
+            "BANANA", "GRANOLA_BAR", "TRAIL_MIX", "BEEF_JERKY", "MIXED_NUTS", "PEANUT_BUTTER_SANDWICH", "WATER_CAMELBAK"
         ]
     },
 
