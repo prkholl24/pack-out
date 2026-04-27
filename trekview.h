@@ -65,8 +65,21 @@ public slots:
      */
     void openColorSelectorSlot();
 
+    /**
+     * @brief nextSceneSlot: emits the signal to move to the next program scene
+     */
     void nextSceneSlot();
 
+    /**
+     * @brief toggleSkipButton: Toggles the visibility of the skip button to skip a level
+     */
+    void toggleSkipButtonSlot();
+
+    /**
+     * @brief nextLevelSlot: Sends signal to change level
+     * @param level: Which level to display
+     * @param timerState: Should the game clock be activated
+     */
     void nextLevelSlot(int level, bool timerState);
 signals:
 
@@ -144,6 +157,8 @@ protected:
      * @brief keyPressEvent: Used for world editing
      */
     void keyPressEvent(QKeyEvent *event) override;
+private slots:
+    void on_skipButton_clicked();
 };
 
 #endif // TREKVIEW_H
