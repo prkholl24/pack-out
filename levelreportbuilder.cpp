@@ -15,12 +15,11 @@
 std::map<ScienceLesson, LessonContent> LevelReportBuilder::lessonRegistry;
 QJsonObject LevelReportBuilder::feedbackData;
 
-void LevelReportBuilder::ensureContentLoaded()
-{
-    if (!lessonRegistry.empty()) return;
+namespace {
 
-    // 1. Load Lessons from JSON
-    static const std::map<QString, ScienceLesson> keyToEnum = {
+const std::map<QString, ScienceLesson>& lessonKeyMap()
+{
+    static const std::map<QString, ScienceLesson> m = {
         { "BMR_BASE_METABOLISM",      ScienceLesson::BMR_BASE_METABOLISM },
         { "PANDOLF_WEIGHT_PENALTY",   ScienceLesson::PANDOLF_WEIGHT_PENALTY },
         { "HYDRATION_BASICS",         ScienceLesson::HYDRATION_BASICS },
@@ -34,14 +33,23 @@ void LevelReportBuilder::ensureContentLoaded()
         { "VOLUME_OVERFLOW",          ScienceLesson::VOLUME_OVERFLOW },
         { "TEN_ESSENTIALS_MISSING",   ScienceLesson::TEN_ESSENTIALS_MISSING }
     };
+    return m;
+}
 
+} // namespace
+
+void LevelReportBuilder::ensureContentLoaded()
+{
+    if (!lessonRegistry.empty()) return;
+
+    // 1. Load Lessons from JSON
     QFile lessonFile(":/data/lessons.json");
     if (lessonFile.open(QIODevice::ReadOnly)) {
         QJsonObject root = QJsonDocument::fromJson(lessonFile.readAll()).object();
-        for (auto it = keyToEnum.begin(); it != keyToEnum.end(); ++it) {
-            if (root.contains(it->first)) {
-                QJsonObject obj = root.value(it->first).toObject();
-                lessonRegistry[it->second] = { obj.value("title").toString(), obj.value("body").toString() };
+        for (const auto& entry : lessonKeyMap()) {
+            if (root.contains(entry.first)) {
+                QJsonObject obj = root.value(entry.first).toObject();
+                lessonRegistry[entry.second] = { obj.value("title").toString(), obj.value("body").toString() };
             }
         }
     }
@@ -55,10 +63,6 @@ void LevelReportBuilder::ensureContentLoaded()
 
 QString LevelReportBuilder::getLessonByKey(const QString& key)
 {
-    // We don't need the enum map here, just read directly from the raw JSON object
-    // but we need to ensure the raw JSON is loaded into feedbackData or a local.
-    // Actually, ensureContentLoaded loads lessonRegistry, but that uses enums.
-    
     QFile lessonFile(":/data/lessons.json");
     if (lessonFile.open(QIODevice::ReadOnly)) {
         QJsonObject root = QJsonDocument::fromJson(lessonFile.readAll()).object();
@@ -70,15 +74,31 @@ QString LevelReportBuilder::getLessonByKey(const QString& key)
     return QString();
 }
 
+QString LevelReportBuilder::keyForLesson(ScienceLesson lesson)
+{
+    if (lesson == ScienceLesson::NONE) return QString();
+    for (const auto& entry : lessonKeyMap()) {
+        if (entry.second == lesson) return entry.first;
+    }
+    return QString();
+}
+
+ScienceLesson LevelReportBuilder::lessonForKey(const QString& key)
+{
+    const auto& m = lessonKeyMap();
+    auto it = m.find(key);
+    return it != m.end() ? it->second : ScienceLesson::NONE;
+}
+
 QString LevelReportBuilder::buildReport(const LevelResult& result)
 {
     ensureContentLoaded();
     QString report = buildSummaryReport(result);
 
-    if (result.passed) report += "\n" + buildPassReport();
-    else report += "\n" + buildFailReport(result);
+    if (result.passed) report += "<br>" + buildPassReport();
+    else report += "<br>" + buildFailReport(result);
 
-    report += "\n" + buildScienceTip(result);
+    report += "<br>" + buildScienceTip(result);
     return report;
 }
 
@@ -86,39 +106,61 @@ QString LevelReportBuilder::buildScienceTip(const LevelResult& result)
 {
     auto it = lessonRegistry.find(result.lessonCode);
     if (it == lessonRegistry.end())
-        return "The following has been added to your survival guide for reference:\n\nProper preparation is the key to every successful trek!";
+        return QStringLiteral("The following has been added to your survival guide for reference:<br><br>"
+                              "Proper preparation is the key to every successful trek!");
 
-    return "The following has been added to your survival guide for reference:\n\n" + it->second.title + "\n" + it->second.body;
+    return QStringLiteral("The following has been added to your survival guide for reference:<br><br>"
+                          "<b>%1</b><br>%2")
+        .arg(it->second.title.toHtmlEscaped(),
+             it->second.body.toHtmlEscaped().replace("\n", "<br>"));
 }
 
 QString LevelReportBuilder::buildSummaryReport(const LevelResult& result)
 {
     QString report;
-    report += "Backpack Report\n";
-    report += "Grade: " + QString::number(result.grade, 'f', 1) + "/100\n";
-    report += "Weight: " + QString::number(result.totals.weightLbs, 'f', 1) + " lbs\n";
-    report += "Volume: " + QString::number(result.totals.volume, 'f', 1) + " / " + QString::number(result.maxVolume, 'f', 1) + " L\n";
-    report += "Calories packed: " + QString::number(result.totals.calories, 'f', 0) + "\n";
-    report += "Hydration packed: " + QString::number(result.totals.effectiveHydration, 'f', 1) + " oz\n\n";
+    report += "<b>Backpack Report</b><br>";
+    report += "Grade: " + QString::number(result.grade, 'f', 1) + "<br>";
+    report += "Weight: " + QString::number(result.totals.weightLbs, 'f', 1) + " lbs<br>";
+    report += "Volume: " + QString::number(result.totals.volume, 'f', 1) + " / " + QString::number(result.maxVolume, 'f', 1) + " L<br>";
 
-    report += "Energy Expenditure:\n";
-    report += "- Base Metabolism: " + QString::number(result.bmrBurn, 'f', 0) + " kcal\n";
-    report += "- Distance Burn: " + QString::number(result.distanceBurn, 'f', 0) + " kcal\n";
-    report += "- Elevation Burn: " + QString::number(result.climbBurn, 'f', 0) + " kcal\n";
-    
-    double threshold = TrekRules::get("health_thresholds", "load_penalty_display_threshold");
-    if (result.loadPenalty > threshold) {
-        report += "- Pack Load Penalty: " + QString::number(result.loadPenalty, 'f', 0) + " kcal\n";
+    // Only show calories if it's not a hydration-only level
+    if (!result.hydrationOnly) {
+        report += "Calories packed: " + QString::number(result.totals.calories, 'f', 0) + "<br>";
     }
-    report += "Total Need: " + QString::number(result.requiredCalories) + " kcal\n";
+
+    report += "Hydration packed: " + QString::number(result.totals.effectiveHydration, 'f', 1) + " oz<br>";
+
+    // Science totals that influence hydration/grades
+    report += "Sodium packed: " + QString::number(result.totals.sodium, 'f', 0) + " mg<br>";
+    if (result.totals.caffeine > 0) {
+        report += "Caffeine packed: " + QString::number(result.totals.caffeine, 'f', 0) + " mg<br>";
+    }
+    report += "<br>";
+
+    // Hide energy expenditure breakdown for beginners to focus on hydration
+    if (!result.hydrationOnly) {
+        report += "<b>Energy Expenditure:</b><br>";
+        report += "- Base Metabolism: " + QString::number(result.bmrBurn, 'f', 0) + " kcal<br>";
+        report += "- Distance Burn: " + QString::number(result.distanceBurn, 'f', 0) + " kcal<br>";
+        report += "- Elevation Burn: " + QString::number(result.climbBurn, 'f', 0) + " kcal<br>";
+
+        double threshold = TrekRules::get("health_thresholds", "load_penalty_display_threshold");
+        if (result.loadPenalty > threshold) {
+            report += "- Pack Load Penalty: " + QString::number(result.loadPenalty, 'f', 0) + " kcal<br>";
+        }
+        report += "Total Need: " + QString::number(result.requiredCalories) + " kcal<br>";
+    } else {
+        report += "Trip Need: " + QString::number(result.requiredHydration, 'f', 1) + " oz water<br>";
+    }
+
     return report;
 }
 
 QString LevelReportBuilder::buildPassReport()
 {
     QString report;
-    report += "Trip Outcome: Victory\n";
-    report += feedbackData.value("pass_body").toString() + "\n";
+    report += "<b>Trip Outcome: Victory</b><br>";
+    report += feedbackData.value("pass_body").toString().toHtmlEscaped().replace("\n", "<br>") + "<br>";
     return report;
 }
 
@@ -139,21 +181,21 @@ QString LevelReportBuilder::buildFailReport(const LevelResult& result)
     };
 
     QString report;
-    report += "Trip Outcome: Exhaustion\n";
-    report += feedbackData.value("fail_intro").toString();
+    report += "<b>Trip Outcome: Exhaustion</b><br>";
+    report += feedbackData.value("fail_intro").toString().toHtmlEscaped().replace("\n", "<br>");
 
     QJsonObject scenarios = feedbackData.value("failure_scenarios").toObject();
-    
+
     // Iterate through conditions identified by the Model
     for (TripCondition condition : result.conditions) {
         if (conditionToKey.count(condition)) {
             QString jsonKey = conditionToKey.at(condition);
             if (scenarios.contains(jsonKey)) {
-                report += scenarios.value(jsonKey).toString();
+                report += scenarios.value(jsonKey).toString().toHtmlEscaped().replace("\n", "<br>");
             }
         }
     }
 
-    report += feedbackData.value("fail_footer").toString();
+    report += feedbackData.value("fail_footer").toString().toHtmlEscaped().replace("\n", "<br>");
     return report;
 }

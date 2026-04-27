@@ -41,6 +41,21 @@ public:
      */
     static QString getLessonByKey(const QString& key);
 
+    /**
+     * @brief Returns the JSON key for a ScienceLesson (e.g., COTTON_CLOTHING_WARNING).
+     *
+     * Returns an empty QString for ScienceLesson::NONE or any unmapped value.
+     * Shared source of truth for serialization and scrapbook page lookup.
+     */
+    static QString keyForLesson(ScienceLesson lesson);
+
+    /**
+     * @brief Returns the ScienceLesson for a JSON key.
+     *
+     * Returns ScienceLesson::NONE if the key is not recognized.
+     */
+    static ScienceLesson lessonForKey(const QString& key);
+
 private:
     /**
      * @brief Ensures the lesson registry and feedback data are loaded from JSON.

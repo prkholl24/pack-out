@@ -49,6 +49,13 @@ public:
      */
     static QString getTip(const QString& category, const QString& key);
 
+    /**
+     * @brief Generates a list of environmental tips for a level.
+     */
+    static QStringList getEnvironmentalTips(WeatherType weather, TerrainType terrain,
+                                            AdventureType adventure, int durationHours,
+                                            bool skipGearCheck, int customCalories);
+
     // --- Enum Conversion Helpers ---
     static QString terrainToString(TerrainType t);
     static QString weatherToString(WeatherType w);

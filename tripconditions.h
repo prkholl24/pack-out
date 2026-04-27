@@ -50,6 +50,10 @@ struct TripRequirements {
     QString scienceFocus = "";
     double passingScore = 70.0;
 
+    // Pack volume capacity in liters. Day hike default is 20L; scale up for
+    // overnight and multi-day backpacking trips.
+    double packVolumeL = 20.0;
+
     // If true, all gear checks are skipped for this level (used for beginner levels)
     bool skipGearCheck = false;
     /// Item names available for the player to choose from in this level.
