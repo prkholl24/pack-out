@@ -10,18 +10,23 @@
 #include <vector>
 #include "level.h"
 #include "player.h"
+#include "trekview.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
 }
 class QStackedWidget;
+class QPushButton;
 QT_END_NAMESPACE
 
 class BackpackScene;
 class BriefView;
 class DebriefView;
+class TrekView;
 class Level;
+class MusicManager;
+class TitleScreen;
 
 /**
  * @class MainWindow
@@ -43,6 +48,9 @@ public:
      */
     ~MainWindow();
 
+protected:
+    void resizeEvent(QResizeEvent* event) override;
+
     /**
      * @brief Adds an item to the player's current backpack.
      * @param item - The item to add.
@@ -57,9 +65,21 @@ public:
 
 private slots:
     /**
+     * @brief Switches to the TitleScreen.
+     */
+    void showTitleScreen();
+
+    /**
      * @brief Switches to the BriefView.
      */
     void showBriefView();
+
+    /**
+     * @brief Switches to the TrekView
+     */
+    void showTrekView();
+
+    void onTrekViewEnd();
 
     /**
      * @brief Switches to the BackpackScene.
@@ -93,6 +113,12 @@ private slots:
      */
     void handlePackedItemRemoved(const QString& itemName);
 
+
+
+signals:
+
+    void nextTrekViewLevel(int level, bool timerState);
+
 private:
     /** @brief Auto-generated form from mainwindow.ui. */
     Ui::MainWindow* ui;
@@ -108,6 +134,11 @@ private:
     BackpackScene* backpackScene;
 
     /**
+     * @brief The trek view scene.
+     */
+    TrekView* trekViewScene;
+    
+     /**   
      * @brief The pre-level briefing view.
      */
     BriefView* briefView;
@@ -116,6 +147,16 @@ private:
      * @brief The post-level results view.
      */
     DebriefView* debriefView;
+
+    /**
+     * @brief The title / main-menu screen shown at launch.
+     */
+    TitleScreen* titleScreen;
+
+    /**
+     * @brief Per-level background music controller.
+     */
+    MusicManager* music;
 
     /**
      * @brief Mirrors bag contents by scene item name so removals can
@@ -157,5 +198,14 @@ private:
      * @brief Advances to the next available level, if any.
      */
     void advanceToNextLevel();
+
+    /**
+     * @brief Debug skip button for testing scene flow.
+     */
+    void debugSkipToNextScene();
+
+#ifdef QT_DEBUG
+    QPushButton* debugSkipBtn;
+#endif
 };
 #endif // MAINWINDOW_H

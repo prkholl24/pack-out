@@ -15,55 +15,26 @@
 #ifndef DEBRIEFVIEW_H
 #define DEBRIEFVIEW_H
 
+#include <QColor>
 #include <QWidget>
 #include "levelresult.h"
 
 class Player;
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class DebriefView;
-}
+namespace Ui { class DebriefView; }
 QT_END_NAMESPACE
 
-/**
- * @class DebriefView
- * @brief Post-level results widget.
- *
- * Displays the player's grade, pass/fail status, and feedback
- * report after a level is completed. Provides navigation buttons
- * for retrying, advancing, or returning to the menu.
- *
- * Intended to be hosted inside MainWindow's QStackedWidget.
- */
-class DebriefView : public QWidget
-{
+struct LevelTheme;
+
+class DebriefView : public QWidget {
     Q_OBJECT
-
 public:
-    /**
-     * @brief Constructs the debrief view.
-     *
-     * @param parent Owner widget (typically the QStackedWidget
-     *               inside MainWindow).
-     */
-    explicit DebriefView(QWidget *parent = nullptr);
+    explicit DebriefView(QWidget* parent = nullptr);
+    ~DebriefView() override;
 
-    /**
-     * @brief Destroys the debrief view and its UI form.
-     */
-    ~DebriefView();
-
-    /**
-     * @brief Populates the view with results from a completed level.
-     *
-     * Displays the grade (0-100), pass/fail status, and generates
-     * a feedback report using LevelReportBuilder. Also unlocks the
-     * earned lesson on the Player (if setPlayer() has been called).
-     *
-     * @param result The evaluation results from the level.
-     */
     void setResults(const LevelResult& result);
+    void applyTheme(const LevelTheme& theme);
 
     /**
      * @brief Associates a Player with this view.
@@ -75,30 +46,19 @@ public:
     void setPlayer(Player* player);
 
 signals:
-    /**
-     * @brief Emitted when the player clicks "Retry Level".
-     *
-     * MainWindow should connect this to show BriefView for the same level.
-     */
     void retryLevelClicked();
-
-    /**
-     * @brief Emitted when the player clicks "Next Level".
-     *
-     * MainWindow should connect this to show BriefView for the next level.
-     */
     void nextLevelClicked();
-
-    /**
-     * @brief Emitted when the player clicks "Menu".
-     *
-     * MainWindow should connect this to return to the main menu.
-     */
     void returnToMenuClicked();
 
+protected:
+    void paintEvent(QPaintEvent* event) override;
+
 private:
-    /** @brief Auto-generated form from debriefview.ui. */
+    void refreshStatusColor();
+
     Ui::DebriefView* ui;
+    QColor themeAccent = QColor("#3E7A4F");
+    bool lastPassed = false;
 
     /** @brief Non-owning pointer used to unlock lessons; may be null. */
     Player* player = nullptr;

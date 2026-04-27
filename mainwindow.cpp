@@ -11,13 +11,23 @@
 #include "fooditem.h"
 #include "gearitem.h"
 #include "levelreportbuilder.h"
+#include "musicmanager.h"
+#include "theme.h"
+#include "themeregistry.h"
+#include "titlescreen.h"
 #include "trekregistry.h"
+#include "trekview.h"
 
 #include <QMenuBar>
+#include <QPushButton>
+#include <QResizeEvent>
 #include <QStackedWidget>
 #include <QStatusBar>
 
 #include "itemregistry.h"
+
+
+#include <iostream>
 
 namespace {
 
@@ -56,7 +66,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Lock the window geometry and strip chrome
-    setFixedSize(800, 600);
+    //setFixedSize(1920,1080);
+    // Strip chrome
     menuBar()->hide();
     statusBar()->hide();
 
@@ -65,25 +76,54 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(sceneStack);
 
     // Initialize all scene views
-    briefView = new BriefView(this);
+    titleScreen   = new TitleScreen(this);
+    briefView     = new BriefView(this);
     backpackScene = new BackpackScene(QStringList(), this);
     backpackScene->setPlayer(&player);
     debriefView = new DebriefView(this);
+    trekViewScene = new TrekView(this);
+
     debriefView->setPlayer(&player);
 
+    sceneStack->addWidget(titleScreen);
     sceneStack->addWidget(briefView);
     sceneStack->addWidget(backpackScene);
     sceneStack->addWidget(debriefView);
+    sceneStack->addWidget(trekViewScene);
+
+    sceneStack->setCurrentWidget(trekViewScene);
 
     // Initialize Utah Treks from external data
+    ThemeRegistry::ensureLoaded();
     treks = TrekRegistry::loadTreks();
+
+    // Audio subsystem
+    music = new MusicManager(this);
+
+    // Title screen seed
+    titleScreen->applyTheme(ThemeRegistry::titleTheme());
 
     // Set up Signal/Slot connections for the Player Model
     connect(&player, &Player::backpackChanged, this, &MainWindow::onBackpackChanged);
     connect(&player, &Player::statsChanged, this, &MainWindow::onStatsChanged);
 
+
+
+    // Title screen -> Brief
+    connect(titleScreen, &TitleScreen::playClicked, this, &MainWindow::showBriefView);
+
     // Connect BriefView's start button to transition to packing
     connect(briefView, &BriefView::startPackingClicked, this, &MainWindow::showBackpackScene);
+
+    //Connect nextTrekViewLevel to the trek view slot, nextLevelSlot. Increments the trek view level
+    connect(this, &MainWindow::nextTrekViewLevel, trekViewScene, &TrekView::nextLevelSlot);
+
+    //connects nextSceneSignal to the onTrekViewEnd slot. Moves to the next scene/view
+    connect(trekViewScene, &TrekView::nextSceneSignal, this, &MainWindow::onTrekViewEnd);
+
+
+
+   // connect(MainWindow)
 
     connectBackpackSceneSignals();
 
@@ -92,20 +132,48 @@ MainWindow::MainWindow(QWidget *parent)
         showBriefView();
     });
     connect(debriefView, &DebriefView::nextLevelClicked, this, [this]() {
-        advanceToNextLevel();
-        showBriefView();
+        if (currentTrekIndex >= (int)treks.size() - 1) {
+            currentTrekIndex = 0;
+            showTitleScreen();
+        } else {
+            advanceToNextLevel();
+            showBriefView();
+        }
     });
-    connect(debriefView, &DebriefView::returnToMenuClicked, this, [this]() {
-        showBriefView();
-    });
+    connect(debriefView, &DebriefView::returnToMenuClicked,
+            this, &MainWindow::showTitleScreen);
 
-    // Start on the first trek
-    showBriefView();
+    // Start on the title screen
+    showTitleScreen();
+
+    //showTrekView();
+
+#ifdef QT_DEBUG
+    debugSkipBtn = new QPushButton("»", this);
+    debugSkipBtn->setFixedSize(32, 32);
+    debugSkipBtn->setStyleSheet(
+        "QPushButton { background: rgba(0,0,0,0.3); color: #888; border: none; "
+        "border-radius: 4px; font-size: 16px; } "
+        "QPushButton:hover { background: rgba(0,0,0,0.5); color: #fff; }");
+    debugSkipBtn->raise();
+    connect(debugSkipBtn, &QPushButton::clicked, this, &MainWindow::debugSkipToNextScene);
+#endif
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+    QMainWindow::resizeEvent(event);
+#ifdef QT_DEBUG
+    if (debugSkipBtn) {
+        debugSkipBtn->move(width() - debugSkipBtn->width() - 8,
+                           height() - debugSkipBtn->height() - 8);
+    }
+#endif
 }
 
 void MainWindow::addPackItem(Item* item)
@@ -137,28 +205,62 @@ void MainWindow::onStatsChanged(double weight, double volume)
     }
 }
 
+void MainWindow::showTitleScreen()
+{
+    const LevelTheme theme = ThemeRegistry::titleTheme();
+    titleScreen->applyTheme(theme);
+    if (music) music->playForTheme(theme);
+    sceneStack->setCurrentWidget(titleScreen);
+}
+
 void MainWindow::showBriefView()
 {
     if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size()) {
-        briefView->setLevel(treks[currentTrekIndex], currentTrekIndex + 1);
+        const Level& level = treks[currentTrekIndex];
+        const LevelTheme theme = ThemeRegistry::themeFor(level);
+        briefView->setLevel(level, currentTrekIndex + 1);
+        briefView->applyTheme(theme);
+        if (music) music->playForTheme(theme);
     }
     sceneStack->setCurrentWidget(briefView);
+}
+
+void MainWindow::showTrekView(){
+
+    emit nextTrekViewLevel(currentTrekIndex+1, true);
+    //emit nextTrekViewLevel(3, true);
+
+    sceneStack->setCurrentWidget(trekViewScene);
+
+}
+
+void MainWindow::onTrekViewEnd(){
+
+   showDebriefView();
 }
 
 void MainWindow::showBackpackScene()
 {
     rebuildBackpackScene();
     resetAttemptState();
+    if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size()) {
+        const Level& level = treks[currentTrekIndex];
+        backpackScene->applyTheme(ThemeRegistry::themeFor(level));
+        backpackScene->setLevelBrief(level.getDescription());
+    }
     sceneStack->setCurrentWidget(backpackScene);
 }
 
 void MainWindow::showDebriefView()
 {
     if (currentTrekIndex >= 0 && currentTrekIndex < (int)treks.size()) {
+        const Level& level = treks[currentTrekIndex];
         const auto& packedItems = player.getBackpack();
-        LevelResult result = treks[currentTrekIndex].evaluateBackpack(packedItems, player);
+        LevelResult result = level.evaluateBackpack(packedItems, player);
         debriefView->setResults(result);
+        debriefView->applyTheme(ThemeRegistry::themeFor(level));
     }
+    if (music) music->playForTheme(ThemeRegistry::titleTheme());
     sceneStack->setCurrentWidget(debriefView);
 }
 
@@ -188,7 +290,7 @@ void MainWindow::handlePackedItemRemoved(const QString& itemName)
 
 void MainWindow::connectBackpackSceneSignals()
 {
-    connect(backpackScene, &BackpackScene::levelHasStarted, this, &MainWindow::showDebriefView);
+    connect(backpackScene, &BackpackScene::levelHasStarted, this, &MainWindow::showTrekView);
     connect(backpackScene, &BackpackScene::itemAddedToBag, this, &MainWindow::handlePackedItemAdded);
     connect(backpackScene, &BackpackScene::itemRemovedFromBag, this, &MainWindow::handlePackedItemRemoved);
 }
@@ -222,4 +324,28 @@ void MainWindow::advanceToNextLevel()
     if (currentTrekIndex < (int)treks.size() - 1) {
         currentTrekIndex++;
     }
+}
+
+void MainWindow::debugSkipToNextScene()
+{
+#ifdef QT_DEBUG
+    QWidget* current = sceneStack->currentWidget();
+    if (current == titleScreen) {
+        showBriefView();
+    } else if (current == briefView) {
+        showBackpackScene();
+    } else if (current == backpackScene) {
+        showTrekView();
+    } else if (current == trekViewScene) {
+        showDebriefView();
+    } else if (current == debriefView) {
+        if (currentTrekIndex >= (int)treks.size() - 1) {
+            currentTrekIndex = 0;
+            showTitleScreen();
+        } else {
+            advanceToNextLevel();
+            showBriefView();
+        }
+    }
+#endif
 }

@@ -16,7 +16,7 @@ QString gearEnumToString(GearType g) {
         case GearType::FLASHLIGHT: return "FLASHLIGHT";
         case GearType::HAT: return "HAT";
         case GearType::MATCHES: return "MATCHES";
-        case GearType::POCKET_KNIFE: return "POCKET_KNIFE";
+        case GearType::MULTI_TOOL: return "MULTI_TOOL";
         case GearType::RAIN_JACKET: return "RAIN_JACKET";
         case GearType::SLEEPING_BAG: return "SLEEPING_BAG";
         case GearType::SUNSCREEN: return "SUNSCREEN";

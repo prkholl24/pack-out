@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
+        <file>DryCanyonTrail.png</file>
+        <file>styles.qss</file>
         <file>images/banana.png</file>
         <file>images/potato.png</file>
         <file>images/water_bottle.png</file>
@@ -8,6 +10,14 @@
         <file>data/feedback.json</file>
         <file>data/tuning.json</file>
         <file>data/items.json</file>
+        <file>data/themes.json</file>
+        <file>themes/title/image.png</file>
+        <file>themes/title/music.ogg</file>
+        <file>themes/delicate_arch/music.ogg</file>
+        <file>themes/fish_lake_loop/music.ogg</file>
+        <file>themes/lake_blanche/music.ogg</file>
+        <file>themes/glacier/music.ogg</file>
+        <file>themes/olympic_rain/music.ogg</file>
         <file>sprites/BANANA.png</file>
         <file>sprites/BEAR_SPRAY.png</file>
         <file>sprites/BEEF_JERKY.png</file>
@@ -24,7 +34,7 @@
         <file>sprites/MATCHES.png</file>
         <file>sprites/MIXED_NUTS.png</file>
         <file>sprites/PEANUT_BUTTER_SANDWICH.png</file>
-        <file>sprites/POCKET_KNIFE.png</file>
+        <file>sprites/MULTI_TOOL.png</file>
         <file>sprites/POTATO.png</file>
         <file>sprites/RAIN_JACKET.png</file>
         <file>sprites/SLEEPING_BAG.png</file>
@@ -41,5 +51,22 @@
         <file>sprites/WHISTLE.png</file>
         <file>sprites/WOOL_SHIRT.png</file>
         <file>sprites/ZIPLOC_BAG.png</file>
+        <file>BryceArchesBackground.jpg</file>
+        <file>images/FishLakeLoop.png</file>
+        <file>images/GlacierNP.png</file>
+        <file>images/LakeBlanche.png</file>
+        <file>images/OlympicNP.png</file>
+        <file>themes/delicate_arch/image.png</file>
+        <file>themes/fish_lake_loop/image.png</file>
+        <file>themes/lake_blanche/image.png</file>
+        <file>themes/glacier/image.png</file>
+        <file>themes/olympic_rain/image.png</file>
+    </qresource>
+    <qresource prefix="/trekViewLevels">
+        <file>level1.json</file>
+        <file>level2.json</file>
+        <file>level3.json</file>
+        <file>level4.json</file>
+        <file>level5.json</file>
     </qresource>
 </RCC>

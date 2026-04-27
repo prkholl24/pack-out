@@ -1,0 +1,2032 @@
+{
+    "background": "LEVEL_1",
+    "endarea": [
+        610,
+        -45,
+        935,
+        -155
+    ],
+    "level": 3,
+    "objects": [
+        {
+            "angle": 25,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 461,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 3,
+            "x": -680,
+            "y": 332
+        },
+        {
+            "angle": -55,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 1,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 287,
+            "x": -500,
+            "y": 8
+        },
+        {
+            "angle": -20,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 59,
+            "x": -393,
+            "y": -121
+        },
+        {
+            "angle": 24,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 82,
+            "x": -326,
+            "y": -115
+        },
+        {
+            "angle": -25,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 285,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 2,
+            "x": -227,
+            "y": 32
+        },
+        {
+            "angle": 52,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 1,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 130,
+            "x": -143,
+            "y": 193
+        },
+        {
+            "angle": 43,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 1,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 146,
+            "x": -50,
+            "y": 295
+        },
+        {
+            "angle": 32,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 146,
+            "x": 64,
+            "y": 384
+        },
+        {
+            "angle": 16,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 128,
+            "x": 182,
+            "y": 436
+        },
+        {
+            "angle": -3,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 154,
+            "x": 312,
+            "y": 448
+        },
+        {
+            "angle": -13,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 130,
+            "x": 451,
+            "y": 429
+        },
+        {
+            "angle": -24,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 161,
+            "x": 587,
+            "y": 382
+        },
+        {
+            "angle": -40,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 226,
+            "x": 744,
+            "y": 280
+        },
+        {
+            "angle": -56,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 259,
+            "x": 888,
+            "y": 122
+        },
+        {
+            "angle": -64,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 557,
+            "x": -848,
+            "y": -220
+        },
+        {
+            "angle": -9,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 1,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 355,
+            "x": -554,
+            "y": -497
+        },
+        {
+            "angle": 7,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 290,
+            "x": -243,
+            "y": -507
+        },
+        {
+            "angle": -30,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 290,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 2,
+            "x": -35,
+            "y": -367
+        },
+        {
+            "angle": 62,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 346,
+            "x": 101,
+            "y": -119
+        },
+        {
+            "angle": 24,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 178,
+            "x": 256,
+            "y": 64
+        },
+        {
+            "angle": 0,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 1,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 114,
+            "x": 392,
+            "y": 100
+        },
+        {
+            "angle": -48,
+            "color": [
+                0,
+                94,
+                11,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 314,
+            "x": 552,
+            "y": -16
+        },
+        {
+            "angle": 8,
+            "color": [
+                0,
+                210,
+                254,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 362,
+            "x": 784,
+            "y": -160
+        },
+        {
+            "angle": -48,
+            "color": [
+                0,
+                210,
+                254,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 2,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 58,
+            "x": 672,
+            "y": -152
+        },
+        {
+            "angle": 160,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 190,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 5,
+            "x": -665,
+            "y": 135
+        },
+        {
+            "angle": 21,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 5,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 84,
+            "x": -736,
+            "y": 35
+        },
+        {
+            "angle": 80,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 6,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 150,
+            "x": -710,
+            "y": -24
+        },
+        {
+            "angle": -40,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 234,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 10,
+            "x": -720,
+            "y": -256
+        },
+        {
+            "angle": -96,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 130,
+            "x": -752,
+            "y": -240
+        },
+        {
+            "angle": 20,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 153,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 7,
+            "x": -669,
+            "y": -23
+        },
+        {
+            "angle": -60,
+            "color": [
+                162,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 84,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 7,
+            "x": -748,
+            "y": -48
+        },
+        {
+            "angle": 8,
+            "color": [
+                162,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 122,
+            "x": -672,
+            "y": -264
+        },
+        {
+            "angle": 8,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 170,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 10,
+            "x": -504,
+            "y": -280
+        },
+        {
+            "angle": -48,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 90,
+            "x": -544,
+            "y": -168
+        },
+        {
+            "angle": -88,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 107,
+            "x": -517,
+            "y": -149
+        },
+        {
+            "angle": 48,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 87,
+            "x": -481,
+            "y": -193
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": -600,
+            "y": -16
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": -608,
+            "y": -208
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": -680,
+            "y": -128
+        },
+        {
+            "angle": -32,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 82,
+            "x": -528,
+            "y": -328
+        },
+        {
+            "angle": 0,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 114,
+            "x": -728,
+            "y": -336
+        },
+        {
+            "angle": 40,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 162,
+            "x": -373,
+            "y": -336
+        },
+        {
+            "angle": 88,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 106,
+            "x": -432,
+            "y": -440
+        },
+        {
+            "angle": -16,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 106,
+            "x": -488,
+            "y": -440
+        },
+        {
+            "angle": -72,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 82,
+            "x": -408,
+            "y": -312
+        },
+        {
+            "angle": -53,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 82,
+            "x": -426,
+            "y": -124
+        },
+        {
+            "angle": -72,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 74,
+            "x": -392,
+            "y": -184
+        },
+        {
+            "angle": -24,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 122,
+            "x": -352,
+            "y": -176
+        },
+        {
+            "angle": 24,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": -408,
+            "y": -432
+        },
+        {
+            "angle": -136,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 154,
+            "x": -192,
+            "y": -200
+        },
+        {
+            "angle": -88,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 98,
+            "x": -208,
+            "y": -160
+        },
+        {
+            "angle": 0,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 82,
+            "x": -184,
+            "y": -232
+        },
+        {
+            "angle": 72,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 122,
+            "x": -200,
+            "y": -376
+        },
+        {
+            "angle": -72,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 82,
+            "x": -224,
+            "y": -360
+        },
+        {
+            "angle": 40,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 66,
+            "x": -160,
+            "y": -304
+        },
+        {
+            "angle": 72,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 26,
+            "x": -384,
+            "y": -416
+        },
+        {
+            "angle": -48,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": -88,
+            "y": -416
+        },
+        {
+            "angle": 8,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 34,
+            "x": -120,
+            "y": -400
+        },
+        {
+            "angle": -80,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": -104,
+            "y": -376
+        },
+        {
+            "angle": 112,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": -216,
+            "y": 32
+        },
+        {
+            "angle": -104,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 63,
+            "x": -215,
+            "y": -20
+        },
+        {
+            "angle": -56,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 93,
+            "x": -178,
+            "y": -33
+        },
+        {
+            "angle": 48,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 186,
+            "x": -85,
+            "y": -88
+        },
+        {
+            "angle": -80,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 154,
+            "x": -88,
+            "y": 0
+        },
+        {
+            "angle": 16,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 80,
+            "x": -189,
+            "y": 64
+        },
+        {
+            "angle": -40,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": -168,
+            "y": 48
+        },
+        {
+            "angle": 8,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 248,
+            "x": -262,
+            "y": -502
+        },
+        {
+            "angle": -24,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 74,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 10,
+            "x": -312,
+            "y": -480
+        },
+        {
+            "angle": -18,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 88,
+            "x": -188,
+            "y": -510
+        },
+        {
+            "angle": 80,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 130,
+            "x": -16,
+            "y": -136
+        },
+        {
+            "angle": 40,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 58,
+            "x": -48,
+            "y": -216
+        },
+        {
+            "angle": 70,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 106,
+            "x": -43,
+            "y": -247
+        },
+        {
+            "angle": 64,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 202,
+            "x": 40,
+            "y": -232
+        },
+        {
+            "angle": -80,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 74,
+            "x": 56,
+            "y": -152
+        },
+        {
+            "angle": -64,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 234,
+            "x": 72,
+            "y": 40
+        },
+        {
+            "angle": -24,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 140,
+            "x": -47,
+            "y": 174
+        },
+        {
+            "angle": -8,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 98,
+            "x": 0,
+            "y": 72
+        },
+        {
+            "angle": -75,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 53,
+            "x": 42,
+            "y": -89
+        },
+        {
+            "angle": -56,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 122,
+            "x": 72,
+            "y": -48
+        },
+        {
+            "angle": -32,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": -583,
+            "y": -294
+        },
+        {
+            "angle": -51,
+            "color": [
+                115,
+                75,
+                35,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 76,
+            "x": -294,
+            "y": -325
+        },
+        {
+            "angle": 87,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 197,
+            "x": 154,
+            "y": 335
+        },
+        {
+            "angle": -32,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 178,
+            "x": 253,
+            "y": 131
+        },
+        {
+            "angle": 48,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 66,
+            "x": 128,
+            "y": 304
+        },
+        {
+            "angle": -56,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 90,
+            "x": 184,
+            "y": 328
+        },
+        {
+            "angle": 8,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 66,
+            "x": 216,
+            "y": 128
+        },
+        {
+            "angle": -88,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": true,
+            "type": "ABoxCuh",
+            "width": 106,
+            "x": 280,
+            "y": 168
+        },
+        {
+            "angle": -50,
+            "color": [
+                163,
+                107,
+                50,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 10,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 98,
+            "x": 237,
+            "y": 224
+        },
+        {
+            "angle": 0,
+            "color": [
+                44,
+                29,
+                13,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 400,
+            "y": 136
+        },
+        {
+            "angle": 0,
+            "color": [
+                44,
+                29,
+                13,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 400,
+            "y": 187
+        },
+        {
+            "angle": 0,
+            "color": [
+                44,
+                29,
+                13,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 400,
+            "y": 238
+        },
+        {
+            "angle": 0,
+            "color": [
+                44,
+                29,
+                13,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 400,
+            "y": 289
+        },
+        {
+            "angle": 0,
+            "color": [
+                42,
+                84,
+                45,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 400,
+            "y": 340
+        },
+        {
+            "angle": 0,
+            "color": [
+                45,
+                71,
+                45,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 349,
+            "y": 289
+        },
+        {
+            "angle": 0,
+            "color": [
+                45,
+                71,
+                45,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 349,
+            "y": 340
+        },
+        {
+            "angle": 0,
+            "color": [
+                21,
+                34,
+                21,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 400,
+            "y": 391
+        },
+        {
+            "angle": 0,
+            "color": [
+                30,
+                46,
+                30,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 451,
+            "y": 340
+        },
+        {
+            "angle": 0,
+            "color": [
+                32,
+                50,
+                32,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 451,
+            "y": 289
+        },
+        {
+            "angle": 0,
+            "color": [
+                21,
+                32,
+                21,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 502,
+            "y": 290
+        },
+        {
+            "angle": 0,
+            "color": [
+                26,
+                42,
+                26,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 298,
+            "y": 289
+        },
+        {
+            "angle": 0,
+            "color": [
+                26,
+                42,
+                26,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 348,
+            "y": 239
+        },
+        {
+            "angle": 0,
+            "color": [
+                43,
+                67,
+                42,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 50,
+            "restitution": 0.8999999761581421,
+            "shapetype": "box",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 50,
+            "x": 451,
+            "y": 238
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": -552,
+            "y": -368
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": -456,
+            "y": -280
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": -192,
+            "y": -88
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": -296,
+            "y": -152
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": -280,
+            "y": -408
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": -96,
+            "y": -312
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 15,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 15,
+            "x": 335,
+            "y": 170
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": 472,
+            "y": 120
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": 232,
+            "y": 360
+        },
+        {
+            "angle": 0,
+            "color": [
+                38,
+                24,
+                10,
+                255
+            ],
+            "friction": 0.30000001192092896,
+            "height": 18,
+            "restitution": 0.8999999761581421,
+            "shapetype": "circle",
+            "static": false,
+            "type": "ABoxCuh",
+            "width": 18,
+            "x": 512,
+            "y": 224
+        }
+    ],
+    "playerstart": {
+        "x": -46,
+        "y": 25
+    }
+}

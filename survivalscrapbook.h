@@ -2,6 +2,8 @@
 #define SURVIVALSCRAPBOOK_H
 
 #include <QString>
+#include <QHideEvent>
+#include <QShowEvent>
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>
@@ -25,12 +27,27 @@ public:
      */
     void setLessons(const std::set<ScienceLesson>& lessons);
 
+    /**
+     * @brief Replaces the title (first) page with the current trek's brief.
+     *
+     * Mirrors the mission text shown on BriefView so the player has a
+     * quick reference while packing.
+     */
+    void setBriefDescription(const QString& description);
+
+signals:
+    void visibilityChanged(bool visible);
+
 public slots:
     void toggleVisibility();
 
 private slots:
     void onLeftClicked();
     void onRightClicked();
+
+protected:
+    void showEvent(QShowEvent* event) override;
+    void hideEvent(QHideEvent* event) override;
 
 private:
     void updateArrowState();
@@ -39,10 +56,11 @@ private:
     QPushButton *rightButton;
     QPushButton *closeButton;
     QLabel *textDisplay;
+    QLabel *pageCountLabel;
 
     std::vector<QString> pages;
     int currentPage;
-    const QString titlePage = "The Survival Handbook";
+    QString titlePage = "The Survival Handbook";
 };
 
 #endif // SURVIVALSCRAPBOOK_H

@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -68,13 +68,18 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     player.cpp \
+    trekbox2dphysics.cpp \
+    trekview.cpp \
     trekregistry.cpp \
     trekphysiology.cpp \
     gearcheck.cpp \
     trekrules.cpp \
     itemregistry.cpp \
     survivalscrapbook.cpp \
-    spritecache.cpp
+    spritecache.cpp \
+    titlescreen.cpp \
+    themeregistry.cpp \
+    musicmanager.cpp
 
 HEADERS += \
     backpack.h \
@@ -137,6 +142,7 @@ HEADERS += \
     levelresult.h \
     mainwindow.h \
     nutritionprofile.h \
+    physicsObjects.h \
     player.h \
     tripconditions.h \
     trekregistry.h \
@@ -144,14 +150,22 @@ HEADERS += \
     gearcheck.h \
     trekrules.h \
     itemregistry.h \
-    survivalscrapbook.h \
-    spritecache.h
+    spritecache.h \
+    trekbox2dphysics.h \
+    trekview.h \
+    titlescreen.h \
+    theme.h \
+    themeregistry.h \
+    musicmanager.h \
+    survivalscrapbook.h
 
 FORMS += \
     backpack.ui \
     briefview.ui \
     debriefview.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    trekview.ui \
+    titlescreen.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -162,5 +176,6 @@ RESOURCES += \
     resources.qrc
 
 DISTFILES += \
+    ../BryceArchesBackground.jpg \
     Box2D/Box2DConfig.cmake \
     Box2D/CMakeLists.txt

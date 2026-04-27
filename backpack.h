@@ -52,6 +52,8 @@
 #ifndef BACKPACKSCENE_H
 #define BACKPACKSCENE_H
 
+#include <QColor>
+#include <QRect>
 #include <QWidget>
 #include "Box2D/Box2D.h"
 #include <QTimer>
@@ -73,6 +75,8 @@ namespace Ui {
 class BackpackScene;
 }
 QT_END_NAMESPACE
+
+struct LevelTheme;
 
 /**
  * @class BackpackScene
@@ -121,12 +125,36 @@ public:
     void updateStats(double weight, double volume);
 
     /**
-     * @brief Associates a Player so the scrapbook reflects unlocked lessons.
+     * @brief Applies the per-level theme colors to the scene.
+     *
+     * Stores primary/secondary colors for use in paintEvent (background
+     * tint, Cinch & Go button, themed border). Does not change layout.
+     */
+    void applyTheme(const LevelTheme& theme);
+
+    /**
+     * @brief Screen region reserved for the future Survival Guide overlay.
+     *
+     * No physics bodies or interactive UI are placed in this rectangle so
+     * that `feature/guide`'s SurvivalScrapbook widget can be dropped in
+     * without fighting this scene's layout.
+     */
+    static constexpr QRect kGuideReservedRect{0, 0, 550, 340};
+
+     /** @brief Associates a Player so the scrapbook reflects unlocked lessons.
      *
      * Immediately refreshes the scrapbook pages from the Player's current
      * unlocked set and subscribes to lessonsChanged() for live updates.
      */
     void setPlayer(Player* player);
+
+    /**
+     * @brief Feeds the current trek's mission brief into the survival guide.
+     *
+     * The guide's cover page mirrors the BriefView description so the
+     * player can re-read the mission while packing.
+     */
+    void setLevelBrief(const QString& description);
 
 signals:
     /**
@@ -169,11 +197,19 @@ private:
     //  Constants
     // -----------------------------------------------------------------
     const int REFRESH_RATE = 60;
-    static constexpr float PIXELS_PER_METER = 50.0f;
-    static constexpr float WORLD_WIDTH_M = 16.0f;
-    static constexpr float WORLD_HEIGHT_M = 12.0f;
-    static constexpr int WINDOW_WIDTH_PX = 800;
-    static constexpr int WINDOW_HEIGHT_PX = 600;
+    static constexpr float PIXELS_PER_METER = 90.0f;
+    static constexpr int   WINDOW_WIDTH_PX   = 1920;
+    static constexpr int   WINDOW_HEIGHT_PX  = 1080;
+    static constexpr float WORLD_WIDTH_M     = WINDOW_WIDTH_PX  / PIXELS_PER_METER; // ~21.33 m
+    static constexpr float WORLD_HEIGHT_M    = WINDOW_HEIGHT_PX / PIXELS_PER_METER; // 12 m
+
+    // -----------------------------------------------------------------
+    //  Theme state (applied by MainWindow on level change)
+    // -----------------------------------------------------------------
+    QColor themePrimary   = QColor("#3E7A4F");
+    QColor themeSecondary = QColor("#C8D9B8");
+    QColor themeOnPrim    = QColor("#FFFFFF");
+    QColor themeOnSurface = QColor("#1E1E1E");
 
     // -----------------------------------------------------------------
     //  Backpack status
@@ -243,6 +279,7 @@ private:
     // -----------------------------------------------------------------
     //  Scene construction helpers
     // -----------------------------------------------------------------
+    void refreshSurvivalGuideButtonStyle();
     void createBackpack();
     void createTabs();
     void createCinchAndGoButton();

@@ -20,9 +20,9 @@
     },
     {
         "name": "Fish Lake Loop",
-        "description": "Fish Lake is Utah's largest natural mountain lake, located at over 8,800 feet in the Fishlake National Forest. Known as the 'gem of Utah,' this 5-mile long and 1-mile wide alpine lake is famous for large lake trout and year-round fishing. It is also home to Pando, a massive clonal colony of a single male Quaking Aspen located in the Fishlake National Forest in south-central Utah. While it looks like a forest of 47,000 individual trees, it is actually one single living organism connected by a vast, shared underground root system. You had to check this place out, so you set out for a long day hike aroudn the lake's perimeter. Pack enough food and water to stay strong through the full loop.",
-        "miles": 9.0,
-        "elevationGain": 500.0,
+        "description": "Fish Lake is Utah's largest natural mountain lake, located at over 8,800 feet in the Fishlake National Forest. Known as the 'gem of Utah,' this 5-mile long and 1-mile wide alpine lake is famous for large lake trout and year-round fishing. It is also home to Pando, a massive clonal colony of a single male Quaking Aspen located in the Fishlake National Forest in south-central Utah. While it looks like a forest of 47,000 individual trees, it is actually one single living organism connected by a vast, shared underground root system. You had to check this place out, so you set out for a long day hike around the lake's perimeter. Pack enough food and water to stay strong through the full loop.",
+        "miles": 19.0,
+        "elevationGain": 900.0,
         "duration": 5,
         "terrain": "FOREST",
         "weather": "WINDY",
@@ -40,7 +40,7 @@
         "name": "Lake Blanche",
         "description": "You're finally feeling comfortable enough to plan your first single-night backpacking trip. Lake Blanche is a popular, scenic alpine lake backpacking destination in Utah's Wasatch Mountains, known for its steep, 6.7 to 7-mile round-trip hike and stunning views of Sundial Peak. You will need more than food and water to make it through the night, and you should remember a trash bag to pack out wrappers and waste.",
         "miles": 7.1,
-        "elevationGain": 2688.0,
+        "elevationGain": 2730.0,
         "duration": 20,
         "terrain": "MOUNTAIN",
         "weather": "COLD",
@@ -57,7 +57,7 @@
             "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
             "HAT", "SUNSCREEN", "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET",
             "SLEEPING_BAG", "TENT", "FLASHLIGHT", "COMPASS", "MATCHES", "FIRESTARTER",
-            "FIRST_AID_KIT", "POCKET_KNIFE", "TREKKING_POLES", "WATER_FILTER", "WHISTLE",
+            "FIRST_AID_KIT", "MULTI_TOOL", "TREKKING_POLES", "WATER_FILTER", "WHISTLE",
             "TRASH_BAG", "ZIPLOC_BAG"
         ]
     },
@@ -71,8 +71,8 @@
         "weather": "SNOW",
         "adventure": "BACKPACKING",
         "scienceFocus": "PANDOLF_WEIGHT_PENALTY",
-        "packVolumeL": 50.0,
-        "customCalories": 3200,
+        "packVolumeL": 45.0,
+        "customCalories": 3000,
         "customHydration": 128.0,
         "requiredGearItems": [
             "TENT", "SLEEPING_BAG", "FLASHLIGHT", "WOOL_SHIRT", "TREKKING_POLES", "TRASH_BAG"
@@ -82,7 +82,7 @@
             "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
             "HAT", "SUNSCREEN", "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET",
             "SLEEPING_BAG", "TENT", "FLASHLIGHT", "COMPASS", "MATCHES", "FIRESTARTER",
-            "FIRST_AID_KIT", "POCKET_KNIFE", "TREKKING_POLES", "BEAR_SPRAY", "WATER_FILTER", "WHISTLE",
+            "FIRST_AID_KIT", "MULTI_TOOL", "TREKKING_POLES", "BEAR_SPRAY", "WATER_FILTER", "WHISTLE",
             "CAST_IRON_SKILLET", "TRASH_BAG", "ZIPLOC_BAG"
         ]
     },
@@ -108,7 +108,7 @@
             "WATER_BOTTLE", "WATER_CAMELBAK", "SPORTS_DRINK", "SODA", "ENERGY_DRINK", "BEER",
             "HAT", "SUNSCREEN", "WOOL_SHIRT", "COTTON_SHIRT", "RAIN_JACKET",
             "SLEEPING_BAG", "TENT", "FLASHLIGHT", "COMPASS", "MATCHES", "FIRESTARTER",
-            "FIRST_AID_KIT", "POCKET_KNIFE", "TREKKING_POLES", "BEAR_SPRAY", "WATER_FILTER", "WHISTLE",
+            "FIRST_AID_KIT", "MULTI_TOOL", "TREKKING_POLES", "BEAR_SPRAY", "WATER_FILTER", "WHISTLE",
             "CAST_IRON_SKILLET", "TRASH_BAG", "ZIPLOC_BAG"
         ]
     }
