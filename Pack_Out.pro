@@ -79,7 +79,8 @@ SOURCES += \
     spritecache.cpp \
     titlescreen.cpp \
     themeregistry.cpp \
-    musicmanager.cpp
+    musicmanager.cpp \
+    scaledwindow.cpp
 
 HEADERS += \
     backpack.h \
@@ -157,6 +158,7 @@ HEADERS += \
     theme.h \
     themeregistry.h \
     musicmanager.h \
+    scaledwindow.h \
     survivalscrapbook.h
 
 FORMS += \

@@ -14,6 +14,7 @@
  * @date 4/7/2026
  */
 #include "mainwindow.h"
+#include "scaledwindow.h"
 #include "trekview.h"
 #include "spritecache.h"
 
@@ -79,25 +80,24 @@ int main(int argc, char *argv[])
 
     SpriteCache::init();
 
-    MainWindow w;
+    MainWindow* w = new MainWindow;
+    ScaledWindow sw(w);
 
     // Pick a display mode based on logical screen size:
     //   – Clearly larger than 1920×1080 (e.g. 1440p, 4K at low DPI):
-    //     show as a fixed 1920×1080 centered window.
-    //   – Anything that fits tightly (exactly 1080p, 1920×1200, or any
-    //     scaled display where the logical area ≤ 1920×1200):
-    //     go fullscreen so the taskbar is hidden.
+    //     show as a centered window matching the available screen area.
+    //   – Anything else: go fullscreen so the taskbar is hidden.
     const QRect screenRect = QGuiApplication::primaryScreen()->geometry();
     const bool largeEnoughForWindowed =
         screenRect.width() > 1920 && screenRect.height() > 1200;
 
     if (largeEnoughForWindowed) {
-        w.setFixedSize(1920, 1080);
         const QRect avail = QGuiApplication::primaryScreen()->availableGeometry();
-        w.move(avail.center() - QPoint(1920 / 2, 1080 / 2));
-        w.show();
+        sw.resize(avail.width() * 3 / 4, avail.height() * 3 / 4);
+        sw.move(avail.center() - QPoint(sw.width() / 2, sw.height() / 2));
+        sw.show();
     } else {
-        w.showFullScreen();
+        sw.showFullScreen();
     }
 
     return a.exec();
