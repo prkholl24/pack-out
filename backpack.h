@@ -139,7 +139,7 @@ public:
      * that `feature/guide`'s SurvivalScrapbook widget can be dropped in
      * without fighting this scene's layout.
      */
-    static constexpr QRect kGuideReservedRect{0, 0, 550, 340};
+    static constexpr QRect kGuideReservedRect{0, 0, 550, 460};
 
      /** @brief Associates a Player so the scrapbook reflects unlocked lessons.
      *

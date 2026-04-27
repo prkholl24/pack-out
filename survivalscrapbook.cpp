@@ -111,7 +111,7 @@ SurvivalScrapbook::SurvivalScrapbook(QWidget* parent) : QWidget(parent)
         }
     )");
 
-    resize(400, 340);
+    resize(400, 460);
     updateArrowState();
 }
 

@@ -2,9 +2,6 @@
     <qresource prefix="/">
         <file>DryCanyonTrail.png</file>
         <file>styles.qss</file>
-        <file>images/banana.png</file>
-        <file>images/potato.png</file>
-        <file>images/water_bottle.png</file>
         <file>data/lessons.json</file>
         <file>data/treks.json</file>
         <file>data/feedback.json</file>
