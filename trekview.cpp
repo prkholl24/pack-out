@@ -28,6 +28,9 @@ TrekView::TrekView(QWidget *parent)
     //Connects moveToNextFrame in physics to nextSceneSlot in view
     connect(phys, &TrekBox2DPhysics::moveToNextFrame, this, &TrekView::nextSceneSlot);
 
+    //Connects toggle skip button to the slot to toggle the visibility of the skip button
+    connect(phys, &TrekBox2DPhysics::toggleSkipButtonSignal, this, &TrekView::toggleSkipButtonSlot);
+
     //Connects updateMousePosition in view, to setMousePosition in physics
     connect(this, &TrekView::updatePhysicsMousePosition, phys, &TrekBox2DPhysics::setTargetFromMouse);
     //Connects: Sends key pressed to slot worldEditorSlot in TrekBox2DPhysics
@@ -39,7 +42,10 @@ TrekView::TrekView(QWidget *parent)
     //Connects nextLevelSignal in view to nextLevelSlot in physics
     connect(this, &TrekView::nextLevelSignal, phys, &TrekBox2DPhysics::nextLevelSlot);
 
+    //Connects the UI skip button to the slot on_skipButton_clicked
+    connect(ui->skipButton, &QPushButton::clicked, this, &TrekView::on_skipButton_clicked);
 
+    ui->skipButton->hide();
 
     connect(this, &TrekView::leftMouseButtonClickedSignal, phys, &TrekBox2DPhysics::leftMouseButtonClickedSlot);
     playerLevel = 1;
@@ -156,7 +162,6 @@ void TrekView::paintEvent(QPaintEvent *event){
             painter.save();
 
             painter.translate(visual.x, visual.y);
-            //float angleDegrees = visual.angle * 180.0f / 3.14159269f;
             painter.rotate(-visual.angle);
 
             if(visual.shapeType == "box"){
@@ -169,14 +174,23 @@ void TrekView::paintEvent(QPaintEvent *event){
                                     -visual.height * 0.5f,
                                     visual.width,
                                     visual.height);
-
             }
-
             painter.restore();
-
-
         }
-
-
-
 }
+
+void TrekView::toggleSkipButtonSlot(){
+    if(ui->skipButton->isHidden()){
+        ui->skipButton->show();
+    }else{
+        ui->skipButton->hide();
+    }
+}
+
+void TrekView::on_skipButton_clicked()
+{
+    std::cout << "Skip button clicked" << std::endl;
+    ui->skipButton->hide();
+    emit nextSceneSignal();
+}
+

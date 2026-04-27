@@ -17,6 +17,8 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
     fromJsonLevel(FilePath);
     }
 
+    levelCompleted =  {false, false, false, false, false};
+
     connect(timer, &QTimer::timeout,this, &TrekBox2DPhysics::updateWorldSlot);
 
     timer->start(10);
@@ -26,17 +28,13 @@ TrekBox2DPhysics::TrekBox2DPhysics(QObject *parent)
 
         if(saveToFile){
         toJsonLevel(FilePath);
-
         }
-
     }
 
-    //nextLevelSlot(currentLevel, false);
 }
 
 TrekBox2DPhysics::~TrekBox2DPhysics(){
 }
-
 
 
 void TrekBox2DPhysics::nextLevelSlot(int levelNo, bool timerState){
@@ -59,8 +57,10 @@ void TrekBox2DPhysics::nextLevelSlot(int levelNo, bool timerState){
     bodyVector.clear();
     clearWorldBodies();
 
+    if(levelCompleted[currentLevel -1]){
+        emit toggleSkipButtonSignal();
+    }
 
-    // FilePath = QCoreApplication::applicationDirPath() + "/level" + QString::number(currentLevel) + ".json";
 
     FilePath = "://trekViewLevels/level" + QString::number(currentLevel) + ".json";
 
@@ -165,9 +165,6 @@ void TrekBox2DPhysics::clearWorldBodies(){
         world.DestroyBody(body);
         body = next;
     }
-
-
-
 }
 
 b2Vec2 TrekBox2DPhysics::screenToWorld(const QPointF& p) const {
@@ -218,7 +215,6 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 
         if(phys.shapeType == "box")
         {
-
             b2PolygonShape  shape;
             shape.SetAsBox((phys.width / pixelsPerMeter) * 0.5f, (phys.height / pixelsPerMeter) * 0.5f );
 
@@ -230,8 +226,6 @@ void TrekBox2DPhysics::createPhysicsObjects(){
 
             body->CreateFixture(&fixtureDef);
         }else if (phys.shapeType == "circle") {
-
-
             b2CircleShape shape;
             shape.m_radius = (phys.width * 0.5f) / pixelsPerMeter;
             b2FixtureDef fixtureDef;
@@ -245,11 +239,7 @@ void TrekBox2DPhysics::createPhysicsObjects(){
     }
 }
 bool TrekBox2DPhysics::checkEndArea(int x, int y){
-
-    //std::cout << "Player Pos X: " << x << " Y: " << y << std::endl;
-
     if ((x > endArea[0] && x < endArea[2]) && (y < endArea[1] && y > endArea[3])) {
-        std::cout << "END AREA BRUH" << std::endl;
         return true;
     }
     return false;
@@ -288,6 +278,13 @@ void TrekBox2DPhysics::updateWorldSlot(){
         b2Vec2 position = body->GetPosition();
 
         if (checkEndArea(position.x * pixelsPerMeter,position.y * pixelsPerMeter)){
+            if(levelCompleted[currentLevel - 1]){
+                emit toggleSkipButtonSignal();
+            }
+
+            levelCompleted[currentLevel - 1] = true;
+
+
             emit moveToNextFrame();
             timer->stop();
         }
@@ -339,8 +336,6 @@ void TrekBox2DPhysics::worldEditorSlot(int key){
             //Removes last object
             if(objectAdded){
                 objectsVector.removeLast();
-
-
             }
             removeAllPhysicsObjects();
 
@@ -678,8 +673,6 @@ void TrekBox2DPhysics::setColorSlot(QVector<int> color){
     removeAllPhysicsObjects();
 
     createPhysicsObjects();
-
-
 }
 
 

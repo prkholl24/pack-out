@@ -52,6 +52,8 @@ private:
     //True enables the world editor to create levels.
     bool worldEdit = true;
 
+    QVector<bool> levelCompleted;
+
     //X and Y starting location of the player object
     //Stores the player's starting b2word (x,y) coordinates METERS BRUHH
     QPoint playerStartingPoint = QPoint(-46,-25);
@@ -139,8 +141,7 @@ private:
     //Curent level the game is on
     int currentLevel = 1;
 
-     // QString FilePath = QCoreApplication::applicationDirPath()
-     //                        + "/level" + QString::number(currentLevel) + ".json";
+
 
     QString FilePath = "://trekViewLevels/level" + QString::number(currentLevel) + ".json";
     QString levelBackground = "LEVEL_1";
@@ -172,7 +173,17 @@ private:
 
 signals:
 
+    /**
+     * @brief sendBodyLocation: Sends x and y of the player body location
+     * @param x: Player x coordinate
+     * @param y: Player y coordinate
+     */
     void sendBodyLocation(float x, float y);
+
+    /**
+     * @brief toggleSkipButtonSignal: Toggles the views skip button
+     */
+    void toggleSkipButtonSignal();
 
     /**
      * @brief getColor: Prompts view to get a color from user
@@ -183,7 +194,7 @@ signals:
     void loadVisualObjectsSignal(QVector<PhysicsObjectDef>& objectsVector);
     //Emits the current player level
     void sendCurrentLevelSignal(int level);
-
+    //Emits a signal to advance to the next program scene
     void moveToNextFrame();
 public slots:
 
