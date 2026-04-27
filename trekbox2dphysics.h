@@ -50,7 +50,7 @@ private:
     //Mainly used for initial level design.
     bool saveToFile = false;
     //True enables the world editor to create levels.
-    bool worldEdit = true;
+    bool worldEdit = false;
 
     QVector<bool> levelCompleted;
 
